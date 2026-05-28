@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../model/member.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../member_profile_screen.dart';
 
 class MemberCard extends StatelessWidget {
   final Member member;
@@ -12,7 +13,13 @@ class MemberCard extends StatelessWidget {
     final categoryColor =
         kCategoryColors[member.category.tag] ?? kAccentBlue;
 
-    return Container(
+    return GestureDetector(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => MemberProfileScreen(member: member),
+        ),
+      ),
+      child: Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
@@ -78,6 +85,7 @@ class MemberCard extends StatelessWidget {
           _WhatsAppButton(phone: member.phone),
         ],
       ),
+    ),
     );
   }
 }
