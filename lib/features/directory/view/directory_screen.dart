@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
 import '../viewmodel/directory_viewmodel.dart';
+import '../../register/view/register_screen.dart';
 import 'widgets/category_filter_bar.dart';
 import 'widgets/member_card.dart';
 
@@ -71,7 +72,9 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const RegisterScreen()),
+        ),
         backgroundColor: kAccentBlue,
         child: const Icon(Icons.add, color: Colors.white),
       ),
