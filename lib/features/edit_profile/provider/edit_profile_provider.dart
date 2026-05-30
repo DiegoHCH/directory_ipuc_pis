@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../../core/services/cloudinary_service.dart';
 import '../../directory/model/member.dart';
 import '../../directory/repository/member_repository.dart';
 
@@ -12,6 +15,8 @@ class EditProfileState {
   final List<String> offers;
   final bool visible;
   final bool isSaving;
+  final bool isUploadingPhoto;
+  final String? photoUrl;
   final String? errorMessage;
 
   const EditProfileState({
@@ -22,6 +27,8 @@ class EditProfileState {
     required this.offers,
     this.visible = true,
     this.isSaving = false,
+    this.isUploadingPhoto = false,
+    this.photoUrl,
     this.errorMessage,
   });
 
@@ -34,6 +41,7 @@ class EditProfileState {
             : m.category,
         offers: List.from(m.offers),
         visible: m.visible,
+        photoUrl: m.photoUrl,
       );
 
   bool get isDirty =>
@@ -41,6 +49,7 @@ class EditProfileState {
       businessName != original.description ||
       category != original.category ||
       !visible ||
+      photoUrl != original.photoUrl ||
       offers.length != original.offers.length ||
       !offers.every(original.offers.contains);
 
@@ -51,6 +60,8 @@ class EditProfileState {
     List<String>? offers,
     bool? visible,
     bool? isSaving,
+    bool? isUploadingPhoto,
+    String? photoUrl,
     String? errorMessage,
   }) =>
       EditProfileState(
@@ -61,6 +72,8 @@ class EditProfileState {
         offers: offers ?? this.offers,
         visible: visible ?? this.visible,
         isSaving: isSaving ?? this.isSaving,
+        isUploadingPhoto: isUploadingPhoto ?? this.isUploadingPhoto,
+        photoUrl: photoUrl ?? this.photoUrl,
         errorMessage: errorMessage,
       );
 }
@@ -85,6 +98,28 @@ class EditProfileNotifier
       state = state.copyWith(
           offers: state.offers.where((o) => o != v).toList());
 
+  Future<void> pickAndUploadPhoto() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 800,
+      maxHeight: 800,
+      imageQuality: 85,
+    );
+    if (picked == null) return;
+
+    state = state.copyWith(isUploadingPhoto: true, errorMessage: null);
+    try {
+      final url = await uploadToCloudinary(File(picked.path));
+      state = state.copyWith(photoUrl: url, isUploadingPhoto: false);
+    } catch (_) {
+      state = state.copyWith(
+        isUploadingPhoto: false,
+        errorMessage: 'No se pudo subir la foto. Intenta de nuevo.',
+      );
+    }
+  }
+
   /// Guarda los cambios en Firestore. Retorna true si fue exitoso.
   Future<bool> save() async {
     state = state.copyWith(isSaving: true, errorMessage: null);
@@ -96,13 +131,14 @@ class EditProfileNotifier
         category: state.category,
         offers: state.offers,
         visible: state.visible,
+        photoUrl: state.photoUrl,
       );
 
       await ref.read(memberRepositoryProvider).update(updated);
 
       state = state.copyWith(isSaving: false);
       return true;
-    } catch (e, stack) {
+    } catch (e, _) {
       state = state.copyWith(
         isSaving: false,
         errorMessage: 'No se pudieron guardar los cambios. Intenta de nuevo.',

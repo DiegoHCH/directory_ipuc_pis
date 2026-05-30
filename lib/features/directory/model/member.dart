@@ -28,6 +28,7 @@ class Member {
   final List<String> offers;
   final bool verified;
   final bool visible;
+  final String? photoUrl;
 
   const Member({
     required this.id,
@@ -39,6 +40,7 @@ class Member {
     this.offers = const [],
     this.verified = false,
     this.visible = true,
+    this.photoUrl,
   });
 
   String get initials {
@@ -60,6 +62,7 @@ class Member {
         ),
         bio: map['bio'] as String? ?? '',
         offers: List<String>.from(map['offers'] as List? ?? []),
+        photoUrl: map['photoUrl'] as String?,
       );
 
   Map<String, dynamic> toMap() => {
@@ -71,6 +74,7 @@ class Member {
         'offers': offers,
         'verified': verified,
         'visible': visible,
+        if (photoUrl != null) 'photoUrl': photoUrl,
       };
 
   Member copyWith({
@@ -83,6 +87,7 @@ class Member {
     List<String>? offers,
     bool? verified,
     bool? visible,
+    String? photoUrl,
   }) =>
       Member(
         id: id ?? this.id,
@@ -94,6 +99,7 @@ class Member {
         offers: offers ?? this.offers,
         verified: verified ?? this.verified,
         visible: visible ?? this.visible,
+        photoUrl: photoUrl ?? this.photoUrl,
       );
 }
 

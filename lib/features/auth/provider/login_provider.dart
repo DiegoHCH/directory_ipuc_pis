@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repository/auth_repository.dart';
 
@@ -57,7 +56,7 @@ class LoginNotifier extends AutoDisposeNotifier<LoginState> {
         errorMessage: ref.read(authRepositoryProvider).friendlyAuthError(e),
       );
       return false;
-    } catch (e, stack) {
+    } catch (e, _) {
       state = state.copyWith(
         isSubmitting: false,
         errorMessage: 'No se pudo iniciar sesión. Intenta de nuevo.',

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../model/member.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/member_avatar.dart';
 
 class MemberCard extends StatelessWidget {
   final Member member;
@@ -30,7 +31,7 @@ class MemberCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            _Avatar(initials: member.initials, backgroundColor: colors.background),
+            MemberAvatar(member: member, size: 46),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -118,33 +119,4 @@ class MemberCard extends StatelessWidget {
   }
 }
 
-class _Avatar extends StatelessWidget {
-  final String initials;
-  final Color backgroundColor;
-
-  const _Avatar({required this.initials, required this.backgroundColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 46,
-      height: 46,
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: kAccentBlue.withValues(alpha: 0.3)),
-      ),
-      child: Center(
-        child: Text(
-          initials,
-          style: const TextStyle(
-            color: kAccentBlue,
-            fontWeight: FontWeight.w700,
-            fontSize: 15,
-          ),
-        ),
-      ),
-    );
-  }
-}
 

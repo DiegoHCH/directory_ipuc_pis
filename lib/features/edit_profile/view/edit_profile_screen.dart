@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/services/cloudinary_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../directory/model/member.dart';
@@ -166,7 +167,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
-                    Center(child: _AvatarPicker(initials: widget.member.initials)),
+                    Center(child: _AvatarPicker(member: widget.member)),
                     const SizedBox(height: 24),
                     _FieldLabel('TU NOMBRE'),
                     const SizedBox(height: 8),
@@ -231,64 +232,102 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   }
 }
 
-class _AvatarPicker extends StatelessWidget {
-  final String initials;
-  const _AvatarPicker({required this.initials});
+class _AvatarPicker extends ConsumerWidget {
+  final Member member;
+  const _AvatarPicker({required this.member});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(editProfileProvider(member));
+    final notifier = ref.read(editProfileProvider(member).notifier);
     final colors = context.colors;
-    return Column(
-      children: [
-        Stack(
-          children: [
-            Container(
-              width: 86,
-              height: 86,
-              decoration: BoxDecoration(
-                color: colors.surface,
-                shape: BoxShape.circle,
-                border: Border.all(color: kAccentBlue, width: 2.5),
+    final photoUrl = state.photoUrl;
+
+    return GestureDetector(
+      onTap: state.isUploadingPhoto ? null : notifier.pickAndUploadPhoto,
+      child: Column(
+        children: [
+          Stack(
+            children: [
+              Container(
+                width: 86,
+                height: 86,
+                decoration: BoxDecoration(
+                  color: colors.surface,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: kAccentBlue, width: 2.5),
+                ),
+                child: ClipOval(
+                  child: state.isUploadingPhoto
+                      ? const Center(
+                          child: SizedBox(
+                            width: 28,
+                            height: 28,
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2.5, color: kAccentBlue),
+                          ),
+                        )
+                      : photoUrl != null && photoUrl.isNotEmpty
+                          ? Image.network(
+                              cloudinaryThumb(photoUrl, size: 172),
+                              width: 86,
+                              height: 86,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, err, stack) => Center(
+                                child: Text(
+                                  member.initials,
+                                  style: const TextStyle(
+                                    color: kAccentBlue,
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Center(
+                              child: Text(
+                                member.initials,
+                                style: const TextStyle(
+                                  color: kAccentBlue,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                ),
               ),
-              child: Center(
-                child: Text(
-                  initials,
-                  style: const TextStyle(
-                    color: kAccentBlue,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
+              if (!state.isUploadingPhoto)
+                Positioned(
+                  bottom: 2,
+                  right: 2,
+                  child: Container(
+                    width: 26,
+                    height: 26,
+                    decoration: BoxDecoration(
+                      color: kAccentBlue,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: colors.background, width: 2),
+                    ),
+                    child: const Icon(Icons.camera_alt,
+                        color: Colors.white, size: 13),
                   ),
                 ),
-              ),
-            ),
-            Positioned(
-              bottom: 2,
-              right: 2,
-              child: Container(
-                width: 26,
-                height: 26,
-                decoration: BoxDecoration(
-                  color: kAccentBlue,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: colors.background, width: 2),
-                ),
-                child: const Icon(Icons.camera_alt,
-                    color: Colors.white, size: 13),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        const Text(
-          'CAMBIAR FOTO',
-          style: TextStyle(
-            color: kAccentBlue,
-            fontSize: 11,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.4,
+            ],
           ),
-        ),
-      ],
+          const SizedBox(height: 8),
+          Text(
+            state.isUploadingPhoto ? 'SUBIENDO...' : 'CAMBIAR FOTO',
+            style: TextStyle(
+              color: state.isUploadingPhoto
+                  ? colors.textSecondary
+                  : kAccentBlue,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.4,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

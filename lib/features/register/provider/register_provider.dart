@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/repository/auth_repository.dart';
 import '../../directory/model/member.dart';
@@ -136,7 +135,7 @@ class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
         errorMessage: ref.read(authRepositoryProvider).friendlyAuthError(e),
       );
       return false;
-    } catch (e, stack) {
+    } catch (e, _) {
       state = state.copyWith(
         isSubmitting: false,
         errorMessage: 'No se pudo crear el perfil. Intenta de nuevo.',

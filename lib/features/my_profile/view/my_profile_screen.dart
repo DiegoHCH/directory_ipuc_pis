@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/member_avatar.dart';
 import '../../directory/model/member.dart';
 import '../provider/current_member_provider.dart';
 import '../provider/my_profile_provider.dart';
@@ -59,9 +60,8 @@ class _ProfileContent extends ConsumerWidget {
                     ZoomIn(
                       duration: const Duration(milliseconds: 500),
                       child: Center(
-                        child: _LargeAvatar(
-                            initials: member.initials,
-                            surface: colors.surface),
+                        child: MemberAvatar(
+                            member: member, size: 90, circle: true),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -303,35 +303,6 @@ class _TopBar extends StatelessWidget {
   }
 }
 
-class _LargeAvatar extends StatelessWidget {
-  final String initials;
-  final Color surface;
-
-  const _LargeAvatar({required this.initials, required this.surface});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 90,
-      height: 90,
-      decoration: BoxDecoration(
-        color: surface,
-        shape: BoxShape.circle,
-        border: Border.all(color: kAccentBlue, width: 2.5),
-      ),
-      child: Center(
-        child: Text(
-          initials,
-          style: const TextStyle(
-            color: kAccentBlue,
-            fontSize: 28,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class _StatsRow extends StatelessWidget {
   final ProfileStats stats;
