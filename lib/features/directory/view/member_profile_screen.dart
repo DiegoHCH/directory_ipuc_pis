@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_colors.dart';
@@ -152,7 +153,7 @@ class MemberProfileScreen extends ConsumerWidget {
                     FadeInUp(
                       delay: const Duration(milliseconds: 420),
                       duration: const Duration(milliseconds: 400),
-                      child: _WhatsAppButton(),
+                      child: _WhatsAppButton(phone: member.phone),
                     ),
                     const SizedBox(height: 24),
                   ],
@@ -367,14 +368,32 @@ class _PhoneCard extends StatelessWidget {
 }
 
 class _WhatsAppButton extends StatelessWidget {
+  final String phone;
+
+  const _WhatsAppButton({required this.phone});
+
+  Future<void> _openWhatsApp(BuildContext context) async {
+    final digits = phone.replaceAll(RegExp(r'[^\d]'), '');
+    final uri = Uri.parse('https://wa.me/$digits');
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo abrir WhatsApp.')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       height: 52,
       child: ElevatedButton.icon(
-        onPressed: () {},
-        icon: const Icon(Icons.chat, size: 20),
+        onPressed: () => _openWhatsApp(context),
+        icon: const FaIcon(FontAwesomeIcons.whatsapp, size: 20),
         label: const Text(
           'Contactar por WhatsApp',
           style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
@@ -382,8 +401,8 @@ class _WhatsAppButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF25D366),
           foregroundColor: Colors.white,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14)),
           elevation: 0,
         ),
       ),
