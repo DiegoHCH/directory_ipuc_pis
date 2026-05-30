@@ -77,8 +77,9 @@ class MemberCard extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 8),
-            const _WhatsAppButton(),
+            const SizedBox(width: 4),
+            Icon(Icons.chevron_right,
+                color: context.colors.textSecondary, size: 20),
           ],
         ),
       ),
@@ -116,19 +117,3 @@ class _Avatar extends StatelessWidget {
   }
 }
 
-class _WhatsAppButton extends StatelessWidget {
-  const _WhatsAppButton();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 36,
-      height: 36,
-      decoration: const BoxDecoration(
-        color: Color(0xFF25D366),
-        shape: BoxShape.circle,
-      ),
-      child: const Icon(Icons.chat, color: Colors.white, size: 18),
-    );
-  }
-}

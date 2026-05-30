@@ -2,6 +2,7 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../model/member.dart';
@@ -298,10 +299,26 @@ class _PhoneCard extends StatelessWidget {
 
   const _PhoneCard({required this.phone});
 
+  Future<void> _call(BuildContext context) async {
+    final digits = phone.replaceAll(' ', '');
+    final uri = Uri(scheme: 'tel', path: digits);
+    try {
+      await launchUrl(uri);
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('No se pudo abrir el marcador.')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    return Container(
+    return GestureDetector(
+      onTap: () => _call(context),
+      child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: colors.surface,
@@ -343,6 +360,7 @@ class _PhoneCard extends StatelessWidget {
             ],
           ),
         ],
+      ),
       ),
     );
   }
