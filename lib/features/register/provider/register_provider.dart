@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../directory/model/member.dart';
+import '../../directory/repository/member_repository.dart';
 
 class RegisterState {
   final String name;
@@ -8,6 +10,7 @@ class RegisterState {
   final List<String> offers;
   final String phone;
   final bool isSubmitting;
+  final String? errorMessage;
 
   const RegisterState({
     this.name = '',
@@ -16,6 +19,7 @@ class RegisterState {
     this.offers = const [],
     this.phone = '',
     this.isSubmitting = false,
+    this.errorMessage,
   });
 
   bool get isValid =>
@@ -30,6 +34,7 @@ class RegisterState {
     List<String>? offers,
     String? phone,
     bool? isSubmitting,
+    String? errorMessage,
   }) =>
       RegisterState(
         name: name ?? this.name,
@@ -38,6 +43,7 @@ class RegisterState {
         offers: offers ?? this.offers,
         phone: phone ?? this.phone,
         isSubmitting: isSubmitting ?? this.isSubmitting,
+        errorMessage: errorMessage,
       );
 }
 
@@ -60,11 +66,34 @@ class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
       state = state.copyWith(
           offers: state.offers.where((o) => o != v).toList());
 
-  Future<void> submit() async {
-    if (!state.isValid) return;
-    state = state.copyWith(isSubmitting: true);
-    await Future.delayed(const Duration(seconds: 1));
-    state = state.copyWith(isSubmitting: false);
+  /// Guarda el miembro en Firestore y retorna true si fue exitoso.
+  Future<bool> submit() async {
+    if (!state.isValid) return false;
+
+    state = state.copyWith(isSubmitting: true, errorMessage: null);
+
+    try {
+      final member = Member(
+        id: '',
+        name: state.name.trim(),
+        description: '',
+        phone: '+57${state.phone.trim()}',
+        category: state.category!,
+        bio: state.bio.trim(),
+        offers: state.offers,
+      );
+
+      await ref.read(memberRepositoryProvider).add(member);
+      return true;
+    } catch (e, stack) {
+      debugPrint('❌ RegisterNotifier.submit error: $e');
+      debugPrint(stack.toString());
+      state = state.copyWith(
+        isSubmitting: false,
+        errorMessage: 'No se pudo guardar. Intenta de nuevo.',
+      );
+      return false;
+    }
   }
 }
 

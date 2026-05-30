@@ -129,13 +129,46 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       controller: _phoneController,
                       onChanged: notifier.setPhone,
                     ),
+                    if (state.errorMessage != null) ...[
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEF5350).withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.error_outline,
+                                color: Color(0xFFEF5350), size: 18),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                state.errorMessage!,
+                                style: const TextStyle(
+                                    color: Color(0xFFEF5350), fontSize: 13),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 28),
                     _SubmitButton(
                       isValid: state.isValid,
                       isSubmitting: state.isSubmitting,
                       onSubmit: () async {
-                        await notifier.submit();
-                        if (context.mounted) context.pop();
+                        final ok = await notifier.submit();
+                        if (ok && context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('¡Hermano registrado exitosamente!'),
+                              backgroundColor: Color(0xFF4CAF50),
+                            ),
+                          );
+                          context.pop();
+                        }
                       },
                     ),
                   ],
