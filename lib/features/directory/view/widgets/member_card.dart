@@ -6,8 +6,9 @@ import '../../../../core/theme/app_theme.dart';
 
 class MemberCard extends StatelessWidget {
   final Member member;
+  final bool isMe;
 
-  const MemberCard({super.key, required this.member});
+  const MemberCard({super.key, required this.member, this.isMe = false});
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +16,17 @@ class MemberCard extends StatelessWidget {
     final categoryColor = kCategoryColors[member.category.tag] ?? kAccentBlue;
 
     return GestureDetector(
-      onTap: () => context.push('/member', extra: member),
+      onTap: () => context.push(isMe ? '/my-profile' : '/member',
+          extra: isMe ? null : member),
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: colors.surface,
           borderRadius: BorderRadius.circular(14),
+          border: isMe
+              ? Border.all(color: kAccentBlue.withValues(alpha: 0.6))
+              : null,
         ),
         child: Row(
           children: [
@@ -31,13 +36,39 @@ class MemberCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    member.name,
-                    style: TextStyle(
-                      color: colors.textPrimary,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                    ),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          member.name,
+                          style: TextStyle(
+                            color: colors.textPrimary,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                      if (isMe) ...[
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 7, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: kAccentBlue,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Text(
+                            'TÚ',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                   const SizedBox(height: 2),
                   Text(

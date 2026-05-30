@@ -27,11 +27,35 @@ class MemberRepository {
           .toList()
         ..sort((a, b) => a.name.compareTo(b.name)));
 
-  Future<void> add(Member member) => _col.add({
-        ...member.toMap(),
-        'visible': true,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
+  /// Crea el perfil del hermano ya verificado. Usa el uid de Auth como id
+  /// del documento, para vincular sesión ↔ perfil. Retorna el Member guardado.
+  Future<Member> add(Member member, {required String uid}) async {
+    await _col.doc(uid).set({
+      ...member.toMap(),
+      'visible': true,
+      'verified': true,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+    return member.copyWith(id: uid, verified: true);
+  }
+
+  /// True si ya existe un perfil con ese número de teléfono.
+  Future<bool> phoneExists(String phone) async {
+    final snap = await _col.where('phone', isEqualTo: phone).limit(1).get();
+    return snap.docs.isNotEmpty;
+  }
+
+  /// Busca el perfil asociado a un uid (null si no existe).
+  Future<Member?> getByUid(String uid) async {
+    final doc = await _col.doc(uid).get();
+    if (!doc.exists) return null;
+    return Member.fromMap(doc.id, doc.data()!);
+  }
+
+  /// Stream en vivo del perfil de un uid (null si no existe).
+  Stream<Member?> watchByUid(String uid) =>
+      _col.doc(uid).snapshots().map((doc) =>
+          doc.exists ? Member.fromMap(doc.id, doc.data()!) : null);
 
   Future<void> update(Member member) =>
       _col.doc(member.id).update(member.toMap());

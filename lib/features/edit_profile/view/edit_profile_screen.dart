@@ -105,29 +105,55 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: GestureDetector(
-                      onTap: state.isSaving
+                      behavior: HitTestBehavior.opaque,
+                      onTap: state.isSaving || !state.isDirty
                           ? null
                           : () async {
-                              await notifier.save();
-                              if (context.mounted) context.pop();
+                              final ok = await notifier.save();
+                              if (!context.mounted) return;
+                              if (ok) {
+                                context.pop();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Cambios guardados.'),
+                                    backgroundColor: Color(0xFF4CAF50),
+                                  ),
+                                );
+                              } else {
+                                final msg = ref
+                                        .read(editProfileProvider(
+                                            widget.member))
+                                        .errorMessage ??
+                                    'No se pudo guardar.';
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(msg),
+                                    backgroundColor: const Color(0xFFEF5350),
+                                  ),
+                                );
+                              }
                             },
-                      child: state.isSaving
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: kAccentBlue),
-                            )
-                          : Text(
-                              'Guardar',
-                              style: TextStyle(
-                                color: state.isDirty
-                                    ? kAccentBlue
-                                    : colors.textSecondary,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 8),
+                        child: state.isSaving
+                            ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 2, color: kAccentBlue),
+                              )
+                            : Text(
+                                'Guardar',
+                                style: TextStyle(
+                                  color: state.isDirty
+                                      ? kAccentBlue
+                                      : colors.textSecondary,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                            ),
+                      ),
                     ),
                   ),
                 ],

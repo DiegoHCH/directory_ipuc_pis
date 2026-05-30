@@ -20,12 +20,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _nameController = TextEditingController();
   final _bioController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
     _bioController.dispose();
     _phoneController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -129,30 +133,27 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       controller: _phoneController,
                       onChanged: notifier.setPhone,
                     ),
+                    const SizedBox(height: 20),
+                    _FieldLabel('TU CORREO'),
+                    const SizedBox(height: 8),
+                    _InputField(
+                      controller: _emailController,
+                      hintText: 'correo@ejemplo.com',
+                      keyboardType: TextInputType.emailAddress,
+                      onChanged: notifier.setEmail,
+                    ),
+                    const SizedBox(height: 20),
+                    _FieldLabel('CONTRASEÑA'),
+                    const SizedBox(height: 8),
+                    _InputField(
+                      controller: _passwordController,
+                      hintText: 'Mínimo 6 caracteres',
+                      obscureText: true,
+                      onChanged: notifier.setPassword,
+                    ),
                     if (state.errorMessage != null) ...[
-                      const SizedBox(height: 12),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFEF5350).withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.error_outline,
-                                color: Color(0xFFEF5350), size: 18),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                state.errorMessage!,
-                                style: const TextStyle(
-                                    color: Color(0xFFEF5350), fontSize: 13),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      const SizedBox(height: 16),
+                      _ErrorBanner(message: state.errorMessage!),
                     ],
                     const SizedBox(height: 28),
                     _SubmitButton(
@@ -161,13 +162,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       onSubmit: () async {
                         final ok = await notifier.submit();
                         if (ok && context.mounted) {
+                          context.go('/');
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('¡Hermano registrado exitosamente!'),
+                              content: Text(
+                                  '¡Tu perfil fue creado! Ya apareces en el directorio.'),
                               backgroundColor: Color(0xFF4CAF50),
                             ),
                           );
-                          context.pop();
                         }
                       },
                     ),
@@ -295,6 +297,8 @@ class _InputField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final int maxLines;
+  final bool obscureText;
+  final TextInputType? keyboardType;
   final ValueChanged<String> onChanged;
 
   const _InputField({
@@ -302,6 +306,8 @@ class _InputField extends StatelessWidget {
     required this.hintText,
     required this.onChanged,
     this.maxLines = 1,
+    this.obscureText = false,
+    this.keyboardType,
   });
 
   @override
@@ -315,7 +321,11 @@ class _InputField extends StatelessWidget {
       child: TextField(
         controller: controller,
         onChanged: onChanged,
-        maxLines: maxLines,
+        maxLines: obscureText ? 1 : maxLines,
+        obscureText: obscureText,
+        keyboardType: keyboardType,
+        autocorrect: !obscureText,
+        enableSuggestions: !obscureText,
         style: TextStyle(color: colors.textPrimary, fontSize: 15),
         decoration: InputDecoration(
           hintText: hintText,
@@ -324,6 +334,35 @@ class _InputField extends StatelessWidget {
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         ),
+      ),
+    );
+  }
+}
+
+class _ErrorBanner extends StatelessWidget {
+  final String message;
+
+  const _ErrorBanner({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEF5350).withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.error_outline, color: Color(0xFFEF5350), size: 18),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              message,
+              style: const TextStyle(color: Color(0xFFEF5350), fontSize: 13),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -410,9 +449,9 @@ class _SubmitButton extends StatelessWidget {
                 child: CircularProgressIndicator(
                     strokeWidth: 2, color: Colors.white),
               )
-            : const Icon(Icons.chat, size: 20),
+            : const Icon(Icons.check_circle_outline, size: 20),
         label: const Text(
-          'Crear y enviar invitación',
+          'Crear mi perfil',
           style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
         ),
         style: ElevatedButton.styleFrom(

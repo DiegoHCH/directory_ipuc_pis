@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../auth/repository/auth_repository.dart';
+import '../../my_profile/provider/current_member_provider.dart';
 import '../provider/settings_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -373,9 +375,11 @@ class _ToggleRow extends StatelessWidget {
 
 // ── Cuenta ────────────────────────────────────────────────────────────────────
 
-class _AccountCard extends StatelessWidget {
+class _AccountCard extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoggedIn = ref.watch(isLoggedInProvider);
+
     return Container(
       decoration: BoxDecoration(
         color: context.colors.surface,
@@ -383,20 +387,38 @@ class _AccountCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _NavRow(label: 'Mi perfil', onTap: () {}, showDivider: true),
+          _NavRow(
+            label: 'Mi perfil',
+            onTap: () => context.push(isLoggedIn ? '/my-profile' : '/login'),
+            showDivider: true,
+          ),
           _NavRow(
               label: 'Ayuda y soporte', onTap: () {}, showDivider: true),
           GestureDetector(
-            onTap: () {},
+            onTap: () async {
+              if (isLoggedIn) {
+                await ref.read(authRepositoryProvider).signOut();
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Sesión cerrada.')),
+                  );
+                }
+              } else {
+                context.push('/login');
+              }
+            },
             behavior: HitTestBehavior.opaque,
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Cerrar sesión',
+                  isLoggedIn ? 'Cerrar sesión' : 'Iniciar sesión',
                   style: TextStyle(
-                    color: Color(0xFFEF5350),
+                    color: isLoggedIn
+                        ? const Color(0xFFEF5350)
+                        : kAccentBlue,
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                   ),

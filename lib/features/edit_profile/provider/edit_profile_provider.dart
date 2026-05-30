@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../directory/model/member.dart';
+import '../../directory/repository/member_repository.dart';
 
 @immutable
 class EditProfileState {
@@ -11,6 +12,7 @@ class EditProfileState {
   final List<String> offers;
   final bool visible;
   final bool isSaving;
+  final String? errorMessage;
 
   const EditProfileState({
     required this.original,
@@ -20,6 +22,7 @@ class EditProfileState {
     required this.offers,
     this.visible = true,
     this.isSaving = false,
+    this.errorMessage,
   });
 
   factory EditProfileState.fromMember(Member m) => EditProfileState(
@@ -30,6 +33,7 @@ class EditProfileState {
             ? MemberCategory.emprendimiento
             : m.category,
         offers: List.from(m.offers),
+        visible: m.visible,
       );
 
   bool get isDirty =>
@@ -47,6 +51,7 @@ class EditProfileState {
     List<String>? offers,
     bool? visible,
     bool? isSaving,
+    String? errorMessage,
   }) =>
       EditProfileState(
         original: original,
@@ -56,6 +61,7 @@ class EditProfileState {
         offers: offers ?? this.offers,
         visible: visible ?? this.visible,
         isSaving: isSaving ?? this.isSaving,
+        errorMessage: errorMessage,
       );
 }
 
@@ -79,10 +85,30 @@ class EditProfileNotifier
       state = state.copyWith(
           offers: state.offers.where((o) => o != v).toList());
 
-  Future<void> save() async {
-    state = state.copyWith(isSaving: true);
-    await Future.delayed(const Duration(milliseconds: 800));
-    state = state.copyWith(isSaving: false);
+  /// Guarda los cambios en Firestore. Retorna true si fue exitoso.
+  Future<bool> save() async {
+    state = state.copyWith(isSaving: true, errorMessage: null);
+
+    try {
+      final updated = state.original.copyWith(
+        name: state.name.trim(),
+        description: state.businessName.trim(),
+        category: state.category,
+        offers: state.offers,
+        visible: state.visible,
+      );
+
+      await ref.read(memberRepositoryProvider).update(updated);
+
+      state = state.copyWith(isSaving: false);
+      return true;
+    } catch (e, stack) {
+      state = state.copyWith(
+        isSaving: false,
+        errorMessage: 'No se pudieron guardar los cambios. Intenta de nuevo.',
+      );
+      return false;
+    }
   }
 }
 

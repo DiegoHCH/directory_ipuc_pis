@@ -7,6 +7,7 @@ import '../../../core/theme/app_theme.dart';
 import '../model/member.dart';
 import '../provider/directory_provider.dart';
 import '../repository/member_repository.dart';
+import '../../my_profile/provider/current_member_provider.dart';
 import 'widgets/category_filter_bar.dart';
 import 'widgets/member_card.dart';
 
@@ -19,6 +20,7 @@ class DirectoryScreen extends ConsumerWidget {
     final notifier = ref.read(directoryProvider.notifier);
     final filteredAsync = ref.watch(filteredMembersProvider);
     final totalAsync = ref.watch(membersStreamProvider);
+    final myId = ref.watch(currentMemberProvider).valueOrNull?.id;
 
     return Scaffold(
       body: SafeArea(
@@ -70,7 +72,10 @@ class DirectoryScreen extends ConsumerWidget {
                           delay: Duration(
                               milliseconds: (i * 70).clamp(0, 350)),
                           duration: const Duration(milliseconds: 400),
-                          child: MemberCard(member: members[i]),
+                          child: MemberCard(
+                          member: members[i],
+                          isMe: members[i].id == myId,
+                        ),
                         ),
                       ),
               ),
@@ -81,9 +86,13 @@ class DirectoryScreen extends ConsumerWidget {
       floatingActionButton: ZoomIn(
         delay: const Duration(milliseconds: 400),
         child: FloatingActionButton(
-          onPressed: () => context.push('/register'),
+          onPressed: () =>
+              context.push(myId != null ? '/my-profile' : '/register'),
           backgroundColor: kAccentBlue,
-          child: const Icon(Icons.add, color: Colors.white),
+          child: Icon(
+            myId != null ? Icons.person : Icons.add,
+            color: Colors.white,
+          ),
         ),
       ),
     );

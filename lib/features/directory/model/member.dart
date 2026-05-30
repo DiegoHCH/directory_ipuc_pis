@@ -26,6 +26,8 @@ class Member {
   final MemberCategory category;
   final String bio;
   final List<String> offers;
+  final bool verified;
+  final bool visible;
 
   const Member({
     required this.id,
@@ -35,6 +37,8 @@ class Member {
     required this.category,
     this.bio = '',
     this.offers = const [],
+    this.verified = false,
+    this.visible = true,
   });
 
   String get initials {
@@ -48,6 +52,8 @@ class Member {
         name: map['name'] as String? ?? '',
         description: map['description'] as String? ?? '',
         phone: map['phone'] as String? ?? '',
+        verified: map['verified'] as bool? ?? false,
+        visible: map['visible'] as bool? ?? true,
         category: MemberCategory.values.firstWhere(
           (c) => c.name == map['category'],
           orElse: () => MemberCategory.servicio,
@@ -63,24 +69,31 @@ class Member {
         'category': category.name,
         'bio': bio,
         'offers': offers,
+        'verified': verified,
+        'visible': visible,
       };
 
   Member copyWith({
+    String? id,
     String? name,
     String? description,
     String? phone,
     MemberCategory? category,
     String? bio,
     List<String>? offers,
+    bool? verified,
+    bool? visible,
   }) =>
       Member(
-        id: id,
+        id: id ?? this.id,
         name: name ?? this.name,
         description: description ?? this.description,
         phone: phone ?? this.phone,
         category: category ?? this.category,
         bio: bio ?? this.bio,
         offers: offers ?? this.offers,
+        verified: verified ?? this.verified,
+        visible: visible ?? this.visible,
       );
 }
 

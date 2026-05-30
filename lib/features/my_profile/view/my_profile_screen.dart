@@ -5,21 +5,45 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../directory/model/member.dart';
+import '../provider/current_member_provider.dart';
 import '../provider/my_profile_provider.dart';
 
 class MyProfileScreen extends ConsumerWidget {
+  const MyProfileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final memberAsync = ref.watch(currentMemberProvider);
+
+    return Scaffold(
+      body: SafeArea(
+        child: memberAsync.when(
+          loading: () =>
+              const Center(child: CircularProgressIndicator(color: kAccentBlue)),
+          error: (e, _) => _MessageView(
+            icon: Icons.error_outline,
+            message: 'No se pudo cargar tu perfil.',
+          ),
+          data: (member) => member == null
+              ? const _NotLoggedIn()
+              : _ProfileContent(member: member),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileContent extends ConsumerWidget {
   final Member member;
 
-  const MyProfileScreen({super.key, required this.member});
+  const _ProfileContent({required this.member});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profileState = ref.watch(myProfileProvider);
     final colors = context.colors;
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
+    return Column(
           children: [
             FadeInDown(
               duration: const Duration(milliseconds: 400),
@@ -125,7 +149,76 @@ class MyProfileScreen extends ConsumerWidget {
               ),
             ),
           ],
+        );
+  }
+}
+
+class _NotLoggedIn extends StatelessWidget {
+  const _NotLoggedIn();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.person_outline, size: 48, color: colors.textSecondary),
+            const SizedBox(height: 16),
+            Text(
+              'Inicia sesión para ver tu perfil',
+              style: TextStyle(
+                color: colors.textPrimary,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: () => context.go('/login'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: kAccentBlue,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                  elevation: 0,
+                ),
+                child: const Text('Iniciar sesión',
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+              ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+}
+
+class _MessageView extends StatelessWidget {
+  final IconData icon;
+  final String message;
+
+  const _MessageView({required this.icon, required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 48, color: colors.textSecondary),
+          const SizedBox(height: 16),
+          Text(message,
+              style: TextStyle(color: colors.textPrimary, fontSize: 15)),
+        ],
       ),
     );
   }
@@ -147,7 +240,8 @@ class _TopBar extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: GestureDetector(
-              onTap: () => context.pop(),
+              onTap: () =>
+                  context.canPop() ? context.pop() : context.go('/'),
               child: Container(
                 width: 36,
                 height: 36,

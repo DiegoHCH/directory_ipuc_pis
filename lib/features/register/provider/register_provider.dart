@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../auth/repository/auth_repository.dart';
 import '../../directory/model/member.dart';
 import '../../directory/repository/member_repository.dart';
 
@@ -9,8 +11,11 @@ class RegisterState {
   final String bio;
   final List<String> offers;
   final String phone;
+  final String email;
+  final String password;
   final bool isSubmitting;
   final String? errorMessage;
+  final Member? createdMember;
 
   const RegisterState({
     this.name = '',
@@ -18,14 +23,21 @@ class RegisterState {
     this.bio = '',
     this.offers = const [],
     this.phone = '',
+    this.email = '',
+    this.password = '',
     this.isSubmitting = false,
     this.errorMessage,
+    this.createdMember,
   });
 
   bool get isValid =>
       name.trim().isNotEmpty &&
       category != null &&
-      phone.trim().isNotEmpty;
+      phone.trim().isNotEmpty &&
+      email.trim().isNotEmpty &&
+      password.length >= 6;
+
+  String get fullPhone => '+57${phone.trim()}';
 
   RegisterState copyWith({
     String? name,
@@ -33,8 +45,11 @@ class RegisterState {
     String? bio,
     List<String>? offers,
     String? phone,
+    String? email,
+    String? password,
     bool? isSubmitting,
     String? errorMessage,
+    Member? createdMember,
   }) =>
       RegisterState(
         name: name ?? this.name,
@@ -42,8 +57,11 @@ class RegisterState {
         bio: bio ?? this.bio,
         offers: offers ?? this.offers,
         phone: phone ?? this.phone,
+        email: email ?? this.email,
+        password: password ?? this.password,
         isSubmitting: isSubmitting ?? this.isSubmitting,
         errorMessage: errorMessage,
+        createdMember: createdMember ?? this.createdMember,
       );
 }
 
@@ -55,6 +73,8 @@ class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
   void setCategory(MemberCategory v) => state = state.copyWith(category: v);
   void setBio(String v) => state = state.copyWith(bio: v);
   void setPhone(String v) => state = state.copyWith(phone: v);
+  void setEmail(String v) => state = state.copyWith(email: v);
+  void setPassword(String v) => state = state.copyWith(password: v);
 
   void addOffer(String v) {
     final t = v.trim();
@@ -66,31 +86,60 @@ class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
       state = state.copyWith(
           offers: state.offers.where((o) => o != v).toList());
 
-  /// Guarda el miembro en Firestore y retorna true si fue exitoso.
+  /// Crea la cuenta de auth y guarda el perfil en Firestore.
+  /// Retorna true si fue exitoso.
   Future<bool> submit() async {
     if (!state.isValid) return false;
 
     state = state.copyWith(isSubmitting: true, errorMessage: null);
 
     try {
+      // 1. Verifica que el número no esté ya registrado.
+      final phoneTaken = await ref
+          .read(memberRepositoryProvider)
+          .phoneExists(state.fullPhone);
+      if (phoneTaken) {
+        state = state.copyWith(
+          isSubmitting: false,
+          errorMessage:
+              'Ese número ya está registrado. Si es tuyo, inicia sesión.',
+        );
+        return false;
+      }
+
+      // 2. Crea la cuenta (el correo duplicado lo bloquea Firebase).
+      final auth = ref.read(authRepositoryProvider);
+      final credential = await auth.signUpWithEmail(
+        email: state.email.trim(),
+        password: state.password,
+      );
+
       final member = Member(
         id: '',
         name: state.name.trim(),
         description: '',
-        phone: '+57${state.phone.trim()}',
+        phone: state.fullPhone,
         category: state.category!,
         bio: state.bio.trim(),
         offers: state.offers,
       );
 
-      await ref.read(memberRepositoryProvider).add(member);
+      final saved = await ref
+          .read(memberRepositoryProvider)
+          .add(member, uid: credential.user!.uid);
+
+      state = state.copyWith(isSubmitting: false, createdMember: saved);
       return true;
-    } catch (e, stack) {
-      debugPrint('❌ RegisterNotifier.submit error: $e');
-      debugPrint(stack.toString());
+    } on FirebaseAuthException catch (e) {
       state = state.copyWith(
         isSubmitting: false,
-        errorMessage: 'No se pudo guardar. Intenta de nuevo.',
+        errorMessage: ref.read(authRepositoryProvider).friendlyAuthError(e),
+      );
+      return false;
+    } catch (e, stack) {
+      state = state.copyWith(
+        isSubmitting: false,
+        errorMessage: 'No se pudo crear el perfil. Intenta de nuevo.',
       );
       return false;
     }

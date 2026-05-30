@@ -2,12 +2,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/directory/model/member.dart';
 import '../../features/directory/view/directory_screen.dart';
+import '../../features/auth/view/login_screen.dart';
 import '../../features/directory/view/member_profile_screen.dart';
 import '../../features/edit_profile/view/edit_profile_screen.dart';
 import '../../features/my_profile/view/my_profile_screen.dart';
 import '../../features/register/view/register_screen.dart';
 import '../../features/settings/view/settings_screen.dart';
-import '../../features/verification/view/verification_screen.dart';
 
 final routerProvider = Provider<GoRouter>(
   (_) => GoRouter(
@@ -26,8 +26,8 @@ final routerProvider = Provider<GoRouter>(
         builder: (ctx, _) => const RegisterScreen(),
       ),
       GoRoute(
-        path: '/verify',
-        builder: (ctx, _) => const VerificationScreen(),
+        path: '/login',
+        builder: (ctx, _) => const LoginScreen(),
       ),
       GoRoute(
         path: '/member',
@@ -36,8 +36,7 @@ final routerProvider = Provider<GoRouter>(
       ),
       GoRoute(
         path: '/my-profile',
-        builder: (ctx, state) =>
-            MyProfileScreen(member: state.extra as Member),
+        builder: (ctx, _) => const MyProfileScreen(),
       ),
       GoRoute(
         path: '/edit-profile',
