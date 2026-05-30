@@ -1,126 +1,122 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../core/providers/theme_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../core/theme/theme_notifier.dart';
-import '../viewmodel/settings_viewmodel.dart';
+import '../provider/settings_provider.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
-  late final SettingsViewModel _viewModel;
-
-  @override
-  void initState() {
-    super.initState();
-    _viewModel = SettingsViewModel();
-  }
-
-  @override
-  void dispose() {
-    _viewModel.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListenableBuilder(
-        listenable: _viewModel,
-        builder: (context, _) => _SettingsBody(viewModel: _viewModel),
-      ),
-    );
-  }
-}
-
-class _SettingsBody extends StatelessWidget {
-  final SettingsViewModel viewModel;
-
-  const _SettingsBody({required this.viewModel});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
+    final notifier = ref.read(settingsProvider.notifier);
     final colors = context.colors;
-    return SafeArea(
-      child: Column(
-        children: [
-          _TopBar(),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Top bar
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
                 children: [
-                  const SizedBox(height: 24),
-                  _SectionLabel('APARIENCIA'),
-                  const SizedBox(height: 10),
-                  _AppearanceCard(),
-                  const SizedBox(height: 24),
-                  _SectionLabel('NOTIFICACIONES'),
-                  const SizedBox(height: 10),
-                  _NotificationsCard(viewModel: viewModel),
-                  const SizedBox(height: 24),
-                  _SectionLabel('CUENTA'),
-                  const SizedBox(height: 10),
-                  _AccountCard(),
-                  const SizedBox(height: 32),
-                  Center(
-                    child: Text(
-                      'Directorio Hermanos · v1.0\nIglesia Pentecostal Unida de Colombia',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: colors.textSecondary,
-                        fontSize: 12,
-                        height: 1.6,
+                  GestureDetector(
+                    onTap: () => context.pop(),
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: colors.surface,
+                        borderRadius: BorderRadius.circular(10),
                       ),
+                      child: Icon(Icons.chevron_left,
+                          color: colors.textPrimary, size: 22),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(width: 14),
+                  Text(
+                    'Configuración',
+                    style: TextStyle(
+                      color: colors.textPrimary,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 ],
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _TopBar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Navigator.of(context).maybePop(),
-            child: Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: colors.surface,
-                borderRadius: BorderRadius.circular(10),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 24),
+                    FadeInLeft(
+                      duration: const Duration(milliseconds: 400),
+                      child: _SectionLabel('APARIENCIA'),
+                    ),
+                    const SizedBox(height: 10),
+                    FadeInUp(
+                      duration: const Duration(milliseconds: 400),
+                      child: _AppearanceCard(),
+                    ),
+                    const SizedBox(height: 24),
+                    FadeInLeft(
+                      delay: const Duration(milliseconds: 150),
+                      duration: const Duration(milliseconds: 400),
+                      child: _SectionLabel('NOTIFICACIONES'),
+                    ),
+                    const SizedBox(height: 10),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 150),
+                      duration: const Duration(milliseconds: 400),
+                      child: _NotificationsCard(
+                        settings: settings,
+                        notifier: notifier,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    FadeInLeft(
+                      delay: const Duration(milliseconds: 300),
+                      duration: const Duration(milliseconds: 400),
+                      child: _SectionLabel('CUENTA'),
+                    ),
+                    const SizedBox(height: 10),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 300),
+                      duration: const Duration(milliseconds: 400),
+                      child: _AccountCard(),
+                    ),
+                    const SizedBox(height: 32),
+                    FadeIn(
+                      delay: const Duration(milliseconds: 450),
+                      duration: const Duration(milliseconds: 500),
+                      child: Center(
+                      child: Text(
+                        'Directorio Hermanos · v1.0\nIglesia Pentecostal Unida de Colombia',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: colors.textSecondary,
+                          fontSize: 12,
+                          height: 1.6,
+                        ),
+                      ),
+                    ),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
-              child: Icon(Icons.chevron_left,
-                  color: colors.textPrimary, size: 22),
             ),
-          ),
-          const SizedBox(width: 14),
-          Text(
-            'Configuración',
-            style: TextStyle(
-              color: colors.textPrimary,
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -146,32 +142,19 @@ class _SectionLabel extends StatelessWidget {
 
 // ── Apariencia ────────────────────────────────────────────────────────────────
 
-class _AppearanceCard extends StatelessWidget {
+class _AppearanceCard extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
-    final themeNotifier = ThemeProvider.of(context);
-    final current = themeNotifier.mode;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final current = ref.watch(themeProvider);
     final colors = context.colors;
 
-    final options = [
-      _ThemeOption(
-        mode: ThemeMode.system,
-        label: 'Automático',
-        subtitle: 'Sigue el sistema de tu teléfono',
-        icon: Icons.contrast,
-      ),
-      _ThemeOption(
-        mode: ThemeMode.light,
-        label: 'Claro',
-        subtitle: 'Fondo blanco, texto azul',
-        icon: Icons.wb_sunny_outlined,
-      ),
-      _ThemeOption(
-        mode: ThemeMode.dark,
-        label: 'Oscuro',
-        subtitle: 'Fondo azul noche IPUC',
-        icon: Icons.dark_mode_outlined,
-      ),
+    const options = [
+      (ThemeMode.system, 'Automático', 'Sigue el sistema de tu teléfono',
+          Icons.contrast),
+      (ThemeMode.light, 'Claro', 'Fondo blanco, texto azul',
+          Icons.wb_sunny_outlined),
+      (ThemeMode.dark, 'Oscuro', 'Fondo azul noche IPUC',
+          Icons.dark_mode_outlined),
     ];
 
     return Container(
@@ -180,17 +163,21 @@ class _AppearanceCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
-        children: options.asMap().entries.map((e) {
-          final index = e.key;
-          final option = e.value;
-          final isSelected = option.mode == current;
+        children: options.indexed.map(((int, dynamic) e) {
+          final (index, opt) = e;
+          final (mode, label, subtitle, icon) =
+              opt as (ThemeMode, String, String, IconData);
+          final isSelected = mode == current;
           final isLast = index == options.length - 1;
 
           return _ThemeRow(
-            option: option,
+            mode: mode,
+            label: label,
+            subtitle: subtitle,
+            icon: icon,
             isSelected: isSelected,
             showDivider: !isLast,
-            onTap: () => themeNotifier.setMode(option.mode),
+            onTap: () => ref.read(themeProvider.notifier).state = mode,
           );
         }).toList(),
       ),
@@ -198,28 +185,20 @@ class _AppearanceCard extends StatelessWidget {
   }
 }
 
-class _ThemeOption {
+class _ThemeRow extends StatelessWidget {
   final ThemeMode mode;
   final String label;
   final String subtitle;
   final IconData icon;
-
-  const _ThemeOption({
-    required this.mode,
-    required this.label,
-    required this.subtitle,
-    required this.icon,
-  });
-}
-
-class _ThemeRow extends StatelessWidget {
-  final _ThemeOption option;
   final bool isSelected;
   final bool showDivider;
   final VoidCallback onTap;
 
   const _ThemeRow({
-    required this.option,
+    required this.mode,
+    required this.label,
+    required this.subtitle,
+    required this.icon,
     required this.isSelected,
     required this.showDivider,
     required this.onTap,
@@ -234,7 +213,8 @@ class _ThemeRow extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
                 Container(
@@ -247,7 +227,7 @@ class _ThemeRow extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
-                    option.icon,
+                    icon,
                     color: isSelected ? Colors.white : kAccentBlue,
                     size: 20,
                   ),
@@ -258,7 +238,7 @@ class _ThemeRow extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        option.label,
+                        label,
                         style: TextStyle(
                           color: colors.textPrimary,
                           fontSize: 15,
@@ -267,11 +247,9 @@ class _ThemeRow extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        option.subtitle,
+                        subtitle,
                         style: TextStyle(
-                          color: colors.textSecondary,
-                          fontSize: 12,
-                        ),
+                            color: colors.textSecondary, fontSize: 12),
                       ),
                     ],
                   ),
@@ -310,30 +288,31 @@ class _ThemeRow extends StatelessWidget {
 // ── Notificaciones ────────────────────────────────────────────────────────────
 
 class _NotificationsCard extends StatelessWidget {
-  final SettingsViewModel viewModel;
+  final SettingsState settings;
+  final SettingsNotifier notifier;
 
-  const _NotificationsCard({required this.viewModel});
+  const _NotificationsCard(
+      {required this.settings, required this.notifier});
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     return Container(
       decoration: BoxDecoration(
-        color: colors.surface,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         children: [
           _ToggleRow(
             label: 'Avisarme de nuevos hermanos',
-            value: viewModel.notifyNewMembers,
-            onToggle: viewModel.toggleNotifyNewMembers,
+            value: settings.notifyNewMembers,
+            onToggle: notifier.toggleNotifyNewMembers,
             showDivider: true,
           ),
           _ToggleRow(
             label: 'Contactos a mi perfil',
-            value: viewModel.notifyContacts,
-            onToggle: viewModel.toggleNotifyContacts,
+            value: settings.notifyContacts,
+            onToggle: notifier.toggleNotifyContacts,
             showDivider: false,
           ),
         ],
@@ -365,14 +344,11 @@ class _ToggleRow extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: colors.textPrimary,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
+                child: Text(label,
+                    style: TextStyle(
+                        color: colors.textPrimary,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w400)),
               ),
               Switch(
                 value: value,
@@ -400,31 +376,22 @@ class _ToggleRow extends StatelessWidget {
 class _AccountCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     return Container(
       decoration: BoxDecoration(
-        color: colors.surface,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         children: [
+          _NavRow(label: 'Mi perfil', onTap: () {}, showDivider: true),
           _NavRow(
-            label: 'Mi perfil',
-            onTap: () {},
-            showDivider: true,
-          ),
-          _NavRow(
-            label: 'Ayuda y soporte',
-            onTap: () {},
-            showDivider: true,
-          ),
+              label: 'Ayuda y soporte', onTap: () {}, showDivider: true),
           GestureDetector(
             onTap: () {},
             behavior: HitTestBehavior.opaque,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 16),
-              child: const Align(
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Cerrar sesión',
@@ -448,11 +415,10 @@ class _NavRow extends StatelessWidget {
   final VoidCallback onTap;
   final bool showDivider;
 
-  const _NavRow({
-    required this.label,
-    required this.onTap,
-    required this.showDivider,
-  });
+  const _NavRow(
+      {required this.label,
+      required this.onTap,
+      required this.showDivider});
 
   @override
   Widget build(BuildContext context) {
@@ -463,19 +429,15 @@ class _NavRow extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 16, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Row(
               children: [
                 Expanded(
-                  child: Text(
-                    label,
-                    style: TextStyle(
-                      color: colors.textPrimary,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
+                  child: Text(label,
+                      style: TextStyle(
+                          color: colors.textPrimary,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400)),
                 ),
                 Icon(Icons.chevron_right,
                     color: colors.textSecondary, size: 20),

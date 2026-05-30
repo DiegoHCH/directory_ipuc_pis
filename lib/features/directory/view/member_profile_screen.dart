@@ -1,159 +1,180 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../model/member.dart';
-import '../viewmodel/member_profile_viewmodel.dart';
+import '../../my_profile/provider/my_profile_provider.dart';
 
-class MemberProfileScreen extends StatefulWidget {
+class MemberProfileScreen extends ConsumerWidget {
   final Member member;
 
   const MemberProfileScreen({super.key, required this.member});
 
   @override
-  State<MemberProfileScreen> createState() => _MemberProfileScreenState();
-}
-
-class _MemberProfileScreenState extends State<MemberProfileScreen> {
-  late final MemberProfileViewModel _viewModel;
-
-  @override
-  void initState() {
-    super.initState();
-    _viewModel = MemberProfileViewModel(widget.member);
-  }
-
-  @override
-  void dispose() {
-    _viewModel.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListenableBuilder(
-        listenable: _viewModel,
-        builder: (context, _) => _ProfileBody(viewModel: _viewModel),
-      ),
-    );
-  }
-}
-
-class _ProfileBody extends StatelessWidget {
-  final MemberProfileViewModel viewModel;
-
-  const _ProfileBody({required this.viewModel});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isBookmarked = ref.watch(bookmarkProvider(member.id));
     final colors = context.colors;
-    final member = viewModel.member;
     final categoryColor = kCategoryColors[member.category.tag] ?? kAccentBlue;
 
-    return SafeArea(
-      child: Column(
-        children: [
-          _TopBar(viewModel: viewModel),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 24),
-                  Center(child: _LargeAvatar(initials: member.initials)),
-                  const SizedBox(height: 16),
-                  Center(
-                    child: Text(
-                      member.name,
-                      style: TextStyle(
-                        color: colors.textPrimary,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          width: 7,
-                          height: 7,
-                          decoration: BoxDecoration(
-                            color: categoryColor,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          member.category.tag,
-                          style: TextStyle(
-                            color: categoryColor,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.8,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Center(
-                    child: Text(
-                      member.description,
-                      style: const TextStyle(
-                        color: kAccentBlue,
-                        fontSize: 15,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    ),
-                  ),
-                  if (member.bio.isNotEmpty) ...[
-                    const SizedBox(height: 20),
-                    Text(
-                      member.bio,
-                      style: TextStyle(
-                        color: colors.textPrimary,
-                        fontSize: 14,
-                        height: 1.6,
-                      ),
-                    ),
-                  ],
-                  if (member.offers.isNotEmpty) ...[
-                    const SizedBox(height: 24),
-                    Text(
-                      'LO QUE OFRECE',
-                      style: TextStyle(
-                        color: colors.textSecondary,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.4,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    _OffersWrap(offers: member.offers),
-                  ],
-                  const SizedBox(height: 24),
-                  _PhoneCard(phone: member.phone),
-                  const SizedBox(height: 16),
-                  _WhatsAppButton(url: viewModel.whatsAppUrl),
-                  const SizedBox(height: 24),
-                ],
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            FadeInDown(
+              duration: const Duration(milliseconds: 400),
+              child: _TopBar(
+                isBookmarked: isBookmarked,
+                onBookmark: () => ref
+                    .read(bookmarkProvider(member.id).notifier)
+                    .state = !isBookmarked,
+                onShare: () {},
               ),
             ),
-          ),
-        ],
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 24),
+                    ZoomIn(
+                      duration: const Duration(milliseconds: 500),
+                      child: Center(
+                        child: _LargeAvatar(
+                            initials: member.initials,
+                            surface: colors.surface),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 100),
+                      duration: const Duration(milliseconds: 400),
+                      child: Column(
+                        children: [
+                          Center(
+                            child: Text(
+                              member.name,
+                              style: TextStyle(
+                                color: colors.textPrimary,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Center(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 7,
+                                  height: 7,
+                                  decoration: BoxDecoration(
+                                    color: categoryColor,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  member.category.tag,
+                                  style: TextStyle(
+                                    color: categoryColor,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.8,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Center(
+                            child: Text(
+                              member.description,
+                              style: const TextStyle(
+                                color: kAccentBlue,
+                                fontSize: 15,
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (member.bio.isNotEmpty) ...[
+                      const SizedBox(height: 20),
+                      FadeIn(
+                        delay: const Duration(milliseconds: 200),
+                        duration: const Duration(milliseconds: 500),
+                        child: Text(
+                          member.bio,
+                          style: TextStyle(
+                            color: colors.textPrimary,
+                            fontSize: 14,
+                            height: 1.6,
+                          ),
+                        ),
+                      ),
+                    ],
+                    if (member.offers.isNotEmpty) ...[
+                      const SizedBox(height: 24),
+                      FadeInUp(
+                        delay: const Duration(milliseconds: 280),
+                        duration: const Duration(milliseconds: 400),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'LO QUE OFRECE',
+                              style: TextStyle(
+                                color: colors.textSecondary,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.4,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            _OffersWrap(offers: member.offers),
+                          ],
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 24),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 360),
+                      duration: const Duration(milliseconds: 400),
+                      child: _PhoneCard(phone: member.phone),
+                    ),
+                    const SizedBox(height: 16),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 420),
+                      duration: const Duration(milliseconds: 400),
+                      child: _WhatsAppButton(),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
 class _TopBar extends StatelessWidget {
-  final MemberProfileViewModel viewModel;
+  final bool isBookmarked;
+  final VoidCallback onBookmark;
+  final VoidCallback onShare;
 
-  const _TopBar({required this.viewModel});
+  const _TopBar({
+    required this.isBookmarked,
+    required this.onBookmark,
+    required this.onShare,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -164,22 +185,20 @@ class _TopBar extends StatelessWidget {
         children: [
           _IconBtn(
             icon: Icons.chevron_left,
-            onTap: () => Navigator.of(context).pop(),
-            backgroundColor: colors.surface,
+            onTap: () => context.pop(),
+            surface: colors.surface,
           ),
           const Spacer(),
           _IconBtn(
-            icon: viewModel.bookmarked
-                ? Icons.bookmark
-                : Icons.bookmark_border,
-            onTap: viewModel.toggleBookmark,
-            backgroundColor: colors.surface,
+            icon: isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+            onTap: onBookmark,
+            surface: colors.surface,
           ),
           const SizedBox(width: 8),
           _IconBtn(
             icon: Icons.ios_share,
-            onTap: () {},
-            backgroundColor: colors.surface,
+            onTap: onShare,
+            surface: colors.surface,
           ),
         ],
       ),
@@ -190,13 +209,10 @@ class _TopBar extends StatelessWidget {
 class _IconBtn extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
-  final Color backgroundColor;
+  final Color surface;
 
-  const _IconBtn({
-    required this.icon,
-    required this.onTap,
-    required this.backgroundColor,
-  });
+  const _IconBtn(
+      {required this.icon, required this.onTap, required this.surface});
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +222,7 @@ class _IconBtn extends StatelessWidget {
         width: 38,
         height: 38,
         decoration: BoxDecoration(
-          color: backgroundColor,
+          color: surface,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(icon, color: context.colors.textPrimary, size: 20),
@@ -217,7 +233,9 @@ class _IconBtn extends StatelessWidget {
 
 class _LargeAvatar extends StatelessWidget {
   final String initials;
-  const _LargeAvatar({required this.initials});
+  final Color surface;
+
+  const _LargeAvatar({required this.initials, required this.surface});
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +243,7 @@ class _LargeAvatar extends StatelessWidget {
       width: 90,
       height: 90,
       decoration: BoxDecoration(
-        color: context.colors.surface,
+        color: surface,
         shape: BoxShape.circle,
         border: Border.all(color: kAccentBlue, width: 2.5),
       ),
@@ -250,13 +268,12 @@ class _OffersWrap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     return Wrap(
       spacing: 8,
       runSpacing: 8,
       children: offers
           .map(
-            (offer) => Container(
+            (o) => Container(
               padding:
                   const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
@@ -265,8 +282,9 @@ class _OffersWrap extends StatelessWidget {
                     color: kAccentBlue.withValues(alpha: 0.5)),
               ),
               child: Text(
-                offer,
-                style: TextStyle(color: colors.textPrimary, fontSize: 13),
+                o,
+                style: TextStyle(
+                    color: context.colors.textPrimary, fontSize: 13),
               ),
             ),
           )
@@ -331,10 +349,6 @@ class _PhoneCard extends StatelessWidget {
 }
 
 class _WhatsAppButton extends StatelessWidget {
-  final String url;
-
-  const _WhatsAppButton({required this.url});
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -350,9 +364,8 @@ class _WhatsAppButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF25D366),
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           elevation: 0,
         ),
       ),

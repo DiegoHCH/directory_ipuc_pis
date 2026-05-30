@@ -1,84 +1,76 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
-import '../viewmodel/directory_viewmodel.dart';
-import '../../register/view/register_screen.dart';
-import '../../settings/view/settings_screen.dart';
+import '../provider/directory_provider.dart';
 import 'widgets/category_filter_bar.dart';
 import 'widgets/member_card.dart';
 
-class DirectoryScreen extends StatefulWidget {
+class DirectoryScreen extends ConsumerWidget {
   const DirectoryScreen({super.key});
 
   @override
-  State<DirectoryScreen> createState() => _DirectoryScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(directoryProvider);
+    final notifier = ref.read(directoryProvider.notifier);
 
-class _DirectoryScreenState extends State<DirectoryScreen> {
-  late final DirectoryViewModel _viewModel;
-  late final TextEditingController _searchController;
-
-  @override
-  void initState() {
-    super.initState();
-    _viewModel = DirectoryViewModel();
-    _searchController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    _viewModel.dispose();
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: ListenableBuilder(
-          listenable: _viewModel,
-          builder: (context, _) {
-            final members = _viewModel.filteredMembers;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _Header(totalMembers: _viewModel.totalMembers),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: _SearchBar(
-                    controller: _searchController,
-                    onChanged: _viewModel.setSearchQuery,
-                  ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            FadeInDown(
+              duration: const Duration(milliseconds: 500),
+              child: _Header(
+                totalMembers: state.totalMembers,
+                onSettingsTap: () => context.push('/settings'),
+              ),
+            ),
+            const SizedBox(height: 20),
+            FadeInDown(
+              delay: const Duration(milliseconds: 100),
+              duration: const Duration(milliseconds: 400),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: _SearchBar(onChanged: notifier.setSearchQuery),
+              ),
+            ),
+            const SizedBox(height: 16),
+            FadeInLeft(
+              delay: const Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 400),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: CategoryFilterBar(
+                  selected: state.selectedCategory,
+                  onSelected: notifier.setCategory,
                 ),
-                const SizedBox(height: 16),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: CategoryFilterBar(
-                    selected: _viewModel.selectedCategory,
-                    onSelected: _viewModel.setCategory,
-                  ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                itemCount: state.filteredMembers.length,
+                itemBuilder: (_, i) => FadeInUp(
+                  delay: Duration(milliseconds: (i * 70).clamp(0, 350)),
+                  duration: const Duration(milliseconds: 400),
+                  child: MemberCard(member: state.filteredMembers[i]),
                 ),
-                const SizedBox(height: 16),
-                Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    itemCount: members.length,
-                    itemBuilder: (_, i) => MemberCard(member: members[i]),
-                  ),
-                ),
-              ],
-            );
-          },
+              ),
+            ),
+          ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => const RegisterScreen()),
+      floatingActionButton: ZoomIn(
+        delay: const Duration(milliseconds: 400),
+        child: FloatingActionButton(
+          onPressed: () => context.push('/register'),
+          backgroundColor: kAccentBlue,
+          child: const Icon(Icons.add, color: Colors.white),
         ),
-        backgroundColor: kAccentBlue,
-        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -86,8 +78,9 @@ class _DirectoryScreenState extends State<DirectoryScreen> {
 
 class _Header extends StatelessWidget {
   final int totalMembers;
+  final VoidCallback onSettingsTap;
 
-  const _Header({required this.totalMembers});
+  const _Header({required this.totalMembers, required this.onSettingsTap});
 
   @override
   Widget build(BuildContext context) {
@@ -110,9 +103,7 @@ class _Header extends StatelessWidget {
               ),
               const Spacer(),
               GestureDetector(
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                ),
+                onTap: onSettingsTap,
                 child: Icon(Icons.settings_outlined,
                     color: colors.textSecondary, size: 22),
               ),
@@ -149,10 +140,9 @@ class _Header extends StatelessWidget {
 }
 
 class _SearchBar extends StatelessWidget {
-  final TextEditingController controller;
   final ValueChanged<String> onChanged;
 
-  const _SearchBar({required this.controller, required this.onChanged});
+  const _SearchBar({required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -164,13 +154,13 @@ class _SearchBar extends StatelessWidget {
         border: Border.all(color: colors.textSecondary.withValues(alpha: 0.2)),
       ),
       child: TextField(
-        controller: controller,
         onChanged: onChanged,
         style: TextStyle(color: colors.textPrimary, fontSize: 14),
         decoration: InputDecoration(
           hintText: 'Busca por nombre o servicio...',
           hintStyle: TextStyle(color: colors.textSecondary, fontSize: 14),
-          prefixIcon: Icon(Icons.search, color: colors.textSecondary, size: 20),
+          prefixIcon:
+              Icon(Icons.search, color: colors.textSecondary, size: 20),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 14),
         ),

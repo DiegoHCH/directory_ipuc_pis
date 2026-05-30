@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../model/member.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../member_profile_screen.dart';
 
 class MemberCard extends StatelessWidget {
   final Member member;
@@ -15,11 +15,7 @@ class MemberCard extends StatelessWidget {
     final categoryColor = kCategoryColors[member.category.tag] ?? kAccentBlue;
 
     return GestureDetector(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => MemberProfileScreen(member: member),
-        ),
-      ),
+      onTap: () => context.push('/member', extra: member),
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -46,7 +42,8 @@ class MemberCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     member.description,
-                    style: TextStyle(color: colors.textSecondary, fontSize: 13),
+                    style: TextStyle(
+                        color: colors.textSecondary, fontSize: 13),
                   ),
                   const SizedBox(height: 6),
                   Row(
@@ -73,9 +70,7 @@ class MemberCard extends StatelessWidget {
                       Text(
                         member.phone,
                         style: TextStyle(
-                          color: colors.textSecondary,
-                          fontSize: 12,
-                        ),
+                            color: colors.textSecondary, fontSize: 12),
                       ),
                     ],
                   ),

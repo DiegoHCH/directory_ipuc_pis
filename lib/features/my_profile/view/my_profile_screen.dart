@@ -1,89 +1,131 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../directory/model/member.dart';
-import '../../edit_profile/view/edit_profile_screen.dart';
-import '../viewmodel/my_profile_viewmodel.dart';
+import '../provider/my_profile_provider.dart';
 
-class MyProfileScreen extends StatelessWidget {
+class MyProfileScreen extends ConsumerWidget {
   final Member member;
 
   const MyProfileScreen({super.key, required this.member});
 
   @override
-  Widget build(BuildContext context) {
-    final viewModel = MyProfileViewModel(member: member);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profileState = ref.watch(myProfileProvider);
+    final colors = context.colors;
+
     return Scaffold(
-      body: _MyProfileBody(viewModel: viewModel),
-    );
-  }
-}
-
-class _MyProfileBody extends StatelessWidget {
-  final MyProfileViewModel viewModel;
-
-  const _MyProfileBody({required this.viewModel});
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        children: [
-          _TopBar(status: viewModel.status),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 20),
-                  Center(
-                      child: _LargeAvatar(
-                          initials: viewModel.member.initials)),
-                  const SizedBox(height: 16),
-                  const Center(
-                    child: Text(
-                      'MI PERFIL',
-                      style: TextStyle(
-                        color: kAccentBlue,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.4,
+      body: SafeArea(
+        child: Column(
+          children: [
+            FadeInDown(
+              duration: const Duration(milliseconds: 400),
+              child: _TopBar(status: profileState.status),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 20),
+                    ZoomIn(
+                      duration: const Duration(milliseconds: 500),
+                      child: Center(
+                        child: _LargeAvatar(
+                            initials: member.initials,
+                            surface: colors.surface),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Center(
-                    child: Text(
-                      viewModel.member.name,
-                      style: TextStyle(
-                        color: context.colors.textPrimary,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
+                    const SizedBox(height: 16),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 100),
+                      duration: const Duration(milliseconds: 400),
+                      child: Column(
+                        children: [
+                          const Center(
+                            child: Text(
+                              'MI PERFIL',
+                              style: TextStyle(
+                                color: kAccentBlue,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 1.4,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Center(
+                            child: Text(
+                              member.name,
+                              style: TextStyle(
+                                color: colors.textPrimary,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Center(
+                            child: Text(
+                              member.description,
+                              style: TextStyle(
+                                  color: colors.textSecondary, fontSize: 14),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Center(
-                    child: Text(
-                      viewModel.member.description,
-                      style: TextStyle(
-                        color: context.colors.textSecondary,
-                        fontSize: 14,
-                      ),
+                    const SizedBox(height: 24),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 400),
+                      child: _StatsRow(stats: profileState.stats),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  _StatsRow(stats: viewModel.stats),
-                  const SizedBox(height: 24),
-                  _OffersSection(member: viewModel.member),
-                  const SizedBox(height: 24),
-                ],
+                    const SizedBox(height: 24),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 300),
+                      duration: const Duration(milliseconds: 400),
+                      child: _OffersSection(member: member),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
             ),
-          ),
-          _EditButton(member: viewModel.member),
-        ],
+            FadeInUp(
+              delay: const Duration(milliseconds: 350),
+              duration: const Duration(milliseconds: 400),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton.icon(
+                    onPressed: () =>
+                        context.push('/edit-profile', extra: member),
+                    icon: const Icon(Icons.edit_outlined, size: 18),
+                    label: const Text(
+                      'Editar mi perfil',
+                      style: TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w600),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: kAccentBlue,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
+                      elevation: 0,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -105,7 +147,7 @@ class _TopBar extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: GestureDetector(
-              onTap: () => Navigator.of(context).maybePop(),
+              onTap: () => context.pop(),
               child: Container(
                 width: 36,
                 height: 36,
@@ -118,7 +160,36 @@ class _TopBar extends StatelessWidget {
               ),
             ),
           ),
-          _StatusBadge(status: status),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: colors.surface,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 7,
+                  height: 7,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF4CAF50),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  status.label,
+                  style: TextStyle(
+                    color: colors.textPrimary,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.8,
+                  ),
+                ),
+              ],
+            ),
+          ),
           Align(
             alignment: Alignment.centerRight,
             child: Container(
@@ -128,48 +199,8 @@ class _TopBar extends StatelessWidget {
                 color: colors.surface,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child:
-                  Icon(Icons.ios_share, color: colors.textPrimary, size: 18),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _StatusBadge extends StatelessWidget {
-  final ProfileStatus status;
-
-  const _StatusBadge({required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 7,
-            height: 7,
-            decoration: const BoxDecoration(
-              color: Color(0xFF4CAF50),
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: 6),
-          Text(
-            status.label,
-            style: TextStyle(
-              color: context.colors.textPrimary,
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.8,
+              child: Icon(Icons.ios_share,
+                  color: colors.textPrimary, size: 18),
             ),
           ),
         ],
@@ -180,8 +211,9 @@ class _StatusBadge extends StatelessWidget {
 
 class _LargeAvatar extends StatelessWidget {
   final String initials;
+  final Color surface;
 
-  const _LargeAvatar({required this.initials});
+  const _LargeAvatar({required this.initials, required this.surface});
 
   @override
   Widget build(BuildContext context) {
@@ -189,7 +221,7 @@ class _LargeAvatar extends StatelessWidget {
       width: 90,
       height: 90,
       decoration: BoxDecoration(
-        color: context.colors.surface,
+        color: surface,
         shape: BoxShape.circle,
         border: Border.all(color: kAccentBlue, width: 2.5),
       ),
@@ -223,8 +255,7 @@ class _StatsRow extends StatelessWidget {
         child: Row(
           children: [
             _StatCell(
-                value: '${stats.weeklyViews}',
-                label: 'Vistas esta\nsemana'),
+                value: '${stats.weeklyViews}', label: 'Vistas esta\nsemana'),
             _Divider(),
             _StatCell(
                 value: '${stats.whatsappContacts}',
@@ -268,10 +299,7 @@ class _StatCell extends StatelessWidget {
               label,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: colors.textSecondary,
-                fontSize: 11,
-                height: 1.4,
-              ),
+                  color: colors.textSecondary, fontSize: 11, height: 1.4),
             ),
           ],
         ),
@@ -316,7 +344,7 @@ class _OffersSection extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () => context.push('/edit-profile', extra: member),
               child: const Text(
                 'EDITAR',
                 style: TextStyle(
@@ -331,17 +359,15 @@ class _OffersSection extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         if (member.offers.isEmpty)
-          Text(
-            'Aún no has agregado servicios.',
-            style: TextStyle(color: colors.textSecondary, fontSize: 13),
-          )
+          Text('Aún no has agregado servicios.',
+              style: TextStyle(color: colors.textSecondary, fontSize: 13))
         else
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: member.offers
                 .map(
-                  (offer) => Container(
+                  (o) => Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 14, vertical: 8),
                     decoration: BoxDecoration(
@@ -349,52 +375,14 @@ class _OffersSection extends StatelessWidget {
                       border: Border.all(
                           color: kAccentBlue.withValues(alpha: 0.4)),
                     ),
-                    child: Text(
-                      offer,
-                      style: TextStyle(
-                          color: colors.textPrimary, fontSize: 13),
-                    ),
+                    child: Text(o,
+                        style: TextStyle(
+                            color: colors.textPrimary, fontSize: 13)),
                   ),
                 )
                 .toList(),
           ),
       ],
-    );
-  }
-}
-
-class _EditButton extends StatelessWidget {
-  final Member member;
-  const _EditButton({required this.member});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-      child: SizedBox(
-        width: double.infinity,
-        height: 52,
-        child: ElevatedButton.icon(
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => EditProfileScreen(member: member),
-            ),
-          ),
-          icon: const Icon(Icons.edit_outlined, size: 18),
-          label: const Text(
-            'Editar mi perfil',
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-          ),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: kAccentBlue,
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
-            elevation: 0,
-          ),
-        ),
-      ),
     );
   }
 }

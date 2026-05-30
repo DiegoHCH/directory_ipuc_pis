@@ -4,15 +4,13 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 
 class OtpInput extends StatefulWidget {
-  final int length;
   final List<String> digits;
-  final ValueChanged<(int index, String value)> onChanged;
+  final void Function(int index, String value) onDigitChanged;
 
   const OtpInput({
     super.key,
-    required this.length,
     required this.digits,
-    required this.onChanged,
+    required this.onDigitChanged,
   });
 
   @override
@@ -23,12 +21,14 @@ class _OtpInputState extends State<OtpInput> {
   late final List<FocusNode> _focusNodes;
   late final List<TextEditingController> _controllers;
 
+  static const _length = 6;
+
   @override
   void initState() {
     super.initState();
-    _focusNodes = List.generate(widget.length, (_) => FocusNode());
+    _focusNodes = List.generate(_length, (_) => FocusNode());
     _controllers = List.generate(
-      widget.length,
+      _length,
       (i) => TextEditingController(text: widget.digits[i]),
     );
   }
@@ -36,7 +36,7 @@ class _OtpInputState extends State<OtpInput> {
   @override
   void didUpdateWidget(OtpInput old) {
     super.didUpdateWidget(old);
-    for (var i = 0; i < widget.length; i++) {
+    for (var i = 0; i < _length; i++) {
       if (_controllers[i].text != widget.digits[i]) {
         _controllers[i].text = widget.digits[i];
       }
@@ -57,18 +57,15 @@ class _OtpInputState extends State<OtpInput> {
   void _onChanged(int index, String value) {
     if (value.length > 1) {
       final digits = value.replaceAll(RegExp(r'\D'), '');
-      for (var i = 0; i < widget.length && i < digits.length; i++) {
+      for (var i = 0; i < _length && i < digits.length; i++) {
         _controllers[i].text = digits[i];
-        widget.onChanged((i, digits[i]));
+        widget.onDigitChanged(i, digits[i]);
       }
-      final next = (digits.length).clamp(0, widget.length - 1);
-      _focusNodes[next].requestFocus();
+      _focusNodes[(digits.length).clamp(0, _length - 1)].requestFocus();
       return;
     }
-
-    widget.onChanged((index, value));
-
-    if (value.isNotEmpty && index < widget.length - 1) {
+    widget.onDigitChanged(index, value);
+    if (value.isNotEmpty && index < _length - 1) {
       _focusNodes[index + 1].requestFocus();
     }
   }
@@ -87,7 +84,7 @@ class _OtpInputState extends State<OtpInput> {
     final colors = context.colors;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: List.generate(widget.length, (i) {
+      children: List.generate(_length, (i) {
         final filled = widget.digits[i].isNotEmpty;
         return SizedBox(
           width: 44,
@@ -112,14 +109,12 @@ class _OtpInputState extends State<OtpInput> {
               ),
               decoration: InputDecoration(
                 filled: true,
-                fillColor: filled
-                    ? kAccentBlue.withValues(alpha: 0.15)
-                    : colors.surface,
+                fillColor:
+                    filled ? kAccentBlue.withValues(alpha: 0.15) : colors.surface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
-                    color: filled ? kAccentBlue : Colors.transparent,
-                  ),
+                      color: filled ? kAccentBlue : Colors.transparent),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
