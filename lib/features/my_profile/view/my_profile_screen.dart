@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../directory/model/member.dart';
+import '../../edit_profile/view/edit_profile_screen.dart';
 import '../viewmodel/my_profile_viewmodel.dart';
 
 class MyProfileScreen extends StatelessWidget {
@@ -78,7 +79,7 @@ class _MyProfileBody extends StatelessWidget {
               ),
             ),
           ),
-          _EditButton(),
+          _EditButton(member: viewModel.member),
         ],
       ),
     );
@@ -351,6 +352,9 @@ class _OffersSection extends StatelessWidget {
 }
 
 class _EditButton extends StatelessWidget {
+  final Member member;
+  const _EditButton({required this.member});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -359,7 +363,11 @@ class _EditButton extends StatelessWidget {
         width: double.infinity,
         height: 52,
         child: ElevatedButton.icon(
-          onPressed: () {},
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => EditProfileScreen(member: member),
+            ),
+          ),
           icon: const Icon(Icons.edit_outlined, size: 18),
           label: const Text(
             'Editar mi perfil',
