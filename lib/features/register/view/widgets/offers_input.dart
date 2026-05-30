@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 
 class OffersInput extends StatelessWidget {
@@ -14,25 +15,26 @@ class OffersInput extends StatelessWidget {
   });
 
   void _showAddDialog(BuildContext context) {
+    final colors = context.colors;
     final controller = TextEditingController();
     showDialog<void>(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: kSurfaceColor,
+        backgroundColor: colors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
+        title: Text(
           'Agregar servicio',
-          style: TextStyle(color: kTextPrimary, fontSize: 16),
+          style: TextStyle(color: colors.textPrimary, fontSize: 16),
         ),
         content: TextField(
           controller: controller,
           autofocus: true,
-          style: const TextStyle(color: kTextPrimary),
+          style: TextStyle(color: colors.textPrimary),
           decoration: InputDecoration(
             hintText: 'Ej: Tortas de cumpleaños',
-            hintStyle: const TextStyle(color: kTextSecondary),
+            hintStyle: TextStyle(color: colors.textSecondary),
             filled: true,
-            fillColor: kBackgroundColor,
+            fillColor: colors.background,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide.none,
@@ -46,8 +48,8 @@ class OffersInput extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancelar',
-                style: TextStyle(color: kTextSecondary)),
+            child: Text('Cancelar',
+                style: TextStyle(color: colors.textSecondary)),
           ),
           TextButton(
             onPressed: () {
@@ -64,6 +66,7 @@ class OffersInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -77,20 +80,23 @@ class OffersInput extends StatelessWidget {
         GestureDetector(
           onTap: () => _showAddDialog(context),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
             decoration: BoxDecoration(
-              color: kSurfaceColor,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: kTextSecondary.withValues(alpha: 0.3)),
+              border: Border.all(
+                  color: colors.textSecondary.withValues(alpha: 0.3)),
             ),
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.add, color: kTextSecondary, size: 14),
-                SizedBox(width: 4),
+                Icon(Icons.add, color: colors.textSecondary, size: 14),
+                const SizedBox(width: 4),
                 Text(
                   'Agregar',
-                  style: TextStyle(color: kTextSecondary, fontSize: 13),
+                  style: TextStyle(
+                      color: colors.textSecondary, fontSize: 13),
                 ),
               ],
             ),
@@ -109,10 +115,12 @@ class _OfferChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
-      padding: const EdgeInsets.only(left: 12, right: 6, top: 7, bottom: 7),
+      padding:
+          const EdgeInsets.only(left: 12, right: 6, top: 7, bottom: 7),
       decoration: BoxDecoration(
-        color: kSurfaceColor,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: kAccentBlue.withValues(alpha: 0.4)),
       ),
@@ -121,12 +129,12 @@ class _OfferChip extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(color: kTextPrimary, fontSize: 13),
+            style: TextStyle(color: colors.textPrimary, fontSize: 13),
           ),
           const SizedBox(width: 6),
           GestureDetector(
             onTap: onRemove,
-            child: const Icon(Icons.close, color: kTextSecondary, size: 14),
+            child: Icon(Icons.close, color: colors.textSecondary, size: 14),
           ),
         ],
       ),

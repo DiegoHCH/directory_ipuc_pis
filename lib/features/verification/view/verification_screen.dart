@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../viewmodel/verification_viewmodel.dart';
 import 'widgets/otp_input.dart';
@@ -43,6 +44,7 @@ class _VerificationBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return SafeArea(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,10 +59,10 @@ class _VerificationBody extends StatelessWidget {
                   const SizedBox(height: 16),
                   _PhoneIcon(),
                   const SizedBox(height: 20),
-                  const Text(
+                  Text(
                     'Verifica que',
                     style: TextStyle(
-                      color: kTextPrimary,
+                      color: colors.textPrimary,
                       fontSize: 28,
                       fontWeight: FontWeight.w800,
                       height: 1.1,
@@ -76,10 +78,10 @@ class _VerificationBody extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
+                  Text(
                     'Tu pastor te envió un link para reclamar tu perfil. Ingresa el código de 6 dígitos para activar la edición.',
                     style: TextStyle(
-                      color: kTextSecondary,
+                      color: colors.textSecondary,
                       fontSize: 13,
                       height: 1.5,
                     ),
@@ -94,7 +96,7 @@ class _VerificationBody extends StatelessWidget {
                   const SizedBox(height: 16),
                   _ResendRow(viewModel: viewModel),
                   const SizedBox(height: 24),
-                  _InfoCard(),
+                  const _InfoCard(),
                 ],
               ),
             ),
@@ -117,10 +119,11 @@ class _TopBar extends StatelessWidget {
           width: 36,
           height: 36,
           decoration: BoxDecoration(
-            color: kSurfaceColor,
+            color: context.colors.surface,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: const Icon(Icons.chevron_left, color: kTextPrimary, size: 22),
+          child: Icon(Icons.chevron_left,
+              color: context.colors.textPrimary, size: 22),
         ),
       ),
     );
@@ -134,7 +137,7 @@ class _PhoneIcon extends StatelessWidget {
       width: 48,
       height: 48,
       decoration: BoxDecoration(
-        color: kSurfaceColor,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(14),
       ),
       child: const Icon(Icons.phone, color: kAccentBlue, size: 22),
@@ -155,11 +158,12 @@ class _ResendRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Row(
       children: [
-        const Text(
+        Text(
           '¿No te llegó? ',
-          style: TextStyle(color: kTextSecondary, fontSize: 13),
+          style: TextStyle(color: colors.textSecondary, fontSize: 13),
         ),
         GestureDetector(
           onTap: viewModel.canResend ? viewModel.resend : null,
@@ -168,7 +172,7 @@ class _ResendRow extends StatelessWidget {
                 ? 'Reenviar'
                 : 'Reenviar en ${_formatCountdown(viewModel.countdown)}',
             style: TextStyle(
-              color: viewModel.canResend ? kAccentBlue : kTextSecondary,
+              color: viewModel.canResend ? kAccentBlue : colors.textSecondary,
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),
@@ -180,12 +184,15 @@ class _ResendRow extends StatelessWidget {
 }
 
 class _InfoCard extends StatelessWidget {
+  const _InfoCard();
+
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: kSurfaceColor,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
@@ -197,24 +204,24 @@ class _InfoCard extends StatelessWidget {
             size: 20,
           ),
           const SizedBox(width: 12),
-          const Expanded(
+          Expanded(
             child: Text.rich(
               TextSpan(
                 style: TextStyle(
-                  color: kTextSecondary,
+                  color: colors.textSecondary,
                   fontSize: 13,
                   height: 1.5,
                 ),
                 children: [
-                  TextSpan(text: 'Tu número queda '),
+                  const TextSpan(text: 'Tu número queda '),
                   TextSpan(
                     text: 'atado a tu perfil',
                     style: TextStyle(
-                      color: kTextPrimary,
+                      color: colors.textPrimary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  TextSpan(
+                  const TextSpan(
                     text:
                         ' — nadie más podrá registrarse con él. Un líder de la iglesia revisará tu perfil antes de publicarlo.',
                   ),
@@ -235,6 +242,7 @@ class _SubmitButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
       child: SizedBox(
@@ -247,8 +255,8 @@ class _SubmitButton extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: kAccentBlue,
             foregroundColor: Colors.white,
-            disabledBackgroundColor: kSurfaceColor,
-            disabledForegroundColor: kTextSecondary,
+            disabledBackgroundColor: colors.surface,
+            disabledForegroundColor: colors.textSecondary,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(14),
             ),

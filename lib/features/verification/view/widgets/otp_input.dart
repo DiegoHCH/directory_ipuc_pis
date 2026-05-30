@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 
 class OtpInput extends StatefulWidget {
@@ -55,7 +56,6 @@ class _OtpInputState extends State<OtpInput> {
 
   void _onChanged(int index, String value) {
     if (value.length > 1) {
-      // paste: distribuir dígitos
       final digits = value.replaceAll(RegExp(r'\D'), '');
       for (var i = 0; i < widget.length && i < digits.length; i++) {
         _controllers[i].text = digits[i];
@@ -84,6 +84,7 @@ class _OtpInputState extends State<OtpInput> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: List.generate(widget.length, (i) {
@@ -104,8 +105,8 @@ class _OtpInputState extends State<OtpInput> {
                 LengthLimitingTextInputFormatter(2),
               ],
               onChanged: (v) => _onChanged(i, v),
-              style: const TextStyle(
-                color: kTextPrimary,
+              style: TextStyle(
+                color: colors.textPrimary,
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
               ),
@@ -113,7 +114,7 @@ class _OtpInputState extends State<OtpInput> {
                 filled: true,
                 fillColor: filled
                     ? kAccentBlue.withValues(alpha: 0.15)
-                    : kSurfaceColor,
+                    : colors.surface,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(

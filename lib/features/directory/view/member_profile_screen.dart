@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../model/member.dart';
 import '../viewmodel/member_profile_viewmodel.dart';
@@ -45,9 +46,9 @@ class _ProfileBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final member = viewModel.member;
-    final categoryColor =
-        kCategoryColors[member.category.tag] ?? kAccentBlue;
+    final categoryColor = kCategoryColors[member.category.tag] ?? kAccentBlue;
 
     return SafeArea(
       child: Column(
@@ -65,8 +66,8 @@ class _ProfileBody extends StatelessWidget {
                   Center(
                     child: Text(
                       member.name,
-                      style: const TextStyle(
-                        color: kTextPrimary,
+                      style: TextStyle(
+                        color: colors.textPrimary,
                         fontSize: 22,
                         fontWeight: FontWeight.w800,
                       ),
@@ -113,8 +114,8 @@ class _ProfileBody extends StatelessWidget {
                     const SizedBox(height: 20),
                     Text(
                       member.bio,
-                      style: const TextStyle(
-                        color: kTextPrimary,
+                      style: TextStyle(
+                        color: colors.textPrimary,
                         fontSize: 14,
                         height: 1.6,
                       ),
@@ -122,10 +123,10 @@ class _ProfileBody extends StatelessWidget {
                   ],
                   if (member.offers.isNotEmpty) ...[
                     const SizedBox(height: 24),
-                    const Text(
+                    Text(
                       'LO QUE OFRECE',
                       style: TextStyle(
-                        color: kTextSecondary,
+                        color: colors.textSecondary,
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.4,
@@ -156,6 +157,7 @@ class _TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -163,6 +165,7 @@ class _TopBar extends StatelessWidget {
           _IconBtn(
             icon: Icons.chevron_left,
             onTap: () => Navigator.of(context).pop(),
+            backgroundColor: colors.surface,
           ),
           const Spacer(),
           _IconBtn(
@@ -170,9 +173,14 @@ class _TopBar extends StatelessWidget {
                 ? Icons.bookmark
                 : Icons.bookmark_border,
             onTap: viewModel.toggleBookmark,
+            backgroundColor: colors.surface,
           ),
           const SizedBox(width: 8),
-          _IconBtn(icon: Icons.ios_share, onTap: () {}),
+          _IconBtn(
+            icon: Icons.ios_share,
+            onTap: () {},
+            backgroundColor: colors.surface,
+          ),
         ],
       ),
     );
@@ -182,8 +190,13 @@ class _TopBar extends StatelessWidget {
 class _IconBtn extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
+  final Color backgroundColor;
 
-  const _IconBtn({required this.icon, required this.onTap});
+  const _IconBtn({
+    required this.icon,
+    required this.onTap,
+    required this.backgroundColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -193,10 +206,10 @@ class _IconBtn extends StatelessWidget {
         width: 38,
         height: 38,
         decoration: BoxDecoration(
-          color: kSurfaceColor,
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Icon(icon, color: kTextPrimary, size: 20),
+        child: Icon(icon, color: context.colors.textPrimary, size: 20),
       ),
     );
   }
@@ -204,7 +217,6 @@ class _IconBtn extends StatelessWidget {
 
 class _LargeAvatar extends StatelessWidget {
   final String initials;
-
   const _LargeAvatar({required this.initials});
 
   @override
@@ -213,7 +225,7 @@ class _LargeAvatar extends StatelessWidget {
       width: 90,
       height: 90,
       decoration: BoxDecoration(
-        color: kSurfaceColor,
+        color: context.colors.surface,
         shape: BoxShape.circle,
         border: Border.all(color: kAccentBlue, width: 2.5),
       ),
@@ -238,6 +250,7 @@ class _OffersWrap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -253,10 +266,7 @@ class _OffersWrap extends StatelessWidget {
               ),
               child: Text(
                 offer,
-                style: const TextStyle(
-                  color: kTextPrimary,
-                  fontSize: 13,
-                ),
+                style: TextStyle(color: colors.textPrimary, fontSize: 13),
               ),
             ),
           )
@@ -272,10 +282,11 @@ class _PhoneCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: kSurfaceColor,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
@@ -293,10 +304,10 @@ class _PhoneCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'TELÉFONO',
                 style: TextStyle(
-                  color: kTextSecondary,
+                  color: colors.textSecondary,
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.2,
@@ -305,8 +316,8 @@ class _PhoneCard extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 phone,
-                style: const TextStyle(
-                  color: kTextPrimary,
+                style: TextStyle(
+                  color: colors.textPrimary,
                   fontSize: 15,
                   fontWeight: FontWeight.w600,
                 ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../viewmodel/directory_viewmodel.dart';
 import '../../register/view/register_screen.dart';
+import '../../settings/view/settings_screen.dart';
 import 'widgets/category_filter_bar.dart';
 import 'widgets/member_card.dart';
 
@@ -89,6 +91,7 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: Column(
@@ -96,24 +99,30 @@ class _Header extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text(
+              Text(
                 'IGLESIA PENTECOSTAL UNIDA DE COLOMBIA',
                 style: TextStyle(
-                  color: kTextSecondary,
+                  color: colors.textSecondary,
                   fontSize: 10,
                   letterSpacing: 1.2,
                   fontWeight: FontWeight.w500,
                 ),
               ),
               const Spacer(),
-              Icon(Icons.more_horiz, color: kTextSecondary, size: 20),
+              GestureDetector(
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                ),
+                child: Icon(Icons.settings_outlined,
+                    color: colors.textSecondary, size: 22),
+              ),
             ],
           ),
           const SizedBox(height: 10),
-          const Text(
+          Text(
             'Directorio',
             style: TextStyle(
-              color: kTextPrimary,
+              color: colors.textPrimary,
               fontSize: 30,
               fontWeight: FontWeight.w800,
               height: 1.1,
@@ -131,7 +140,7 @@ class _Header extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             '«Un Señor, una fe, un bautismo.» — $totalMembers hermanos ofreciendo su trabajo.',
-            style: const TextStyle(color: kTextSecondary, fontSize: 13),
+            style: TextStyle(color: colors.textSecondary, fontSize: 13),
           ),
         ],
       ),
@@ -147,22 +156,23 @@ class _SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       decoration: BoxDecoration(
-        color: kSurfaceColor,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: kTextSecondary.withValues(alpha: 0.2)),
+        border: Border.all(color: colors.textSecondary.withValues(alpha: 0.2)),
       ),
       child: TextField(
         controller: controller,
         onChanged: onChanged,
-        style: const TextStyle(color: kTextPrimary, fontSize: 14),
-        decoration: const InputDecoration(
+        style: TextStyle(color: colors.textPrimary, fontSize: 14),
+        decoration: InputDecoration(
           hintText: 'Busca por nombre o servicio...',
-          hintStyle: TextStyle(color: kTextSecondary, fontSize: 14),
-          prefixIcon: Icon(Icons.search, color: kTextSecondary, size: 20),
+          hintStyle: TextStyle(color: colors.textSecondary, fontSize: 14),
+          prefixIcon: Icon(Icons.search, color: colors.textSecondary, size: 20),
           border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(vertical: 14),
         ),
       ),
     );

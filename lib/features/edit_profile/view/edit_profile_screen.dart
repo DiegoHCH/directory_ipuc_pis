@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../directory/model/member.dart';
 import '../../register/view/widgets/category_selector.dart';
@@ -24,7 +25,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.initState();
     _viewModel = EditProfileViewModel(widget.member);
     _nameController = TextEditingController(text: widget.member.name);
-    _businessController = TextEditingController(text: widget.member.description);
+    _businessController =
+        TextEditingController(text: widget.member.description);
   }
 
   @override
@@ -41,25 +43,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   void _onDelete() {
+    final colors = context.colors;
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: kSurfaceColor,
+        backgroundColor: colors.surface,
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
+        title: Text(
           '¿Eliminar perfil?',
-          style: TextStyle(color: kTextPrimary),
+          style: TextStyle(color: colors.textPrimary),
         ),
-        content: const Text(
+        content: Text(
           'Esta acción no se puede deshacer. Tu perfil desaparecerá del directorio.',
-          style: TextStyle(color: kTextSecondary, height: 1.5),
+          style: TextStyle(color: colors.textSecondary, height: 1.5),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancelar',
-                style: TextStyle(color: kTextSecondary)),
+            child: Text('Cancelar',
+                style: TextStyle(color: colors.textSecondary)),
           ),
           TextButton(
             onPressed: () {
@@ -120,7 +123,8 @@ class _EditBody extends StatelessWidget {
                 children: [
                   const SizedBox(height: 20),
                   Center(
-                    child: _AvatarPicker(initials: viewModel.original.initials),
+                    child: _AvatarPicker(
+                        initials: viewModel.original.initials),
                   ),
                   const SizedBox(height: 24),
                   _FieldLabel('TU NOMBRE'),
@@ -193,6 +197,7 @@ class _TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Stack(
@@ -202,16 +207,17 @@ class _TopBar extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: GestureDetector(
               onTap: () => Navigator.of(context).maybePop(),
-              child: const Text(
+              child: Text(
                 'Cancelar',
-                style: TextStyle(color: kTextSecondary, fontSize: 15),
+                style:
+                    TextStyle(color: colors.textSecondary, fontSize: 15),
               ),
             ),
           ),
-          const Text(
+          Text(
             'Editar perfil',
             style: TextStyle(
-              color: kTextPrimary,
+              color: colors.textPrimary,
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
@@ -232,7 +238,7 @@ class _TopBar extends StatelessWidget {
                       style: TextStyle(
                         color: viewModel.isDirty
                             ? kAccentBlue
-                            : kTextSecondary,
+                            : colors.textSecondary,
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
                       ),
@@ -252,6 +258,7 @@ class _AvatarPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Column(
       children: [
         Stack(
@@ -260,7 +267,7 @@ class _AvatarPicker extends StatelessWidget {
               width: 86,
               height: 86,
               decoration: BoxDecoration(
-                color: kSurfaceColor,
+                color: colors.surface,
                 shape: BoxShape.circle,
                 border: Border.all(color: kAccentBlue, width: 2.5),
               ),
@@ -284,7 +291,7 @@ class _AvatarPicker extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: kAccentBlue,
                   shape: BoxShape.circle,
-                  border: Border.all(color: kBackgroundColor, width: 2),
+                  border: Border.all(color: colors.background, width: 2),
                 ),
                 child: const Icon(Icons.camera_alt,
                     color: Colors.white, size: 13),
@@ -315,8 +322,8 @@ class _FieldLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: const TextStyle(
-        color: kTextSecondary,
+      style: TextStyle(
+        color: context.colors.textSecondary,
         fontSize: 11,
         fontWeight: FontWeight.w600,
         letterSpacing: 1.2,
@@ -333,15 +340,16 @@ class _InputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       decoration: BoxDecoration(
-        color: kSurfaceColor,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(
         controller: controller,
         onChanged: onChanged,
-        style: const TextStyle(color: kTextPrimary, fontSize: 15),
+        style: TextStyle(color: colors.textPrimary, fontSize: 15),
         decoration: const InputDecoration(
           border: InputBorder.none,
           contentPadding:
@@ -359,10 +367,11 @@ class _PhoneVerifiedField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: kSurfaceColor,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -370,11 +379,12 @@ class _PhoneVerifiedField extends StatelessWidget {
           Expanded(
             child: Text(
               phone,
-              style: const TextStyle(color: kTextSecondary, fontSize: 15),
+              style:
+                  TextStyle(color: colors.textSecondary, fontSize: 15),
             ),
           ),
-          Row(
-            children: const [
+          const Row(
+            children: [
               Icon(Icons.check, color: Color(0xFF4CAF50), size: 14),
               SizedBox(width: 4),
               Text(
@@ -398,34 +408,39 @@ class _VisibilityToggle extends StatelessWidget {
   final bool visible;
   final VoidCallback onToggle;
 
-  const _VisibilityToggle({required this.visible, required this.onToggle});
+  const _VisibilityToggle(
+      {required this.visible, required this.onToggle});
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: kSurfaceColor,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
         children: [
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Visible en el directorio',
                   style: TextStyle(
-                    color: kTextPrimary,
+                    color: colors.textPrimary,
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                SizedBox(height: 3),
+                const SizedBox(height: 3),
                 Text(
                   'Apágalo si no quieres recibir contactos por ahora.',
-                  style: TextStyle(color: kTextSecondary, fontSize: 12, height: 1.4),
+                  style: TextStyle(
+                      color: colors.textSecondary,
+                      fontSize: 12,
+                      height: 1.4),
                 ),
               ],
             ),
@@ -434,8 +449,8 @@ class _VisibilityToggle extends StatelessWidget {
           Switch(
             value: visible,
             onChanged: (_) => onToggle(),
-            activeThumbColor: kAccentBlue,
-            activeTrackColor: kAccentBlue.withValues(alpha: 0.5),
+            activeThumbColor: Colors.white,
+            activeTrackColor: kAccentBlue,
           ),
         ],
       ),

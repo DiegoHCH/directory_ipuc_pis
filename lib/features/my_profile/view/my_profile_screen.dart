@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../directory/model/member.dart';
 import '../../edit_profile/view/edit_profile_screen.dart';
@@ -36,7 +37,9 @@ class _MyProfileBody extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 20),
-                  Center(child: _LargeAvatar(initials: viewModel.member.initials)),
+                  Center(
+                      child: _LargeAvatar(
+                          initials: viewModel.member.initials)),
                   const SizedBox(height: 16),
                   const Center(
                     child: Text(
@@ -53,8 +56,8 @@ class _MyProfileBody extends StatelessWidget {
                   Center(
                     child: Text(
                       viewModel.member.name,
-                      style: const TextStyle(
-                        color: kTextPrimary,
+                      style: TextStyle(
+                        color: context.colors.textPrimary,
                         fontSize: 22,
                         fontWeight: FontWeight.w800,
                       ),
@@ -64,8 +67,8 @@ class _MyProfileBody extends StatelessWidget {
                   Center(
                     child: Text(
                       viewModel.member.description,
-                      style: const TextStyle(
-                        color: kTextSecondary,
+                      style: TextStyle(
+                        color: context.colors.textSecondary,
                         fontSize: 14,
                       ),
                     ),
@@ -93,6 +96,7 @@ class _TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Stack(
@@ -106,11 +110,11 @@ class _TopBar extends StatelessWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: kSurfaceColor,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.chevron_left,
-                    color: kTextPrimary, size: 22),
+                child: Icon(Icons.chevron_left,
+                    color: colors.textPrimary, size: 22),
               ),
             ),
           ),
@@ -121,11 +125,11 @@ class _TopBar extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: kSurfaceColor,
+                color: colors.surface,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.ios_share,
-                  color: kTextPrimary, size: 18),
+              child:
+                  Icon(Icons.ios_share, color: colors.textPrimary, size: 18),
             ),
           ),
         ],
@@ -144,7 +148,7 @@ class _StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: kSurfaceColor,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -161,8 +165,8 @@ class _StatusBadge extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             status.label,
-            style: const TextStyle(
-              color: kTextPrimary,
+            style: TextStyle(
+              color: context.colors.textPrimary,
               fontSize: 11,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.8,
@@ -185,7 +189,7 @@ class _LargeAvatar extends StatelessWidget {
       width: 90,
       height: 90,
       decoration: BoxDecoration(
-        color: kSurfaceColor,
+        color: context.colors.surface,
         shape: BoxShape.circle,
         border: Border.all(color: kAccentBlue, width: 2.5),
       ),
@@ -212,17 +216,23 @@ class _StatsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: kSurfaceColor,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(14),
       ),
       child: IntrinsicHeight(
         child: Row(
           children: [
-            _StatCell(value: '${stats.weeklyViews}', label: 'Vistas esta\nsemana'),
+            _StatCell(
+                value: '${stats.weeklyViews}',
+                label: 'Vistas esta\nsemana'),
             _Divider(),
-            _StatCell(value: '${stats.whatsappContacts}', label: 'Contactos por\nWhatsApp'),
+            _StatCell(
+                value: '${stats.whatsappContacts}',
+                label: 'Contactos por\nWhatsApp'),
             _Divider(),
-            _StatCell(value: '${stats.activeServices}', label: 'Servicios\nactivos'),
+            _StatCell(
+                value: '${stats.activeServices}',
+                label: 'Servicios\nactivos'),
           ],
         ),
       ),
@@ -238,6 +248,7 @@ class _StatCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
@@ -246,8 +257,8 @@ class _StatCell extends StatelessWidget {
           children: [
             Text(
               value,
-              style: const TextStyle(
-                color: kTextPrimary,
+              style: TextStyle(
+                color: colors.textPrimary,
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
               ),
@@ -256,8 +267,8 @@ class _StatCell extends StatelessWidget {
             Text(
               label,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: kTextSecondary,
+              style: TextStyle(
+                color: colors.textSecondary,
                 fontSize: 11,
                 height: 1.4,
               ),
@@ -273,7 +284,7 @@ class _Divider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return VerticalDivider(
-      color: kTextSecondary.withValues(alpha: 0.15),
+      color: context.colors.textSecondary.withValues(alpha: 0.15),
       width: 1,
       indent: 12,
       endIndent: 12,
@@ -288,16 +299,17 @@ class _OffersSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               'LO QUE OFRECES',
               style: TextStyle(
-                color: kTextSecondary,
+                color: colors.textSecondary,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.4,
@@ -319,9 +331,9 @@ class _OffersSection extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         if (member.offers.isEmpty)
-          const Text(
+          Text(
             'Aún no has agregado servicios.',
-            style: TextStyle(color: kTextSecondary, fontSize: 13),
+            style: TextStyle(color: colors.textSecondary, fontSize: 13),
           )
         else
           Wrap(
@@ -339,8 +351,8 @@ class _OffersSection extends StatelessWidget {
                     ),
                     child: Text(
                       offer,
-                      style: const TextStyle(
-                          color: kTextPrimary, fontSize: 13),
+                      style: TextStyle(
+                          color: colors.textPrimary, fontSize: 13),
                     ),
                   ),
                 )

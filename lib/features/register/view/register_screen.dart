@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../viewmodel/register_viewmodel.dart';
 import 'widgets/category_selector.dart';
@@ -77,10 +78,10 @@ class _RegisterBody extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Nuevo',
                     style: TextStyle(
-                      color: kTextPrimary,
+                      color: context.colors.textPrimary,
                       fontSize: 28,
                       fontWeight: FontWeight.w800,
                       height: 1.1,
@@ -96,12 +97,15 @@ class _RegisterBody extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'Le enviarás un link por WhatsApp para que confirme y pueda editar su perfil.',
-                    style: TextStyle(color: kTextSecondary, fontSize: 13, height: 1.5),
+                    style: TextStyle(
+                        color: context.colors.textSecondary,
+                        fontSize: 13,
+                        height: 1.5),
                   ),
                   const SizedBox(height: 24),
-                  _PhotoUploader(),
+                  const _PhotoUploader(),
                   const SizedBox(height: 24),
                   _FieldLabel('TU NOMBRE'),
                   const SizedBox(height: 8),
@@ -156,6 +160,7 @@ class _RegisterBody extends StatelessWidget {
 class _TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Stack(
@@ -169,11 +174,11 @@ class _TopBar extends StatelessWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: kSurfaceColor,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.chevron_left,
-                    color: kTextPrimary, size: 22),
+                child: Icon(Icons.chevron_left,
+                    color: colors.textPrimary, size: 22),
               ),
             ),
           ),
@@ -181,7 +186,7 @@ class _TopBar extends StatelessWidget {
             padding:
                 const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
             decoration: BoxDecoration(
-              color: kSurfaceColor,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
                   color: kAccentBlue.withValues(alpha: 0.4)),
@@ -210,6 +215,8 @@ class _TopBar extends StatelessWidget {
 }
 
 class _PhotoUploader extends StatelessWidget {
+  const _PhotoUploader();
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -219,7 +226,7 @@ class _PhotoUploader extends StatelessWidget {
             width: 76,
             height: 76,
             decoration: BoxDecoration(
-              color: kSurfaceColor,
+              color: context.colors.surface,
               shape: BoxShape.circle,
               border: Border.all(
                   color: kAccentBlue.withValues(alpha: 0.4), width: 1.5),
@@ -251,8 +258,8 @@ class _FieldLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: const TextStyle(
-        color: kTextSecondary,
+      style: TextStyle(
+        color: context.colors.textSecondary,
         fontSize: 11,
         fontWeight: FontWeight.w600,
         letterSpacing: 1.2,
@@ -276,19 +283,20 @@ class _FormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       decoration: BoxDecoration(
-        color: kSurfaceColor,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(12),
       ),
       child: TextField(
         controller: controller,
         onChanged: onChanged,
         maxLines: maxLines,
-        style: const TextStyle(color: kTextPrimary, fontSize: 15),
+        style: TextStyle(color: colors.textPrimary, fontSize: 15),
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: const TextStyle(color: kTextSecondary, fontSize: 15),
+          hintStyle: TextStyle(color: colors.textSecondary, fontSize: 15),
           border: InputBorder.none,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -306,9 +314,10 @@ class _PhoneField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       decoration: BoxDecoration(
-        color: kSurfaceColor,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -319,13 +328,13 @@ class _PhoneField extends StatelessWidget {
             decoration: BoxDecoration(
               border: Border(
                 right: BorderSide(
-                    color: kTextSecondary.withValues(alpha: 0.2)),
+                    color: colors.textSecondary.withValues(alpha: 0.2)),
               ),
             ),
-            child: const Text(
+            child: Text(
               '+57',
               style: TextStyle(
-                color: kTextSecondary,
+                color: colors.textSecondary,
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
               ),
@@ -337,13 +346,14 @@ class _PhoneField extends StatelessWidget {
               onChanged: onChanged,
               keyboardType: TextInputType.phone,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              style: const TextStyle(color: kTextPrimary, fontSize: 15),
-              decoration: const InputDecoration(
+              style: TextStyle(color: colors.textPrimary, fontSize: 15),
+              decoration: InputDecoration(
                 hintText: '311 412 8033',
-                hintStyle: TextStyle(color: kTextSecondary, fontSize: 15),
+                hintStyle:
+                    TextStyle(color: colors.textSecondary, fontSize: 15),
                 border: InputBorder.none,
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 14, vertical: 14),
               ),
             ),
           ),
@@ -382,8 +392,9 @@ class _SubmitButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: kAccentBlue,
           foregroundColor: Colors.white,
-          disabledBackgroundColor: kSurfaceColor,
-          disabledForegroundColor: kTextSecondary,
+          disabledBackgroundColor:
+              context.colors.surface,
+          disabledForegroundColor: context.colors.textSecondary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),

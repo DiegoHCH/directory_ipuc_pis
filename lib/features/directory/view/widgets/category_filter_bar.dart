@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../model/member.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 
 class CategoryFilterBar extends StatelessWidget {
@@ -22,6 +23,7 @@ class CategoryFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -33,18 +35,20 @@ class CategoryFilterBar extends StatelessWidget {
               onTap: () => onSelected(cat),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
                 decoration: BoxDecoration(
-                  color: isActive ? kAccentBlue : kSurfaceColor,
+                  color: isActive ? kAccentBlue : colors.surface,
                   borderRadius: BorderRadius.circular(20),
                   border: isActive
                       ? null
-                      : Border.all(color: kTextSecondary.withValues(alpha: 0.3)),
+                      : Border.all(
+                          color: colors.textSecondary.withValues(alpha: 0.3)),
                 ),
                 child: Text(
                   cat.label,
                   style: TextStyle(
-                    color: isActive ? Colors.white : kTextSecondary,
+                    color: isActive ? Colors.white : colors.textSecondary,
                     fontWeight:
                         isActive ? FontWeight.w600 : FontWeight.w400,
                     fontSize: 13,

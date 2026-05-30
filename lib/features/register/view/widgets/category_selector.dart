@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../directory/model/member.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_theme.dart';
 
 class CategorySelector extends StatelessWidget {
@@ -21,6 +22,7 @@ class CategorySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return GridView.count(
       crossAxisCount: 2,
       shrinkWrap: true,
@@ -36,12 +38,12 @@ class CategorySelector extends StatelessWidget {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
             decoration: BoxDecoration(
-              color: isSelected ? kAccentBlue : kSurfaceColor,
+              color: isSelected ? kAccentBlue : colors.surface,
               borderRadius: BorderRadius.circular(12),
               border: isSelected
                   ? null
                   : Border.all(
-                      color: kTextSecondary.withValues(alpha: 0.25)),
+                      color: colors.textSecondary.withValues(alpha: 0.25)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -58,10 +60,9 @@ class CategorySelector extends StatelessWidget {
                 Text(
                   cat.label,
                   style: TextStyle(
-                    color: isSelected ? Colors.white : kTextSecondary,
-                    fontWeight: isSelected
-                        ? FontWeight.w600
-                        : FontWeight.w400,
+                    color: isSelected ? Colors.white : colors.textSecondary,
+                    fontWeight:
+                        isSelected ? FontWeight.w600 : FontWeight.w400,
                     fontSize: 14,
                   ),
                 ),
