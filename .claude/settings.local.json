@@ -7,7 +7,11 @@
       "Bash(dart pub *)",
       "Bash(/Users/diego.hoyos/.fvm/versions/stable/bin/flutter --version)",
       "Bash(/Users/diego.hoyos/.fvm/versions/stable/bin/dart pub *)",
-      "Bash(/Users/diego.hoyos/.fvm/versions/stable/bin/dart analyze *)"
+      "Bash(/Users/diego.hoyos/.fvm/versions/stable/bin/dart analyze *)",
+      "Bash(cp /Users/diego.hoyos/Downloads/google-services.json /Users/diego.hoyos/personal/directory_ipuc/android/app/google-services.json)",
+      "Bash(cp /Users/diego.hoyos/Downloads/GoogleService-Info.plist /Users/diego.hoyos/personal/directory_ipuc/ios/Runner/GoogleService-Info.plist)",
+      "Bash(flutterfire --version)",
+      "Bash(/Users/diego.hoyos/.pub-cache/bin/flutterfire configure *)"
     ]
   }
 }

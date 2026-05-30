@@ -42,6 +42,46 @@ class Member {
     if (parts.length >= 2) return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
     return parts[0][0].toUpperCase();
   }
+
+  factory Member.fromMap(String id, Map<String, dynamic> map) => Member(
+        id: id,
+        name: map['name'] as String? ?? '',
+        description: map['description'] as String? ?? '',
+        phone: map['phone'] as String? ?? '',
+        category: MemberCategory.values.firstWhere(
+          (c) => c.name == map['category'],
+          orElse: () => MemberCategory.servicio,
+        ),
+        bio: map['bio'] as String? ?? '',
+        offers: List<String>.from(map['offers'] as List? ?? []),
+      );
+
+  Map<String, dynamic> toMap() => {
+        'name': name,
+        'description': description,
+        'phone': phone,
+        'category': category.name,
+        'bio': bio,
+        'offers': offers,
+      };
+
+  Member copyWith({
+    String? name,
+    String? description,
+    String? phone,
+    MemberCategory? category,
+    String? bio,
+    List<String>? offers,
+  }) =>
+      Member(
+        id: id,
+        name: name ?? this.name,
+        description: description ?? this.description,
+        phone: phone ?? this.phone,
+        category: category ?? this.category,
+        bio: bio ?? this.bio,
+        offers: offers ?? this.offers,
+      );
 }
 
 const mockMembers = [

@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
+import '../model/member.dart';
 import '../provider/directory_provider.dart';
+import '../repository/member_repository.dart';
 import 'widgets/category_filter_bar.dart';
 import 'widgets/member_card.dart';
 
@@ -13,8 +15,10 @@ class DirectoryScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(directoryProvider);
+    final filter = ref.watch(directoryProvider);
     final notifier = ref.read(directoryProvider.notifier);
+    final filteredAsync = ref.watch(filteredMembersProvider);
+    final totalAsync = ref.watch(membersStreamProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -24,7 +28,7 @@ class DirectoryScreen extends ConsumerWidget {
             FadeInDown(
               duration: const Duration(milliseconds: 500),
               child: _Header(
-                totalMembers: state.totalMembers,
+                totalMembers: totalAsync.valueOrNull?.length ?? 0,
                 onSettingsTap: () => context.push('/settings'),
               ),
             ),
@@ -44,21 +48,31 @@ class DirectoryScreen extends ConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.only(left: 20),
                 child: CategoryFilterBar(
-                  selected: state.selectedCategory,
+                  selected: filter.selectedCategory,
                   onSelected: notifier.setCategory,
                 ),
               ),
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: state.filteredMembers.length,
-                itemBuilder: (_, i) => FadeInUp(
-                  delay: Duration(milliseconds: (i * 70).clamp(0, 350)),
-                  duration: const Duration(milliseconds: 400),
-                  child: MemberCard(member: state.filteredMembers[i]),
-                ),
+              child: filteredAsync.when(
+                loading: () => const _LoadingList(),
+                error: (e, _) => _ErrorView(message: e.toString()),
+                data: (members) => members.isEmpty
+                    ? _EmptyView(
+                        hasFilter: filter.searchQuery.isNotEmpty ||
+                            filter.selectedCategory != MemberCategory.all,
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        itemCount: members.length,
+                        itemBuilder: (_, i) => FadeInUp(
+                          delay: Duration(
+                              milliseconds: (i * 70).clamp(0, 350)),
+                          duration: const Duration(milliseconds: 400),
+                          child: MemberCard(member: members[i]),
+                        ),
+                      ),
               ),
             ),
           ],
@@ -75,6 +89,8 @@ class DirectoryScreen extends ConsumerWidget {
     );
   }
 }
+
+// ── Header ────────────────────────────────────────────────────────────────────
 
 class _Header extends StatelessWidget {
   final int totalMembers;
@@ -130,7 +146,9 @@ class _Header extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            '«Un Señor, una fe, un bautismo.» — $totalMembers hermanos ofreciendo su trabajo.',
+            totalMembers == 0
+                ? '«Un Señor, una fe, un bautismo.»'
+                : '«Un Señor, una fe, un bautismo.» — $totalMembers hermanos ofreciendo su trabajo.',
             style: TextStyle(color: colors.textSecondary, fontSize: 13),
           ),
         ],
@@ -138,6 +156,8 @@ class _Header extends StatelessWidget {
     );
   }
 }
+
+// ── Search ────────────────────────────────────────────────────────────────────
 
 class _SearchBar extends StatelessWidget {
   final ValueChanged<String> onChanged;
@@ -164,6 +184,179 @@ class _SearchBar extends StatelessWidget {
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 14),
         ),
+      ),
+    );
+  }
+}
+
+// ── Estados ───────────────────────────────────────────────────────────────────
+
+class _LoadingList extends StatelessWidget {
+  const _LoadingList();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      itemCount: 6,
+      itemBuilder: (context, i) => Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        height: 82,
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: const _ShimmerBar(),
+      ),
+    );
+  }
+}
+
+class _ShimmerBar extends StatefulWidget {
+  const _ShimmerBar();
+
+  @override
+  State<_ShimmerBar> createState() => _ShimmerBarState();
+}
+
+class _ShimmerBarState extends State<_ShimmerBar>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+  late final Animation<double> _anim;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat(reverse: true);
+    _anim = Tween<double>(begin: 0.3, end: 0.7).animate(_ctrl);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _anim,
+      builder: (_, child) => Opacity(
+        opacity: _anim.value,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  color: kAccentBlue.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: 14,
+                      width: 160,
+                      decoration: BoxDecoration(
+                        color: kAccentBlue.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      height: 10,
+                      width: 100,
+                      decoration: BoxDecoration(
+                        color: kAccentBlue.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ErrorView extends StatelessWidget {
+  final String message;
+
+  const _ErrorView({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.cloud_off_outlined,
+                size: 48, color: colors.textSecondary),
+            const SizedBox(height: 16),
+            Text(
+              'No se pudo cargar el directorio',
+              style: TextStyle(
+                color: colors.textPrimary,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              style: TextStyle(color: colors.textSecondary, fontSize: 12),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyView extends StatelessWidget {
+  final bool hasFilter;
+
+  const _EmptyView({required this.hasFilter});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.search_off, size: 48, color: colors.textSecondary),
+          const SizedBox(height: 16),
+          Text(
+            hasFilter
+                ? 'Sin resultados para tu búsqueda'
+                : 'El directorio está vacío',
+            style: TextStyle(
+              color: colors.textPrimary,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }

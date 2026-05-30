@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "804660931161",
+    "project_id": "ipuc-pis-directory",
+    "storage_bucket": "ipuc-pis-directory.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:804660931161:android:27e68838fa0ea335c79f48",
+        "android_client_info": {
+          "package_name": "co.ipuc.pis.directory"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlt9s3wKeaM1W2Hsp3txpNUIb63tim5l0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
