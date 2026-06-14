@@ -14,7 +14,8 @@
       "Bash(/Users/diego.hoyos/.pub-cache/bin/flutterfire configure *)",
       "Bash(/Users/diego.hoyos/fvm/versions/stable/bin/flutter pub *)",
       "Bash(/Users/diego.hoyos/fvm/versions/stable/bin/flutter analyze *)",
-      "Bash(pod install *)"
+      "Bash(pod install *)",
+      "Bash(flutter build *)"
     ]
   }
 }
