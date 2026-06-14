@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../provider/register_provider.dart';
@@ -160,16 +161,25 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       isValid: state.isValid,
                       isSubmitting: state.isSubmitting,
                       onSubmit: () async {
+                        final phone = state.fullPhone;
                         final ok = await notifier.submit();
-                        if (ok && context.mounted) {
+                        if (!context.mounted) return;
+                        if (ok) {
                           context.go('/');
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(
-                                  '¡Tu perfil fue creado! Ya apareces en el directorio.'),
+                                  '¡Perfil creado! Enviando invitación por WhatsApp...'),
                               backgroundColor: Color(0xFF4CAF50),
                             ),
                           );
+                          final digits = phone.replaceAll(RegExp(r'[^\d]'), '');
+                          final message = Uri.encodeComponent(
+                            '¡Hola! Te registré en el Directorio de hermanos IPUC. '
+                            'Ya puedes iniciar sesión con tu correo y completar tu perfil. 🙏',
+                          );
+                          final uri = Uri.parse('https://wa.me/$digits?text=$message');
+                          await launchUrl(uri, mode: LaunchMode.externalApplication);
                         }
                       },
                     ),

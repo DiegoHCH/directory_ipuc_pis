@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../core/services/cloudinary_service.dart';
+import '../../auth/repository/auth_repository.dart';
 import '../../directory/model/member.dart';
 import '../../directory/repository/member_repository.dart';
 
@@ -117,6 +118,22 @@ class EditProfileNotifier
         isUploadingPhoto: false,
         errorMessage: 'No se pudo subir la foto. Intenta de nuevo.',
       );
+    }
+  }
+
+  /// Elimina el perfil de Firestore y cierra sesión. Retorna true si fue exitoso.
+  Future<bool> delete() async {
+    state = state.copyWith(isSaving: true, errorMessage: null);
+    try {
+      await ref.read(memberRepositoryProvider).delete(state.original.id);
+      await ref.read(authRepositoryProvider).signOut();
+      return true;
+    } catch (_) {
+      state = state.copyWith(
+        isSaving: false,
+        errorMessage: 'No se pudo eliminar el perfil. Intenta de nuevo.',
+      );
+      return false;
     }
   }
 

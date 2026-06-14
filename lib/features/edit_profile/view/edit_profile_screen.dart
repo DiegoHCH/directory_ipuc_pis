@@ -58,9 +58,26 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                 style: TextStyle(color: colors.textSecondary)),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.of(ctx).pop();
-              // TODO: eliminar perfil
+              final ok = await ref
+                  .read(editProfileProvider(widget.member).notifier)
+                  .delete();
+              if (!mounted) return;
+              if (ok) {
+                context.go('/');
+              } else {
+                final msg = ref
+                        .read(editProfileProvider(widget.member))
+                        .errorMessage ??
+                    'No se pudo eliminar.';
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(msg),
+                    backgroundColor: const Color(0xFFEF5350),
+                  ),
+                );
+              }
             },
             child: const Text('Eliminar',
                 style: TextStyle(color: Color(0xFFEF5350))),
@@ -110,11 +127,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       onTap: state.isSaving || !state.isDirty
                           ? null
                           : () async {
+                              final screenContext = context;
                               final ok = await notifier.save();
-                              if (!context.mounted) return;
+                              if (!screenContext.mounted) return;
                               if (ok) {
-                                context.pop();
-                                ScaffoldMessenger.of(context).showSnackBar(
+                                screenContext.pop();
+                                ScaffoldMessenger.of(screenContext).showSnackBar(
                                   const SnackBar(
                                     content: Text('Cambios guardados.'),
                                     backgroundColor: Color(0xFF4CAF50),
@@ -126,7 +144,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                             widget.member))
                                         .errorMessage ??
                                     'No se pudo guardar.';
-                                ScaffoldMessenger.of(context).showSnackBar(
+                                ScaffoldMessenger.of(screenContext).showSnackBar(
                                   SnackBar(
                                     content: Text(msg),
                                     backgroundColor: const Color(0xFFEF5350),
