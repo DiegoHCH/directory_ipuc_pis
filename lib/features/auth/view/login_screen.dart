@@ -40,7 +40,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               const SizedBox(height: 8),
               GestureDetector(
                 onTap: () =>
-                    context.canPop() ? context.pop() : context.go('/'),
+                    context.canPop() ? context.pop() : context.go('/directory'),
                 child: Container(
                   width: 36,
                   height: 36,

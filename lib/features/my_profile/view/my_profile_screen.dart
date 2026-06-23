@@ -85,6 +85,9 @@ class _ProfileContent extends ConsumerWidget {
                           Center(
                             child: Text(
                               member.name,
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: colors.textPrimary,
                                 fontSize: 22,
@@ -241,7 +244,7 @@ class _TopBar extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: GestureDetector(
               onTap: () =>
-                  context.canPop() ? context.pop() : context.go('/'),
+                  context.canPop() ? context.pop() : context.go('/directory'),
               child: Container(
                 width: 36,
                 height: 36,

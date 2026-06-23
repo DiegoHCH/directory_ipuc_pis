@@ -117,16 +117,19 @@ class _Header extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
-                'IGLESIA PENTECOSTAL UNIDA DE COLOMBIA',
-                style: TextStyle(
-                  color: colors.textSecondary,
-                  fontSize: 10,
-                  letterSpacing: 1.2,
-                  fontWeight: FontWeight.w500,
+              Expanded(
+                child: Text(
+                  'IGLESIA PENTECOSTAL UNIDA DE COLOMBIA',
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: colors.textSecondary,
+                    fontSize: 10,
+                    letterSpacing: 1.2,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-              const Spacer(),
+              const SizedBox(width: 8),
               GestureDetector(
                 onTap: onSettingsTap,
                 child: Icon(Icons.settings_outlined,

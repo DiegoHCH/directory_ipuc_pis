@@ -65,7 +65,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   .delete();
               if (!mounted) return;
               if (ok) {
-                context.go('/');
+                context.go('/directory');
               } else {
                 final msg = ref
                         .read(editProfileProvider(widget.member))

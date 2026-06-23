@@ -15,7 +15,26 @@
       "Bash(/Users/diego.hoyos/fvm/versions/stable/bin/flutter pub *)",
       "Bash(/Users/diego.hoyos/fvm/versions/stable/bin/flutter analyze *)",
       "Bash(pod install *)",
-      "Bash(flutter build *)"
+      "Bash(flutter build *)",
+      "Bash(convert --version)",
+      "Bash(gs --version)",
+      "Bash(sips --help)",
+      "Bash(python3 *)",
+      "Bash(sips -s format png --resampleHeightWidth 1024 1024 '/Users/diego.hoyos/Downloads/LOGO IPUC_COLOR para fondo claro.pdf' --out /Users/diego.hoyos/personal/directory_ipuc/assets/app_icon.png)",
+      "Bash(ffmpeg -version)",
+      "Bash(ffprobe -v quiet -print_format json -show_streams '/Users/diego.hoyos/Downloads/Animación_full.mp4')",
+      "Bash(ffmpeg -ss 2 -to 8 -i /Users/diego.hoyos/Downloads/Animación_full.mp4 -vf fps=15,scale=540:-1:flags=lanczos,palettegen /tmp/palette.png -y)",
+      "Bash(ffmpeg -ss 2 -to 8 -i /Users/diego.hoyos/Downloads/Animación_full.mp4 -i /tmp/palette.png -vf 'fps=15,scale=540:-1:flags=lanczos[x];[x][1:v]paletteuse' /Users/diego.hoyos/personal/directory_ipuc/assets/splash.gif -y)",
+      "Bash(ffmpeg -ss 2 -to 8 -i /Users/diego.hoyos/Downloads/Animación_full.mp4 -i /tmp/palette.png -filter_complex 'fps=15,scale=540:-1:flags=lanczos[x];[x][1:v]paletteuse' /Users/diego.hoyos/personal/directory_ipuc/assets/splash.gif -y)",
+      "Bash(ffmpeg -ss 2 -to 8 -i /Users/diego.hoyos/Downloads/Animación_full.mp4 -vf fps=12,scale=400:-1:flags=lanczos,palettegen=max_colors=128 /tmp/palette2.png -y)",
+      "Bash(ffmpeg -ss 2 -to 8 -i /Users/diego.hoyos/Downloads/Animación_full.mp4 -i /tmp/palette2.png -filter_complex 'fps=12,scale=400:-1:flags=lanczos[x];[x][1:v]paletteuse=dither=bayer' /Users/diego.hoyos/personal/directory_ipuc/assets/splash.gif -y)",
+      "Bash(rsvg-convert --version)",
+      "Bash(inkscape --version)",
+      "Bash(cairosvg --version)",
+      "Bash(node *)",
+      "Read(//private/tmp/**)",
+      "Bash(npm list *)",
+      "Bash(npm install *)"
     ]
   }
 }

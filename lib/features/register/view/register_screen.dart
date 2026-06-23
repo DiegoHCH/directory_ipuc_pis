@@ -165,7 +165,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         final ok = await notifier.submit();
                         if (!context.mounted) return;
                         if (ok) {
-                          context.go('/');
+                          context.go('/directory');
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                               content: Text(

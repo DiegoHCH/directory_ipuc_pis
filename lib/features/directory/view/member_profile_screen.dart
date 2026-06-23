@@ -58,6 +58,9 @@ class MemberProfileScreen extends ConsumerWidget {
                           Center(
                             child: Text(
                               member.name,
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: colors.textPrimary,
                                 fontSize: 22,

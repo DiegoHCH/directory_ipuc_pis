@@ -74,6 +74,8 @@ class MemberCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     member.description,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                         color: colors.textSecondary, fontSize: 13),
                   ),
@@ -97,12 +99,6 @@ class MemberCard extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        member.phone,
-                        style: TextStyle(
-                            color: colors.textSecondary, fontSize: 12),
                       ),
                     ],
                   ),
