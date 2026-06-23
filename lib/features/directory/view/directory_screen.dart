@@ -156,6 +156,15 @@ class _Header extends StatelessWidget {
               height: 1.1,
             ),
           ),
+          const Text(
+            'IPUC Pisarreal',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              height: 1.4,
+            ),
+          ),
           const SizedBox(height: 10),
           Text(
             totalMembers == 0
