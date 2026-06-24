@@ -608,6 +608,18 @@ abstract class AppLocalizations {
   /// **'Help and support'**
   String get settingsHelp;
 
+  /// No description provided for @settingsPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy policy'**
+  String get settingsPrivacy;
+
+  /// No description provided for @errOpenPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the privacy policy.'**
+  String get errOpenPrivacy;
+
   /// No description provided for @settingsHelpMessage.
   ///
   /// In en, this message translates to:

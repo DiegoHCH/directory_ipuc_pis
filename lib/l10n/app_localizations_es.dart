@@ -269,6 +269,12 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsHelp => 'Ayuda y soporte';
 
   @override
+  String get settingsPrivacy => 'Política de privacidad';
+
+  @override
+  String get errOpenPrivacy => 'No se pudo abrir la política de privacidad.';
+
+  @override
   String get settingsHelpMessage =>
       'Hola, necesito ayuda con el Directorio IPUC Pisarreal 🙏';
 

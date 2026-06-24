@@ -92,6 +92,8 @@
   "settingsNotifyContactsDesc": "Apágalo si no quieres recibir contactos por ahora.",
   "settingsMyProfile": "Mi perfil",
   "settingsHelp": "Ayuda y soporte",
+  "settingsPrivacy": "Política de privacidad",
+  "errOpenPrivacy": "No se pudo abrir la política de privacidad.",
   "settingsHelpMessage": "Hola, necesito ayuda con el Directorio IPUC Pisarreal 🙏",
   "settingsSignOut": "Cerrar sesión",
   "settingsLanguage": "IDIOMA",

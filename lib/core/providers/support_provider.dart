@@ -4,12 +4,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class SupportContact {
   final String name;
   final String phone;
+  final String privacyPolicyUrl;
 
-  const SupportContact({required this.name, required this.phone});
+  const SupportContact({
+    required this.name,
+    required this.phone,
+    required this.privacyPolicyUrl,
+  });
 
   factory SupportContact.fromMap(Map<String, dynamic> map) => SupportContact(
         name: map['name'] as String? ?? '',
         phone: map['phone'] as String? ?? '',
+        privacyPolicyUrl: map['privacyPolicyUrl'] as String? ?? '',
       );
 }
 

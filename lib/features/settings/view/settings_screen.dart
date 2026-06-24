@@ -464,6 +464,24 @@ class _AccountCard extends ConsumerWidget {
               }
             },
           ),
+          _NavRow(
+            label: context.l10n.settingsPrivacy,
+            showDivider: true,
+            onTap: () async {
+              final support = await ref.read(supportContactProvider.future);
+              if (support.privacyPolicyUrl.isEmpty) return;
+              final uri = Uri.parse(support.privacyPolicyUrl);
+              try {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              } catch (_) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(context.l10n.errOpenPrivacy)),
+                  );
+                }
+              }
+            },
+          ),
           GestureDetector(
             onTap: () async {
               if (isLoggedIn) {
