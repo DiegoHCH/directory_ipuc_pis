@@ -2,8 +2,10 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/providers/locale_provider.dart';
+import '../../../core/providers/support_provider.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -444,7 +446,24 @@ class _AccountCard extends ConsumerWidget {
             showDivider: true,
           ),
           _NavRow(
-              label: context.l10n.settingsHelp, onTap: () {}, showDivider: true),
+            label: context.l10n.settingsHelp,
+            showDivider: true,
+            onTap: () async {
+              final msg = Uri.encodeComponent(context.l10n.settingsHelpMessage);
+              final support = await ref.read(supportContactProvider.future);
+              if (support.phone.isEmpty) return;
+              final uri = Uri.parse('https://wa.me/${support.phone}?text=$msg');
+              try {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              } catch (_) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(context.l10n.errOpenWhatsApp)),
+                  );
+                }
+              }
+            },
+          ),
           GestureDetector(
             onTap: () async {
               if (isLoggedIn) {

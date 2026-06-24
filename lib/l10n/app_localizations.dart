@@ -608,6 +608,12 @@ abstract class AppLocalizations {
   /// **'Help and support'**
   String get settingsHelp;
 
+  /// No description provided for @settingsHelpMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, I need help with the IPUC Pisarreal Directory 🙏'**
+  String get settingsHelpMessage;
+
   /// No description provided for @settingsSignOut.
   ///
   /// In en, this message translates to:

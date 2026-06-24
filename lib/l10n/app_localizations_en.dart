@@ -268,6 +268,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsHelp => 'Help and support';
 
   @override
+  String get settingsHelpMessage =>
+      'Hello, I need help with the IPUC Pisarreal Directory 🙏';
+
+  @override
   String get settingsSignOut => 'Sign out';
 
   @override

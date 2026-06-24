@@ -269,6 +269,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settingsHelp => 'Ayuda y soporte';
 
   @override
+  String get settingsHelpMessage =>
+      'Hola, necesito ayuda con el Directorio IPUC Pisarreal 🙏';
+
+  @override
   String get settingsSignOut => 'Cerrar sesión';
 
   @override
