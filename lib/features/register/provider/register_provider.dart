@@ -11,6 +11,7 @@ import '../../settings/provider/settings_provider.dart';
 
 class RegisterState {
   final String name;
+  final String description;
   final MemberCategory? category;
   final String bio;
   final List<String> offers;
@@ -25,6 +26,7 @@ class RegisterState {
 
   const RegisterState({
     this.name = '',
+    this.description = '',
     this.category,
     this.bio = '',
     this.offers = const [],
@@ -50,6 +52,7 @@ class RegisterState {
 
   RegisterState copyWith({
     String? name,
+    String? description,
     MemberCategory? category,
     String? bio,
     List<String>? offers,
@@ -64,6 +67,7 @@ class RegisterState {
   }) =>
       RegisterState(
         name: name ?? this.name,
+        description: description ?? this.description,
         category: category ?? this.category,
         bio: bio ?? this.bio,
         offers: offers ?? this.offers,
@@ -83,6 +87,7 @@ class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
   RegisterState build() => const RegisterState();
 
   void setName(String v) => state = state.copyWith(name: v);
+  void setDescription(String v) => state = state.copyWith(description: v);
   void setCategory(MemberCategory v) => state = state.copyWith(category: v);
   void setBio(String v) => state = state.copyWith(bio: v);
   void setPhone(String v) => state = state.copyWith(phone: v);
@@ -150,7 +155,7 @@ class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
       final member = Member(
         id: '',
         name: state.name.trim(),
-        description: '',
+        description: state.description.trim(),
         phone: state.fullPhone,
         category: state.category!,
         bio: state.bio.trim(),
@@ -164,12 +169,14 @@ class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
 
       state = state.copyWith(isSubmitting: false, createdMember: saved);
 
-      await ref.read(settingsProvider.notifier).enableContactsNotification();
-
-      await NotificationService.publish(
-        title: '¡Nuevo hermano en el directorio!',
-        body: '${saved.name} acaba de unirse a la comunidad. 🙏',
-      );
+      // Notificaciones: no bloquean el registro si fallan
+      try {
+        await ref.read(settingsProvider.notifier).enableContactsNotification();
+        await NotificationService.publish(
+          title: '¡Nuevo hermano en el directorio!',
+          body: '${saved.name} acaba de unirse a la comunidad. 🙏',
+        );
+      } catch (_) {}
 
       return true;
     } on FirebaseAuthException catch (e) {

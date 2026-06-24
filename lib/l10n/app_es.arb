@@ -56,6 +56,7 @@
   "profileMyProfile": "MI PERFIL",
   "profileCategory": "CATEGORÍA",
   "profileServiceLabel": "NEGOCIO O SERVICIO",
+  "profileServiceHint": "Ej: Repostería Casera Dulce Maná",
   "profileBioLabel": "DESCRIBE LO QUE OFRECES",
   "profileServicesLabel": "TUS SERVICIOS",
   "profileVisibleLabel": "Visible en el directorio",

@@ -61,6 +61,7 @@
   "profileMyProfile": "MY PROFILE",
   "profileCategory": "CATEGORY",
   "profileServiceLabel": "BUSINESS OR SERVICE",
+  "profileServiceHint": "E.g.: Sweet Manna Home Bakery",
   "profileBioLabel": "DESCRIBE WHAT YOU OFFER",
   "profileServicesLabel": "YOUR SERVICES",
   "profileVisibleLabel": "Visible in directory",

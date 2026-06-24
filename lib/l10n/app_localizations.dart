@@ -410,6 +410,12 @@ abstract class AppLocalizations {
   /// **'BUSINESS OR SERVICE'**
   String get profileServiceLabel;
 
+  /// No description provided for @profileServiceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'E.g.: Sweet Manna Home Bakery'**
+  String get profileServiceHint;
+
   /// No description provided for @profileBioLabel.
   ///
   /// In en, this message translates to:

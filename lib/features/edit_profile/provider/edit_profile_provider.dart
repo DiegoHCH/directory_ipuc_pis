@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +13,7 @@ class EditProfileState {
   final Member original;
   final String name;
   final String businessName;
+  final String bio;
   final MemberCategory category;
   final List<String> offers;
   final bool visible;
@@ -26,6 +26,7 @@ class EditProfileState {
     required this.original,
     required this.name,
     required this.businessName,
+    required this.bio,
     required this.category,
     required this.offers,
     this.visible = true,
@@ -39,6 +40,7 @@ class EditProfileState {
         original: m,
         name: m.name,
         businessName: m.description,
+        bio: m.bio,
         category: m.category == MemberCategory.all
             ? MemberCategory.emprendimiento
             : m.category,
@@ -50,6 +52,7 @@ class EditProfileState {
   bool get isDirty =>
       name != original.name ||
       businessName != original.description ||
+      bio != original.bio ||
       category != original.category ||
       !visible ||
       photoUrl != original.photoUrl ||
@@ -59,6 +62,7 @@ class EditProfileState {
   EditProfileState copyWith({
     String? name,
     String? businessName,
+    String? bio,
     MemberCategory? category,
     List<String>? offers,
     bool? visible,
@@ -71,6 +75,7 @@ class EditProfileState {
         original: original,
         name: name ?? this.name,
         businessName: businessName ?? this.businessName,
+        bio: bio ?? this.bio,
         category: category ?? this.category,
         offers: offers ?? this.offers,
         visible: visible ?? this.visible,
@@ -88,6 +93,7 @@ class EditProfileNotifier
 
   void setName(String v) => state = state.copyWith(name: v);
   void setBusinessName(String v) => state = state.copyWith(businessName: v);
+  void setBio(String v) => state = state.copyWith(bio: v);
   void setCategory(MemberCategory v) => state = state.copyWith(category: v);
   void toggleVisibility() => state = state.copyWith(visible: !state.visible);
 
@@ -123,36 +129,16 @@ class EditProfileNotifier
     }
   }
 
-  /// Elimina todos los datos del usuario y su cuenta de Auth.
+  /// Elimina el perfil de Firestore y la cuenta de Firebase Auth.
   Future<bool> delete() async {
     state = state.copyWith(isSaving: true, errorMessage: null);
     try {
       final uid = state.original.id;
-      final db = FirebaseFirestore.instance;
 
-      // 1. Borrar vistas del perfil
-      final views = await db
-          .collection('profile_views')
-          .where('memberId', isEqualTo: uid)
-          .get();
-
-      // 2. Borrar eventos de contacto
-      final contacts = await db
-          .collection('contact_events')
-          .where('toId', isEqualTo: uid)
-          .get();
-
-      // 3. Batch delete de Firestore
-      final batch = db.batch();
-      for (final doc in [...views.docs, ...contacts.docs]) {
-        batch.delete(doc.reference);
-      }
-      await batch.commit();
-
-      // 4. Borrar documento del miembro
+      // 1. Borrar documento del miembro
       await ref.read(memberRepositoryProvider).delete(uid);
 
-      // 5. Borrar cuenta de Firebase Auth
+      // 2. Borrar cuenta de Firebase Auth
       await ref.read(authRepositoryProvider).deleteAccount();
 
       return true;
@@ -181,6 +167,7 @@ class EditProfileNotifier
       final updated = state.original.copyWith(
         name: state.name.trim(),
         description: state.businessName.trim(),
+        bio: state.bio.trim(),
         category: state.category,
         offers: state.offers,
         visible: state.visible,

@@ -13,6 +13,8 @@ import '../provider/current_member_provider.dart';
 import '../provider/my_profile_provider.dart';
 import '../provider/profile_stats_provider.dart';
 import '../../../core/extensions/l10n_extension.dart';
+import '../../../core/utils/l10n_errors.dart';
+import '../../edit_profile/provider/edit_profile_provider.dart';
 
 class MyProfileScreen extends ConsumerWidget {
   const MyProfileScreen({super.key});
@@ -38,6 +40,54 @@ class MyProfileScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+void _confirmDelete(BuildContext context, WidgetRef ref, Member member) {
+  final colors = context.colors;
+  showDialog<void>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      backgroundColor: colors.surface,
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.dialog),
+      title: Text(context.l10n.deleteDialogTitle,
+          style: TextStyle(color: colors.textPrimary)),
+      content: Text(
+        context.l10n.deleteDialogBody,
+        style: TextStyle(
+            color: colors.textSecondary,
+            height: AppTypography.lineHeightNormal),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(),
+          child: Text(context.l10n.btnCancel,
+              style: TextStyle(color: colors.textSecondary)),
+        ),
+        TextButton(
+          onPressed: () async {
+            Navigator.of(ctx).pop();
+            final ok = await ref
+                .read(editProfileProvider(member).notifier)
+                .delete();
+            if (!context.mounted) return;
+            if (ok) {
+              context.go('/directory');
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(localizeError(context.l10n,
+                      ref.read(editProfileProvider(member)).errorMessage)),
+                  backgroundColor: colors.error,
+                ),
+              );
+            }
+          },
+          child: Text(context.l10n.btnDelete,
+              style: TextStyle(color: colors.error)),
+        ),
+      ],
+    ),
+  );
 }
 
 class _ProfileContent extends ConsumerWidget {
@@ -151,28 +201,45 @@ class _ProfileContent extends ConsumerWidget {
           duration: const Duration(milliseconds: 400),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(
-                AppSpacing.x6, AppSpacing.x3, AppSpacing.x6, AppSpacing.x6),
-            child: SizedBox(
-              width: double.infinity,
-              height: AppSpacing.buttonHeight,
-              child: ElevatedButton.icon(
-                onPressed: () =>
-                    context.push('/edit-profile', extra: member),
-                icon: const Icon(Icons.edit_outlined, size: 18),
-                label: Text(
-                  context.l10n.btnEditProfile,
-                  style: const TextStyle(
-                      fontSize: AppTypography.sizeLg,
-                      fontWeight: AppTypography.semibold),
+                AppSpacing.x6, AppSpacing.x3, AppSpacing.x6, AppSpacing.x4),
+            child: Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  height: AppSpacing.buttonHeight,
+                  child: ElevatedButton.icon(
+                    onPressed: () =>
+                        context.push('/edit-profile', extra: member),
+                    icon: const Icon(Icons.edit_outlined, size: 18),
+                    label: Text(
+                      context.l10n.btnEditProfile,
+                      style: const TextStyle(
+                          fontSize: AppTypography.sizeLg,
+                          fontWeight: AppTypography.semibold),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: colors.primary,
+                      foregroundColor: colors.textOnPrimary,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: AppRadius.button),
+                      elevation: 0,
+                    ),
+                  ),
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: colors.primary,
-                  foregroundColor: colors.textOnPrimary,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: AppRadius.button),
-                  elevation: 0,
+                const SizedBox(height: AppSpacing.x3),
+                GestureDetector(
+                  onTap: () => _confirmDelete(context, ref, member),
+                  child: Text(
+                    context.l10n.btnDeleteProfile,
+                    style: TextStyle(
+                      color: colors.error,
+                      fontSize: AppTypography.sizeBase,
+                      fontWeight: AppTypography.medium,
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(height: AppSpacing.x3),
+              ],
             ),
           ),
         ),

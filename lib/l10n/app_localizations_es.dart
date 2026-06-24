@@ -169,6 +169,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileServiceLabel => 'NEGOCIO O SERVICIO';
 
   @override
+  String get profileServiceHint => 'Ej: Repostería Casera Dulce Maná';
+
+  @override
   String get profileBioLabel => 'DESCRIBE LO QUE OFRECES';
 
   @override

@@ -22,6 +22,7 @@ class RegisterScreen extends ConsumerStatefulWidget {
 
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _nameController = TextEditingController();
+  final _descriptionController = TextEditingController();
   final _bioController = TextEditingController();
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
@@ -30,6 +31,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   @override
   void dispose() {
     _nameController.dispose();
+    _descriptionController.dispose();
     _bioController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
@@ -99,6 +101,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       controller: _nameController,
                       hintText: context.l10n.regNameHint,
                       onChanged: notifier.setName,
+                    ),
+                    const SizedBox(height: AppSpacing.x5),
+                    _FieldLabel(context.l10n.profileServiceLabel),
+                    const SizedBox(height: AppSpacing.x2),
+                    _InputField(
+                      controller: _descriptionController,
+                      hintText: context.l10n.profileServiceHint,
+                      onChanged: notifier.setDescription,
                     ),
                     const SizedBox(height: AppSpacing.x5),
                     _FieldLabel(context.l10n.regCategoryQuestion),

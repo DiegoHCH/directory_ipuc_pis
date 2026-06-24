@@ -168,6 +168,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get profileServiceLabel => 'BUSINESS OR SERVICE';
 
   @override
+  String get profileServiceHint => 'E.g.: Sweet Manna Home Bakery';
+
+  @override
   String get profileBioLabel => 'DESCRIBE WHAT YOU OFFER';
 
   @override

@@ -25,6 +25,7 @@ class EditProfileScreen extends ConsumerStatefulWidget {
 class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   late final TextEditingController _nameController;
   late final TextEditingController _businessController;
+  late final TextEditingController _bioController;
 
   @override
   void initState() {
@@ -32,61 +33,15 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     _nameController = TextEditingController(text: widget.member.name);
     _businessController =
         TextEditingController(text: widget.member.description);
+    _bioController = TextEditingController(text: widget.member.bio);
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     _businessController.dispose();
+    _bioController.dispose();
     super.dispose();
-  }
-
-  void _onDelete() {
-    final colors = context.colors;
-    showDialog<void>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: colors.surface,
-        shape: RoundedRectangleBorder(borderRadius: AppRadius.dialog),
-        title: Text(context.l10n.deleteDialogTitle,
-            style: TextStyle(color: colors.textPrimary)),
-        content: Text(
-          context.l10n.deleteDialogBody,
-          style: TextStyle(
-              color: colors.textSecondary,
-              height: AppTypography.lineHeightNormal),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(context.l10n.btnCancel,
-                style: TextStyle(color: colors.textSecondary)),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(ctx).pop();
-              final ok = await ref
-                  .read(editProfileProvider(widget.member).notifier)
-                  .delete();
-              if (!mounted) return;
-              if (ok) {
-                context.go('/directory');
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(localizeError(context.l10n,
-                        ref.read(editProfileProvider(widget.member)).errorMessage)),
-                    backgroundColor: context.colors.error,
-                  ),
-                );
-              }
-            },
-            child: Text(context.l10n.btnDelete,
-                style: TextStyle(color: colors.error)),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -210,6 +165,14 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       onSelected: notifier.setCategory,
                     ),
                     const SizedBox(height: AppSpacing.x4),
+                    _FieldLabel(context.l10n.profileBioLabel),
+                    const SizedBox(height: AppSpacing.x2),
+                    _InputField(
+                      controller: _bioController,
+                      onChanged: notifier.setBio,
+                      maxLines: 4,
+                    ),
+                    const SizedBox(height: AppSpacing.x4),
                     _FieldLabel(context.l10n.profileServicesLabel),
                     const SizedBox(height: 10),
                     OffersInput(
@@ -225,20 +188,6 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     _VisibilityToggle(
                       visible: state.visible,
                       onToggle: notifier.toggleVisibility,
-                    ),
-                    const SizedBox(height: AppSpacing.x7),
-                    Center(
-                      child: GestureDetector(
-                        onTap: _onDelete,
-                        child: Text(
-                          context.l10n.btnDeleteProfile,
-                          style: TextStyle(
-                            color: colors.error,
-                            fontSize: AppTypography.sizeBase,
-                            fontWeight: AppTypography.medium,
-                          ),
-                        ),
-                      ),
                     ),
                     const SizedBox(height: AppSpacing.x8),
                   ],
@@ -374,8 +323,13 @@ class _FieldLabel extends StatelessWidget {
 class _InputField extends StatelessWidget {
   final TextEditingController controller;
   final ValueChanged<String> onChanged;
+  final int maxLines;
 
-  const _InputField({required this.controller, required this.onChanged});
+  const _InputField({
+    required this.controller,
+    required this.onChanged,
+    this.maxLines = 1,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -388,6 +342,7 @@ class _InputField extends StatelessWidget {
       child: TextField(
         controller: controller,
         onChanged: onChanged,
+        maxLines: maxLines,
         style: AppTypography.titleLg.copyWith(color: colors.textPrimary),
         decoration: const InputDecoration(
           border: InputBorder.none,
