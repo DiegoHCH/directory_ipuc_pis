@@ -4,6 +4,7 @@ import '../../../core/services/notification_service.dart';
 import '../../auth/repository/auth_repository.dart';
 import '../../directory/model/member.dart';
 import '../../directory/repository/member_repository.dart';
+import '../../settings/provider/settings_provider.dart';
 
 class RegisterState {
   final String name;
@@ -129,6 +130,8 @@ class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
           .add(member, uid: credential.user!.uid);
 
       state = state.copyWith(isSubmitting: false, createdMember: saved);
+
+      await ref.read(settingsProvider.notifier).enableContactsNotification();
 
       await NotificationService.publish(
         title: '¡Nuevo hermano en el directorio!',

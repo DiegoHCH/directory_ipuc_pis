@@ -24,6 +24,7 @@ dependencies:
   permission_handler: ^11.3.1
   image_picker: ^1.1.2
   http: ^1.2.2
+  lottie: ^3.1.0
 
 dev_dependencies:
   flutter_test:
@@ -45,13 +46,22 @@ flutter_launcher_icons:
     generate: false
 
 flutter_native_splash:
-  color: "#FFFFFF"
-  image: assets/splash_logo.png
+  color: "#F0F3FA"
+  color_dark: "#091728"
+  image: assets/app_icon.png
+  image_dark: assets/app_icon.png
+  branding: assets/splash_branding_light.png
+  branding_dark: assets/splash_branding_dark.png
+  branding_bottom_padding: 24
   android: true
   ios: true
   android_12:
-    color: "#FFFFFF"
-    image: assets/splash_logo.png
+    color: "#F0F3FA"
+    color_dark: "#091728"
+    image: assets/app_icon.png
+    image_dark: assets/app_icon.png
+    branding: assets/splash_branding_light.png
+    branding_dark: assets/splash_branding_dark.png
 
 flutter:
   uses-material-design: true

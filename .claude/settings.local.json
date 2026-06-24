@@ -37,7 +37,14 @@
       "Bash(npm install *)",
       "Bash(/Users/diego.hoyos/development/flutter/bin/flutter pub *)",
       "Bash(sed -i '' 's|<string>Directory Ipuc</string>|<string>Directorio Pisarreal</string>|g' /Users/diego.hoyos/personal/directory_ipuc/ios/Runner/Info.plist)",
-      "Bash(sed -i '' 's|<string>directory_ipuc</string>|<string>Directorio Pisarreal</string>|g' /Users/diego.hoyos/personal/directory_ipuc/ios/Runner/Info.plist)"
+      "Bash(sed -i '' 's|<string>directory_ipuc</string>|<string>Directorio Pisarreal</string>|g' /Users/diego.hoyos/personal/directory_ipuc/ios/Runner/Info.plist)",
+      "Bash(magick --version)",
+      "Bash(magick *)",
+      "Bash(dart run *)",
+      "Bash(/Users/diego.hoyos/fvm/versions/stable/bin/flutter --version)",
+      "Bash(git *)",
+      "Bash(/Users/diego.hoyos/fvm/versions/3.38.1/bin/flutter pub *)",
+      "Bash(fc-list)"
     ]
   }
 }

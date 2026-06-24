@@ -8,10 +8,16 @@ import '../../features/edit_profile/view/edit_profile_screen.dart';
 import '../../features/my_profile/view/my_profile_screen.dart';
 import '../../features/register/view/register_screen.dart';
 import '../../features/settings/view/settings_screen.dart';
+import '../../features/splash/splash_screen.dart';
+
 final routerProvider = Provider<GoRouter>(
   (_) => GoRouter(
-    initialLocation: '/directory',
+    initialLocation: '/splash',
     routes: [
+      GoRoute(
+        path: '/splash',
+        builder: (ctx, _) => const SplashScreen(),
+      ),
       GoRoute(
         path: '/directory',
         builder: (ctx, _) => const DirectoryScreen(),

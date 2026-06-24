@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../repository/auth_repository.dart';
+import '../../settings/provider/settings_provider.dart';
 
 class LoginState {
   final String email;
@@ -48,6 +49,7 @@ class LoginNotifier extends AutoDisposeNotifier<LoginState> {
             email: state.email.trim(),
             password: state.password,
           );
+      await ref.read(settingsProvider.notifier).enableContactsNotification();
       state = state.copyWith(isSubmitting: false);
       return true;
     } on FirebaseAuthException catch (e) {

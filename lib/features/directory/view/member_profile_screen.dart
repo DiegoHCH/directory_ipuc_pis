@@ -9,6 +9,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/member_avatar.dart';
 import '../model/member.dart';
+import '../../auth/repository/auth_repository.dart';
 import '../../my_profile/provider/current_member_provider.dart';
 import '../../my_profile/provider/my_profile_provider.dart';
 
@@ -293,7 +294,36 @@ class _OffersWrap extends StatelessWidget {
   }
 }
 
-class _PhoneCard extends StatelessWidget {
+void _requireAuth(BuildContext context, WidgetRef ref, VoidCallback action) {
+  final user = ref.read(authRepositoryProvider).currentUser;
+  if (user != null) {
+    action();
+    return;
+  }
+  showDialog<void>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Text('Inicia sesión'),
+      content: const Text(
+          'Debes iniciar sesión para ver la información de contacto.'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(),
+          child: const Text('Cancelar'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(ctx).pop();
+            context.push('/login');
+          },
+          child: const Text('Iniciar sesión'),
+        ),
+      ],
+    ),
+  );
+}
+
+class _PhoneCard extends ConsumerWidget {
   final String phone;
 
   const _PhoneCard({required this.phone});
@@ -313,10 +343,10 @@ class _PhoneCard extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
     return GestureDetector(
-      onTap: () => _call(context),
+      onTap: () => _requireAuth(context, ref, () => _call(context)),
       child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
@@ -399,7 +429,7 @@ class _WhatsAppButton extends ConsumerWidget {
       width: double.infinity,
       height: 52,
       child: ElevatedButton.icon(
-        onPressed: () => _openWhatsApp(context, ref),
+        onPressed: () => _requireAuth(context, ref, () => _openWhatsApp(context, ref)),
         icon: const FaIcon(FontAwesomeIcons.whatsapp, size: 20),
         label: const Text(
           'Contactar por WhatsApp',

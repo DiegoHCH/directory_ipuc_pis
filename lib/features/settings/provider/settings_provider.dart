@@ -68,6 +68,11 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
     await _prefs.setBool(_keyContacts, !current);
     state = AsyncData(state.requireValue.copyWith(notifyContacts: !current));
   }
+
+  Future<void> enableContactsNotification() async {
+    await _prefs.setBool(_keyContacts, true);
+    state = AsyncData(state.requireValue.copyWith(notifyContacts: true));
+  }
 }
 
 final settingsProvider =

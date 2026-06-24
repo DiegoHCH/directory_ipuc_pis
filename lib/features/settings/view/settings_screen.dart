@@ -128,7 +128,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                       duration: const Duration(milliseconds: 500),
                       child: Center(
                       child: Text(
-                        'Directorio Hermanos · v1.0\nIglesia Pentecostal Unida de Colombia',
+                        'Directorio Hermanos · v1.0\nIglesia Pentecostal Unida de Colombia\nPisarreal - Los Patios',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: colors.textSecondary,
@@ -315,7 +315,7 @@ class _ThemeRow extends StatelessWidget {
 
 // ── Notificaciones ────────────────────────────────────────────────────────────
 
-class _NotificationsCard extends StatelessWidget {
+class _NotificationsCard extends ConsumerWidget {
   final SettingsState settings;
   final SettingsNotifier notifier;
 
@@ -323,7 +323,9 @@ class _NotificationsCard extends StatelessWidget {
       {required this.settings, required this.notifier});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoggedIn = ref.watch(isLoggedInProvider);
+
     return Container(
       decoration: BoxDecoration(
         color: context.colors.surface,
@@ -339,8 +341,9 @@ class _NotificationsCard extends StatelessWidget {
           ),
           _ToggleRow(
             label: 'Contactos a mi perfil',
-            value: settings.notifyContacts,
-            onToggle: () => notifier.toggleNotifyContacts(),
+            value: isLoggedIn ? settings.notifyContacts : false,
+            enabled: isLoggedIn,
+            onToggle: isLoggedIn ? () => notifier.toggleNotifyContacts() : null,
             showDivider: false,
           ),
         ],
@@ -352,14 +355,16 @@ class _NotificationsCard extends StatelessWidget {
 class _ToggleRow extends StatelessWidget {
   final String label;
   final bool value;
-  final VoidCallback onToggle;
+  final VoidCallback? onToggle;
   final bool showDivider;
+  final bool enabled;
 
   const _ToggleRow({
     required this.label,
     required this.value,
     required this.onToggle,
     required this.showDivider,
+    this.enabled = true,
   });
 
   @override
@@ -372,15 +377,22 @@ class _ToggleRow extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: Text(label,
-                    style: TextStyle(
-                        color: colors.textPrimary,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400)),
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    color: enabled
+                        ? colors.textPrimary
+                        : colors.textSecondary,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
               ),
               Switch(
                 value: value,
-                onChanged: (_) => onToggle(),
+                onChanged: enabled && onToggle != null
+                    ? (_) => onToggle!()
+                    : null,
                 activeThumbColor: Colors.white,
                 activeTrackColor: kAccentBlue,
               ),
