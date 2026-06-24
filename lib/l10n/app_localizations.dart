@@ -719,7 +719,7 @@ abstract class AppLocalizations {
   /// No description provided for @successProfileCreated.
   ///
   /// In en, this message translates to:
-  /// **'Profile created! Sending invitation via WhatsApp...'**
+  /// **'Profile created! Welcome to the directory.'**
   String get successProfileCreated;
 
   /// No description provided for @splashTagline.

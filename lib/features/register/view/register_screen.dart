@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -161,7 +160,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       isValid: state.isValid,
                       isSubmitting: state.isSubmitting,
                       onSubmit: () async {
-                        final phone = state.fullPhone;
                         final ok = await notifier.submit();
                         if (!context.mounted) return;
                         if (ok) {
@@ -172,15 +170,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               backgroundColor: context.colors.success,
                             ),
                           );
-                          final digits = phone.replaceAll(RegExp(r'[^\d]'), '');
-                          final message = Uri.encodeComponent(
-                            '¡Hola! Te registré en el Directorio de hermanos IPUC. '
-                            'Ya puedes iniciar sesión con tu correo y completar tu perfil. 🙏',
-                          );
-                          final uri =
-                              Uri.parse('https://wa.me/$digits?text=$message');
-                          await launchUrl(uri,
-                              mode: LaunchMode.externalApplication);
                         }
                       },
                     ),
@@ -236,37 +225,62 @@ class _TopBar extends StatelessWidget {
   }
 }
 
-class _PhotoUploader extends StatelessWidget {
+class _PhotoUploader extends ConsumerWidget {
   const _PhotoUploader();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final photoUrl = ref.watch(registerProvider).photoUrl;
+    final isUploading = ref.watch(registerProvider).isUploadingPhoto;
+
     return Center(
-      child: Column(
-        children: [
-          Container(
-            width: 76,
-            height: 76,
-            decoration: BoxDecoration(
-              color: colors.surface,
-              shape: BoxShape.circle,
-              border:
-                  Border.all(color: colors.primary.withValues(alpha: 0.4), width: 1.5),
+      child: GestureDetector(
+        onTap: isUploading
+            ? null
+            : () => ref.read(registerProvider.notifier).pickPhoto(),
+        child: Column(
+          children: [
+            Container(
+              width: 76,
+              height: 76,
+              decoration: BoxDecoration(
+                color: colors.surface,
+                shape: BoxShape.circle,
+                border: Border.all(
+                    color: colors.primary.withValues(alpha: 0.4), width: 1.5),
+                image: photoUrl != null
+                    ? DecorationImage(
+                        image: NetworkImage(photoUrl),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+              ),
+              child: isUploading
+                  ? Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2, color: colors.primary),
+                    )
+                  : photoUrl == null
+                      ? Icon(Icons.camera_alt_outlined,
+                          color: colors.primary, size: 28)
+                      : null,
             ),
-            child: Icon(Icons.camera_alt_outlined, color: colors.primary, size: 28),
-          ),
-          const SizedBox(height: AppSpacing.x2),
-          Text(
-            context.l10n.btnUploadPhoto,
-            style: TextStyle(
-              color: colors.primary,
-              fontSize: AppTypography.sizeXs,
-              fontWeight: AppTypography.bold,
-              letterSpacing: AppTypography.trackingWider,
+            const SizedBox(height: AppSpacing.x2),
+            Text(
+              photoUrl != null
+                  ? context.l10n.btnChangePhoto
+                  : context.l10n.btnUploadPhoto,
+              style: TextStyle(
+                color: colors.primary,
+                fontSize: AppTypography.sizeXs,
+                fontWeight: AppTypography.bold,
+                letterSpacing: AppTypography.trackingWider,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

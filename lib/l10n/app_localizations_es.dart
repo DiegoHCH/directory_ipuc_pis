@@ -329,7 +329,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get successProfileCreated =>
-      '¡Perfil creado! Enviando invitación por WhatsApp...';
+      '¡Perfil creado! Bienvenido al directorio.';
 
   @override
   String get splashTagline => 'Conectando nuestra comunidad';

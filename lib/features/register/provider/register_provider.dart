@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../../core/services/cloudinary_service.dart';
 import '../../../core/services/notification_service.dart';
 import '../../auth/repository/auth_repository.dart';
 import '../../directory/model/member.dart';
@@ -14,6 +17,8 @@ class RegisterState {
   final String phone;
   final String email;
   final String password;
+  final String? photoUrl;
+  final bool isUploadingPhoto;
   final bool isSubmitting;
   final String? errorMessage;
   final Member? createdMember;
@@ -26,6 +31,8 @@ class RegisterState {
     this.phone = '',
     this.email = '',
     this.password = '',
+    this.photoUrl,
+    this.isUploadingPhoto = false,
     this.isSubmitting = false,
     this.errorMessage,
     this.createdMember,
@@ -34,9 +41,10 @@ class RegisterState {
   bool get isValid =>
       name.trim().isNotEmpty &&
       category != null &&
-      phone.trim().isNotEmpty &&
+      phone.trim().length == 10 &&
       email.trim().isNotEmpty &&
-      password.length >= 6;
+      password.length >= 6 &&
+      !isUploadingPhoto;
 
   String get fullPhone => '+57${phone.trim()}';
 
@@ -48,6 +56,8 @@ class RegisterState {
     String? phone,
     String? email,
     String? password,
+    String? photoUrl,
+    bool? isUploadingPhoto,
     bool? isSubmitting,
     String? errorMessage,
     Member? createdMember,
@@ -60,6 +70,8 @@ class RegisterState {
         phone: phone ?? this.phone,
         email: email ?? this.email,
         password: password ?? this.password,
+        photoUrl: photoUrl ?? this.photoUrl,
+        isUploadingPhoto: isUploadingPhoto ?? this.isUploadingPhoto,
         isSubmitting: isSubmitting ?? this.isSubmitting,
         errorMessage: errorMessage,
         createdMember: createdMember ?? this.createdMember,
@@ -76,6 +88,27 @@ class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
   void setPhone(String v) => state = state.copyWith(phone: v);
   void setEmail(String v) => state = state.copyWith(email: v);
   void setPassword(String v) => state = state.copyWith(password: v);
+
+  Future<void> pickPhoto() async {
+    final picked = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 800,
+      maxHeight: 800,
+      imageQuality: 85,
+    );
+    if (picked == null) return;
+
+    state = state.copyWith(isUploadingPhoto: true, errorMessage: null);
+    try {
+      final url = await uploadToCloudinary(File(picked.path));
+      state = state.copyWith(photoUrl: url, isUploadingPhoto: false);
+    } catch (_) {
+      state = state.copyWith(
+        isUploadingPhoto: false,
+        errorMessage: 'errUploadPhoto',
+      );
+    }
+  }
 
   void addOffer(String v) {
     final t = v.trim();
@@ -122,6 +155,7 @@ class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
         category: state.category!,
         bio: state.bio.trim(),
         offers: state.offers,
+        photoUrl: state.photoUrl,
       );
 
       final saved = await ref
