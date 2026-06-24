@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -121,13 +123,47 @@ class EditProfileNotifier
     }
   }
 
-  /// Elimina el perfil de Firestore y cierra sesión. Retorna true si fue exitoso.
+  /// Elimina todos los datos del usuario y su cuenta de Auth.
   Future<bool> delete() async {
     state = state.copyWith(isSaving: true, errorMessage: null);
     try {
-      await ref.read(memberRepositoryProvider).delete(state.original.id);
-      await ref.read(authRepositoryProvider).signOut();
+      final uid = state.original.id;
+      final db = FirebaseFirestore.instance;
+
+      // 1. Borrar vistas del perfil
+      final views = await db
+          .collection('profile_views')
+          .where('memberId', isEqualTo: uid)
+          .get();
+
+      // 2. Borrar eventos de contacto
+      final contacts = await db
+          .collection('contact_events')
+          .where('toId', isEqualTo: uid)
+          .get();
+
+      // 3. Batch delete de Firestore
+      final batch = db.batch();
+      for (final doc in [...views.docs, ...contacts.docs]) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+
+      // 4. Borrar documento del miembro
+      await ref.read(memberRepositoryProvider).delete(uid);
+
+      // 5. Borrar cuenta de Firebase Auth
+      await ref.read(authRepositoryProvider).deleteAccount();
+
       return true;
+    } on FirebaseAuthException catch (e) {
+      state = state.copyWith(
+        isSaving: false,
+        errorMessage: e.code == 'requires-recent-login'
+            ? 'errReauthRequired'
+            : 'errDeleteProfile',
+      );
+      return false;
     } catch (_) {
       state = state.copyWith(
         isSaving: false,

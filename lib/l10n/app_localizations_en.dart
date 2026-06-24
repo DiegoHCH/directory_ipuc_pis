@@ -345,6 +345,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errDeleteProfile => 'Could not delete profile. Try again.';
 
   @override
+  String get errReauthRequired =>
+      'For security, sign out, sign back in, and try again.';
+
+  @override
   String get errSave => 'Could not save.';
 
   @override

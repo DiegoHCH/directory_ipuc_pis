@@ -18,6 +18,7 @@ String localizeError(AppLocalizations l10n, String? key) {
     'errUserNotFound'   => l10n.errUserNotFound,
     'errNoConnection'   => l10n.errNoConnection,
     'errPhoneTaken'     => l10n.errPhoneTaken,
+    'errReauthRequired' => l10n.errReauthRequired,
     _                   => l10n.errGeneric,
   };
 }

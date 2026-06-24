@@ -34,6 +34,8 @@ class AuthRepository {
         _                                 => 'errGeneric',
       };
 
+  Future<void> deleteAccount() => _auth.currentUser!.delete();
+
   Future<void> signOut() => _auth.signOut();
 }
 

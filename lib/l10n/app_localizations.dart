@@ -752,6 +752,12 @@ abstract class AppLocalizations {
   /// **'Could not delete profile. Try again.'**
   String get errDeleteProfile;
 
+  /// No description provided for @errReauthRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'For security, sign out, sign back in, and try again.'**
+  String get errReauthRequired;
+
   /// No description provided for @errSave.
   ///
   /// In en, this message translates to:

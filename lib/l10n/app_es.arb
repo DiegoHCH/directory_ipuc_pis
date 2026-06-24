@@ -122,6 +122,7 @@
   "errLoadDirectory": "No se pudo cargar el directorio",
   "errCreateProfile": "No se pudo crear el perfil. Intenta de nuevo.",
   "errDeleteProfile": "No se pudo eliminar el perfil. Intenta de nuevo.",
+  "errReauthRequired": "Por seguridad, cierra sesión, vuelve a iniciar sesión e intenta de nuevo.",
   "errSave": "No se pudo guardar.",
   "errSignIn": "No se pudo iniciar sesión. Intenta de nuevo.",
   "errUploadPhoto": "No se pudo subir la foto. Intenta de nuevo.",

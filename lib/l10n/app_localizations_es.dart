@@ -349,6 +349,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se pudo eliminar el perfil. Intenta de nuevo.';
 
   @override
+  String get errReauthRequired =>
+      'Por seguridad, cierra sesión, vuelve a iniciar sesión e intenta de nuevo.';
+
+  @override
   String get errSave => 'No se pudo guardar.';
 
   @override

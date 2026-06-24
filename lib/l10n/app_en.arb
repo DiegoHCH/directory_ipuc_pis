@@ -127,6 +127,7 @@
   "errLoadDirectory": "Could not load the directory",
   "errCreateProfile": "Could not create profile. Try again.",
   "errDeleteProfile": "Could not delete profile. Try again.",
+  "errReauthRequired": "For security, sign out, sign back in, and try again.",
   "errSave": "Could not save.",
   "errSignIn": "Could not sign in. Try again.",
   "errUploadPhoto": "Could not upload photo. Try again.",
