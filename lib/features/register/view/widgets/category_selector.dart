@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../directory/model/member.dart';
+import '../../../../core/extensions/l10n_extension.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_typography.dart';
@@ -20,6 +21,14 @@ class CategorySelector extends StatelessWidget {
     MemberCategory.arte,
     MemberCategory.servicio,
   ];
+
+  String _catLabel(BuildContext context, MemberCategory cat) => switch (cat) {
+        MemberCategory.all           => context.l10n.catAll,
+        MemberCategory.empresa       => context.l10n.catEmpresa,
+        MemberCategory.emprendimiento => context.l10n.catEmprendimiento,
+        MemberCategory.arte          => context.l10n.catArte,
+        MemberCategory.servicio      => context.l10n.catServicio,
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +68,7 @@ class CategorySelector extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  cat.label,
+                  _catLabel(context, cat),
                   style: TextStyle(
                     color: isSelected ? Colors.white : colors.textSecondary,
                     fontWeight: isSelected

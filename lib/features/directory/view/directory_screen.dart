@@ -15,6 +15,7 @@ import '../../../core/widgets/notification_permission_dialog.dart';
 import '../../../features/settings/provider/settings_provider.dart';
 import 'widgets/category_filter_bar.dart';
 import 'widgets/member_card.dart';
+import '../../../core/extensions/l10n_extension.dart';
 
 class DirectoryScreen extends ConsumerStatefulWidget {
   const DirectoryScreen({super.key});
@@ -149,7 +150,7 @@ class _Header extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'IGLESIA PENTECOSTAL UNIDA DE COLOMBIA',
+                  context.l10n.dirChurch,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: colors.textSecondary,
@@ -173,7 +174,7 @@ class _Header extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'Directorio',
+            context.l10n.dirTitle,
             style: TextStyle(
               color: colors.textPrimary,
               fontSize: 30,
@@ -182,7 +183,7 @@ class _Header extends StatelessWidget {
             ),
           ),
           Text(
-            'Hermanos.',
+            context.l10n.dirSubtitle,
             style: TextStyle(
               color: colors.primary,
               fontSize: 30,
@@ -191,7 +192,7 @@ class _Header extends StatelessWidget {
             ),
           ),
           Text(
-            'IPUC Pisarreal',
+            context.l10n.dirChurchShort,
             style: TextStyle(
               color: colors.textPrimary,
               fontSize: AppTypography.sizeXl,
@@ -202,8 +203,8 @@ class _Header extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             totalMembers == 0
-                ? '«Un Señor, una fe, un bautismo.»'
-                : '«Un Señor, una fe, un bautismo.» — $totalMembers hermanos ofreciendo su trabajo.',
+                ? context.l10n.dirQuoteEmpty
+                : context.l10n.dirQuoteWithCount(totalMembers),
             style: TextStyle(
                 color: colors.textSecondary,
                 fontSize: AppTypography.sizeMd),
@@ -235,7 +236,7 @@ class _SearchBar extends StatelessWidget {
         style: TextStyle(
             color: colors.textPrimary, fontSize: AppTypography.sizeBase),
         decoration: InputDecoration(
-          hintText: 'Busca por nombre o servicio...',
+          hintText: context.l10n.dirSearch,
           hintStyle: TextStyle(
               color: colors.textSecondary, fontSize: AppTypography.sizeBase),
           prefixIcon:
@@ -427,7 +428,7 @@ class _ErrorView extends StatelessWidget {
                 size: 48, color: colors.textSecondary),
             const SizedBox(height: AppSpacing.x4),
             Text(
-              'No se pudo cargar el directorio',
+              context.l10n.dirErrorLoad,
               style: AppTypography.titleLg.copyWith(
                 color: colors.textPrimary,
                 fontWeight: AppTypography.semibold,
@@ -477,7 +478,7 @@ class _EmptyView extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.x5),
               Text(
-                'Sin resultados',
+                context.l10n.dirNoResults,
                 style: TextStyle(
                   color: colors.textPrimary,
                   fontSize: 18,
@@ -486,7 +487,7 @@ class _EmptyView extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.x2),
               Text(
-                'Intenta con otro nombre o cambia la categoría.',
+                context.l10n.dirNoResultsSubtitle,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     color: colors.textSecondary,
@@ -517,7 +518,7 @@ class _EmptyView extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.x6),
             Text(
-              'Sé el primero',
+              context.l10n.dirBeFirst,
               style: TextStyle(
                 color: colors.primary,
                 fontSize: 22,
@@ -527,7 +528,7 @@ class _EmptyView extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.x2),
             Text(
-              'El directorio está vacío. Únete y comparte tus servicios con la comunidad.',
+              context.l10n.dirEmptySubtitle,
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: colors.textSecondary,
@@ -538,9 +539,9 @@ class _EmptyView extends StatelessWidget {
             ElevatedButton.icon(
               onPressed: () => context.push('/register'),
               icon: const Icon(Icons.add, size: 18),
-              label: const Text(
-                'Crear mi perfil',
-                style: TextStyle(
+              label: Text(
+                context.l10n.btnCreateProfile,
+                style: const TextStyle(
                     fontSize: AppTypography.sizeLg,
                     fontWeight: AppTypography.semibold),
               ),

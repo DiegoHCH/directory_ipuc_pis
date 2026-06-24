@@ -102,8 +102,7 @@ class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
       if (phoneTaken) {
         state = state.copyWith(
           isSubmitting: false,
-          errorMessage:
-              'Ese número ya está registrado. Si es tuyo, inicia sesión.',
+          errorMessage: 'errPhoneTaken',
         );
         return false;
       }
@@ -148,7 +147,7 @@ class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
     } catch (e, _) {
       state = state.copyWith(
         isSubmitting: false,
-        errorMessage: 'No se pudo crear el perfil. Intenta de nuevo.',
+        errorMessage: 'errCreateProfile',
       );
       return false;
     }

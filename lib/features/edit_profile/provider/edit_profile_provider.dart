@@ -116,7 +116,7 @@ class EditProfileNotifier
     } catch (_) {
       state = state.copyWith(
         isUploadingPhoto: false,
-        errorMessage: 'No se pudo subir la foto. Intenta de nuevo.',
+        errorMessage: 'errUploadPhoto',
       );
     }
   }
@@ -131,7 +131,7 @@ class EditProfileNotifier
     } catch (_) {
       state = state.copyWith(
         isSaving: false,
-        errorMessage: 'No se pudo eliminar el perfil. Intenta de nuevo.',
+        errorMessage: 'errDeleteProfile',
       );
       return false;
     }
@@ -158,7 +158,7 @@ class EditProfileNotifier
     } catch (e, _) {
       state = state.copyWith(
         isSaving: false,
-        errorMessage: 'No se pudieron guardar los cambios. Intenta de nuevo.',
+        errorMessage: 'errSaveChanges',
       );
       return false;
     }

@@ -12,6 +12,7 @@ import '../../directory/model/member.dart';
 import '../provider/current_member_provider.dart';
 import '../provider/my_profile_provider.dart';
 import '../provider/profile_stats_provider.dart';
+import '../../../core/extensions/l10n_extension.dart';
 
 class MyProfileScreen extends ConsumerWidget {
   const MyProfileScreen({super.key});
@@ -28,7 +29,7 @@ class MyProfileScreen extends ConsumerWidget {
               child: CircularProgressIndicator(color: colors.primary)),
           error: (e, _) => _MessageView(
             icon: Icons.error_outline,
-            message: 'No se pudo cargar tu perfil.',
+            message: context.l10n.errLoadProfile,
           ),
           data: (member) => member == null
               ? const _NotLoggedIn()
@@ -89,7 +90,7 @@ class _ProfileContent extends ConsumerWidget {
                     children: [
                       Center(
                         child: Text(
-                          'MI PERFIL',
+                          context.l10n.profileMyProfile,
                           style: TextStyle(
                             color: colors.primary,
                             fontSize: AppTypography.sizeXs,
@@ -158,9 +159,9 @@ class _ProfileContent extends ConsumerWidget {
                 onPressed: () =>
                     context.push('/edit-profile', extra: member),
                 icon: const Icon(Icons.edit_outlined, size: 18),
-                label: const Text(
-                  'Editar mi perfil',
-                  style: TextStyle(
+                label: Text(
+                  context.l10n.btnEditProfile,
+                  style: const TextStyle(
                       fontSize: AppTypography.sizeLg,
                       fontWeight: AppTypography.semibold),
                 ),
@@ -195,7 +196,7 @@ class _NotLoggedIn extends StatelessWidget {
             Icon(Icons.person_outline, size: 48, color: colors.textSecondary),
             const SizedBox(height: AppSpacing.x4),
             Text(
-              'Inicia sesión para ver tu perfil',
+              context.l10n.authSignInToView,
               style: AppTypography.titleLg.copyWith(
                 color: colors.textPrimary,
                 fontWeight: AppTypography.semibold,
@@ -215,8 +216,8 @@ class _NotLoggedIn extends StatelessWidget {
                       borderRadius: AppRadius.button),
                   elevation: 0,
                 ),
-                child: const Text('Iniciar sesión',
-                    style: TextStyle(
+                child: Text(context.l10n.btnSignIn,
+                    style: const TextStyle(
                         fontSize: AppTypography.sizeLg,
                         fontWeight: AppTypography.semibold)),
               ),
@@ -358,7 +359,7 @@ class _StatsRow extends StatelessWidget {
               value: contactsEnabled
                   ? (loading ?? '${stats.weeklyViews}')
                   : '—',
-              label: 'Vistas esta\nsemana',
+              label: context.l10n.profileViews,
               muted: !contactsEnabled,
             ),
             _Divider(),
@@ -366,13 +367,13 @@ class _StatsRow extends StatelessWidget {
               value: contactsEnabled
                   ? (loading ?? '${stats.whatsappContacts}')
                   : '—',
-              label: 'Contactos por\nWhatsApp',
+              label: context.l10n.profileContacts,
               muted: !contactsEnabled,
             ),
             _Divider(),
             _StatCell(
               value: '${stats.activeServices}',
-              label: 'Servicios\nactivos',
+              label: context.l10n.profileActiveServices,
             ),
           ],
         ),
@@ -451,7 +452,7 @@ class _OffersSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'LO QUE OFRECES',
+              context.l10n.profileWhatYouOffer,
               style: TextStyle(
                 color: colors.textSecondary,
                 fontSize: AppTypography.sizeXs,
@@ -462,7 +463,7 @@ class _OffersSection extends StatelessWidget {
             GestureDetector(
               onTap: () => context.push('/edit-profile', extra: member),
               child: Text(
-                'EDITAR',
+                context.l10n.btnEdit,
                 style: TextStyle(
                   color: colors.primary,
                   fontSize: AppTypography.sizeXs,
@@ -475,7 +476,7 @@ class _OffersSection extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.x3),
         if (member.offers.isEmpty)
-          Text('Aún no has agregado servicios.',
+          Text(context.l10n.regNoServices,
               style: TextStyle(
                   color: colors.textSecondary, fontSize: AppTypography.sizeMd))
         else

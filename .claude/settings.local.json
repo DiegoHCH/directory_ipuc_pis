@@ -47,7 +47,11 @@
       "Bash(fc-list)",
       "Bash(/Users/diego.hoyos/fvm/versions/3.38.1/bin/flutter analyze *)",
       "Bash(cp /Users/diego.hoyos/Downloads/myriad-pro/*.OTF /Users/diego.hoyos/personal/directory_ipuc/assets/fonts/)",
-      "Bash(cp /Users/diego.hoyos/Downloads/myriad-pro/*.otf /Users/diego.hoyos/personal/directory_ipuc/assets/fonts/)"
+      "Bash(cp /Users/diego.hoyos/Downloads/myriad-pro/*.otf /Users/diego.hoyos/personal/directory_ipuc/assets/fonts/)",
+      "Bash(grep -oP \"'[A-ZÁÉÍÓÚÑña-záéíóúñ][^']{3,}'\")",
+      "Bash(grep -oP \"\\(?<='\\)[^']{4,}\\(?='\\)\")",
+      "Bash(/Users/diego.hoyos/fvm/versions/3.38.1/bin/flutter gen-l10n *)",
+      "Bash(grep -rn \"'\\\\\\([A-ZÁÉÍÓÚÑña-záéíóúñ¿¡][^']\\\\{4,\\\\}\\\\\\)'\" /Users/diego.hoyos/personal/directory_ipuc/lib --include=\"*.dart\")"
     ]
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../model/member.dart';
+import '../../../../core/extensions/l10n_extension.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -22,6 +23,14 @@ class CategoryFilterBar extends StatelessWidget {
     MemberCategory.arte,
     MemberCategory.servicio,
   ];
+
+  String _catLabel(BuildContext context, MemberCategory cat) => switch (cat) {
+        MemberCategory.all           => context.l10n.catAll,
+        MemberCategory.empresa       => context.l10n.catEmpresa,
+        MemberCategory.emprendimiento => context.l10n.catEmprendimiento,
+        MemberCategory.arte          => context.l10n.catArte,
+        MemberCategory.servicio      => context.l10n.catServicio,
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +57,7 @@ class CategoryFilterBar extends StatelessWidget {
                               colors.textSecondary.withValues(alpha: 0.3)),
                 ),
                 child: Text(
-                  cat.label,
+                  _catLabel(context, cat),
                   style: TextStyle(
                     color: isActive ? Colors.white : colors.textSecondary,
                     fontWeight: isActive

@@ -10,6 +10,8 @@ import '../../directory/model/member.dart';
 import '../../register/view/widgets/category_selector.dart';
 import '../../register/view/widgets/offers_input.dart';
 import '../provider/edit_profile_provider.dart';
+import '../../../core/extensions/l10n_extension.dart';
+import '../../../core/utils/l10n_errors.dart';
 
 class EditProfileScreen extends ConsumerStatefulWidget {
   final Member member;
@@ -46,10 +48,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: colors.surface,
         shape: RoundedRectangleBorder(borderRadius: AppRadius.dialog),
-        title: Text('¿Eliminar perfil?',
+        title: Text(context.l10n.deleteDialogTitle,
             style: TextStyle(color: colors.textPrimary)),
         content: Text(
-          'Esta acción no se puede deshacer. Tu perfil desaparecerá del directorio.',
+          context.l10n.deleteDialogBody,
           style: TextStyle(
               color: colors.textSecondary,
               height: AppTypography.lineHeightNormal),
@@ -57,7 +59,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text('Cancelar',
+            child: Text(context.l10n.btnCancel,
                 style: TextStyle(color: colors.textSecondary)),
           ),
           TextButton(
@@ -70,19 +72,16 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
               if (ok) {
                 context.go('/directory');
               } else {
-                final msg = ref
-                        .read(editProfileProvider(widget.member))
-                        .errorMessage ??
-                    'No se pudo eliminar.';
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(msg),
+                    content: Text(localizeError(context.l10n,
+                        ref.read(editProfileProvider(widget.member)).errorMessage)),
                     backgroundColor: context.colors.error,
                   ),
                 );
               }
             },
-            child: Text('Eliminar',
+            child: Text(context.l10n.btnDelete,
                 style: TextStyle(color: colors.error)),
           ),
         ],
@@ -110,13 +109,13 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     alignment: Alignment.centerLeft,
                     child: GestureDetector(
                       onTap: () => context.pop(),
-                      child: Text('Cancelar',
+                      child: Text(context.l10n.btnCancel,
                           style: AppTypography.titleLg.copyWith(
                               color: colors.textSecondary)),
                     ),
                   ),
                   Text(
-                    'Editar perfil',
+                    context.l10n.btnEditProfile,
                     style: TextStyle(
                       color: colors.textPrimary,
                       fontSize: AppTypography.sizeXl,
@@ -139,20 +138,17 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                     .showSnackBar(
                                   SnackBar(
                                     content:
-                                        const Text('Cambios guardados.'),
+                                        Text(screenContext.l10n.successSaved),
                                     backgroundColor: colors.success,
                                   ),
                                 );
                               } else {
-                                final msg = ref
-                                        .read(editProfileProvider(
-                                            widget.member))
-                                        .errorMessage ??
-                                    'No se pudo guardar.';
                                 ScaffoldMessenger.of(screenContext)
                                     .showSnackBar(
                                   SnackBar(
-                                    content: Text(msg),
+                                    content: Text(localizeError(
+                                        screenContext.l10n,
+                                        ref.read(editProfileProvider(widget.member)).errorMessage)),
                                     backgroundColor: colors.error,
                                   ),
                                 );
@@ -170,7 +166,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                                     strokeWidth: 2, color: colors.primary),
                               )
                             : Text(
-                                'Guardar',
+                                context.l10n.btnSave,
                                 style: AppTypography.titleLg.copyWith(
                                   color: state.isDirty
                                       ? colors.primary
@@ -193,28 +189,28 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     const SizedBox(height: AppSpacing.x5),
                     Center(child: _AvatarPicker(member: widget.member)),
                     const SizedBox(height: AppSpacing.x6),
-                    _FieldLabel('TU NOMBRE'),
+                    _FieldLabel(context.l10n.regNameLabel),
                     const SizedBox(height: AppSpacing.x2),
                     _InputField(
                       controller: _nameController,
                       onChanged: notifier.setName,
                     ),
                     const SizedBox(height: AppSpacing.x4),
-                    _FieldLabel('NEGOCIO O SERVICIO'),
+                    _FieldLabel(context.l10n.profileServiceLabel),
                     const SizedBox(height: AppSpacing.x2),
                     _InputField(
                       controller: _businessController,
                       onChanged: notifier.setBusinessName,
                     ),
                     const SizedBox(height: AppSpacing.x4),
-                    _FieldLabel('CATEGORÍA'),
+                    _FieldLabel(context.l10n.profileCategory),
                     const SizedBox(height: 10),
                     CategorySelector(
                       selected: state.category,
                       onSelected: notifier.setCategory,
                     ),
                     const SizedBox(height: AppSpacing.x4),
-                    _FieldLabel('TUS SERVICIOS'),
+                    _FieldLabel(context.l10n.profileServicesLabel),
                     const SizedBox(height: 10),
                     OffersInput(
                       offers: state.offers,
@@ -222,7 +218,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       onRemove: notifier.removeOffer,
                     ),
                     const SizedBox(height: AppSpacing.x4),
-                    _FieldLabel('TELÉFONO · VERIFICADO'),
+                    _FieldLabel(context.l10n.profilePhoneVerified),
                     const SizedBox(height: AppSpacing.x2),
                     _PhoneVerifiedField(phone: widget.member.phone),
                     const SizedBox(height: AppSpacing.x4),
@@ -235,7 +231,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       child: GestureDetector(
                         onTap: _onDelete,
                         child: Text(
-                          'Eliminar mi perfil',
+                          context.l10n.btnDeleteProfile,
                           style: TextStyle(
                             color: colors.error,
                             fontSize: AppTypography.sizeBase,
@@ -341,7 +337,7 @@ class _AvatarPicker extends ConsumerWidget {
           ),
           const SizedBox(height: AppSpacing.x2),
           Text(
-            state.isUploadingPhoto ? 'SUBIENDO...' : 'CAMBIAR FOTO',
+            state.isUploadingPhoto ? context.l10n.btnUploading : context.l10n.btnChangePhoto,
             style: TextStyle(
               color: state.isUploadingPhoto
                   ? colors.textSecondary
@@ -433,7 +429,7 @@ class _PhoneVerifiedField extends StatelessWidget {
               Icon(Icons.check, color: colors.success, size: 14),
               const SizedBox(width: AppSpacing.x1),
               Text(
-                'VERIFICADO',
+                context.l10n.profileVerified,
                 style: TextStyle(
                   color: colors.success,
                   fontSize: AppTypography.sizeXs,
@@ -475,7 +471,7 @@ class _VisibilityToggle extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Visible en el directorio',
+                  context.l10n.profileVisibleLabel,
                   style: AppTypography.titleLg.copyWith(
                     color: colors.textPrimary,
                     fontWeight: AppTypography.medium,
@@ -483,7 +479,7 @@ class _VisibilityToggle extends StatelessWidget {
                 ),
                 const SizedBox(height: 3),
                 Text(
-                  'Apágalo si no quieres recibir contactos por ahora.',
+                  context.l10n.settingsNotifyContactsDesc,
                   style: TextStyle(
                       color: colors.textSecondary,
                       fontSize: AppTypography.sizeSm,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
+import '../../core/extensions/l10n_extension.dart';
 import '../../core/theme/app_primitives.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
@@ -79,7 +80,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               delay: const Duration(milliseconds: 400),
               duration: const Duration(milliseconds: 700),
               child: Text(
-                'Directorio',
+                context.l10n.dirTitle,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       color: Colors.white,
                       fontWeight: AppTypography.thin,
@@ -116,7 +117,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               delay: const Duration(milliseconds: 800),
               duration: const Duration(milliseconds: 600),
               child: Text(
-                'Conectando nuestra comunidad',
+                context.l10n.splashTagline,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.white38,
                       letterSpacing: 1,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/extensions/l10n_extension.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -25,7 +26,7 @@ class OffersInput extends StatelessWidget {
         backgroundColor: colors.surface,
         shape: RoundedRectangleBorder(borderRadius: AppRadius.card),
         title: Text(
-          'Agregar servicio',
+          context.l10n.btnAddService,
           style: AppTypography.titleLg.copyWith(color: colors.textPrimary),
         ),
         content: TextField(
@@ -33,7 +34,7 @@ class OffersInput extends StatelessWidget {
           autofocus: true,
           style: TextStyle(color: colors.textPrimary),
           decoration: InputDecoration(
-            hintText: 'Ej: Tortas de cumpleaños',
+            hintText: context.l10n.regServiceHint,
             hintStyle: TextStyle(color: colors.textSecondary),
             filled: true,
             fillColor: colors.background,
@@ -50,7 +51,7 @@ class OffersInput extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancelar',
+            child: Text(context.l10n.btnCancel,
                 style: TextStyle(color: colors.textSecondary)),
           ),
           TextButton(
@@ -58,7 +59,7 @@ class OffersInput extends StatelessWidget {
               onAdd(controller.text);
               Navigator.of(context).pop();
             },
-            child: Text('Agregar',
+            child: Text(context.l10n.btnAdd,
                 style: TextStyle(color: colors.primary)),
           ),
         ],
@@ -95,7 +96,7 @@ class OffersInput extends StatelessWidget {
                 Icon(Icons.add, color: colors.textSecondary, size: 14),
                 const SizedBox(width: AppSpacing.x1),
                 Text(
-                  'Agregar',
+                  context.l10n.btnAdd,
                   style: TextStyle(
                       color: colors.textSecondary,
                       fontSize: AppTypography.sizeMd),

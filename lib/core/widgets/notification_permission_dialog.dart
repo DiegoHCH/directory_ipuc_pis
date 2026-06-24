@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../extensions/l10n_extension.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -59,7 +60,7 @@ class _NotificationDialog extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.x5),
             Text(
-              'Mantente al día',
+              context.l10n.notifDialogTitle,
               style: TextStyle(
                 color: colors.textPrimary,
                 fontSize: AppTypography.size2xl,
@@ -69,7 +70,7 @@ class _NotificationDialog extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Text(
-              'Activa las notificaciones para saber cuando un nuevo hermano se une al directorio.',
+              context.l10n.notifDialogBody,
               style: AppTypography.bodyMd.copyWith(
                 color: colors.textSecondary,
               ),
@@ -91,9 +92,9 @@ class _NotificationDialog extends StatelessWidget {
                       borderRadius: AppRadius.button),
                   elevation: 0,
                 ),
-                child: const Text(
-                  'Activar notificaciones',
-                  style: TextStyle(
+                child: Text(
+                  context.l10n.btnActivateNotifications,
+                  style: const TextStyle(
                       fontSize: AppTypography.sizeLg,
                       fontWeight: AppTypography.semibold),
                 ),
@@ -106,7 +107,7 @@ class _NotificationDialog extends StatelessWidget {
                 onDeclined?.call();
               },
               child: Text(
-                'Ahora no',
+                context.l10n.btnNotNow,
                 style: AppTypography.bodyMd.copyWith(
                   color: colors.textSecondary,
                   fontWeight: AppTypography.medium,

@@ -2,6 +2,8 @@ import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/extensions/l10n_extension.dart';
+import '../../../core/providers/locale_provider.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -70,7 +72,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                   ),
                   const SizedBox(width: 14),
                   Text(
-                    'Configuración',
+                    context.l10n.settingsTitle,
                     style: TextStyle(
                       color: colors.textPrimary,
                       fontSize: AppTypography.size2xl,
@@ -89,7 +91,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                     const SizedBox(height: AppSpacing.x6),
                     FadeInLeft(
                       duration: const Duration(milliseconds: 400),
-                      child: _SectionLabel('APARIENCIA'),
+                      child: _SectionLabel(context.l10n.settingsAppearance),
                     ),
                     const SizedBox(height: 10),
                     FadeInUp(
@@ -100,7 +102,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                     FadeInLeft(
                       delay: const Duration(milliseconds: 150),
                       duration: const Duration(milliseconds: 400),
-                      child: _SectionLabel('NOTIFICACIONES'),
+                      child: _SectionLabel(context.l10n.settingsNotifications),
                     ),
                     const SizedBox(height: 10),
                     FadeInUp(
@@ -113,9 +115,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                     ),
                     const SizedBox(height: AppSpacing.x6),
                     FadeInLeft(
+                      delay: const Duration(milliseconds: 225),
+                      duration: const Duration(milliseconds: 400),
+                      child: _SectionLabel(context.l10n.settingsLanguage),
+                    ),
+                    const SizedBox(height: 10),
+                    FadeInUp(
+                      delay: const Duration(milliseconds: 225),
+                      duration: const Duration(milliseconds: 400),
+                      child: const _LanguageCard(),
+                    ),
+                    const SizedBox(height: AppSpacing.x6),
+                    FadeInLeft(
                       delay: const Duration(milliseconds: 300),
                       duration: const Duration(milliseconds: 400),
-                      child: _SectionLabel('CUENTA'),
+                      child: _SectionLabel(context.l10n.settingsAccount),
                     ),
                     const SizedBox(height: 10),
                     FadeInUp(
@@ -129,7 +143,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                       duration: const Duration(milliseconds: 500),
                       child: Center(
                         child: Text(
-                          'Directorio Hermanos · v1.0\nIglesia Pentecostal Unida de Colombia\nPisarreal - Los Patios',
+                          context.l10n.settingsFooter,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: colors.textSecondary,
@@ -177,11 +191,10 @@ class _AppearanceCard extends ConsumerWidget {
     final current = ref.watch(themeProvider);
     final colors = context.colors;
 
-    const options = [
-      (ThemeMode.system, 'Automático', 'Sigue el sistema de tu teléfono',
-          Icons.contrast),
-      (ThemeMode.light, 'Claro', '', Icons.wb_sunny_outlined),
-      (ThemeMode.dark, 'Oscuro', '', Icons.dark_mode_outlined),
+    final options = [
+      (ThemeMode.system, context.l10n.settingsThemeAuto, context.l10n.settingsThemeAutoDesc, Icons.contrast),
+      (ThemeMode.light, context.l10n.settingsThemeLight, '', Icons.wb_sunny_outlined),
+      (ThemeMode.dark, context.l10n.settingsThemeDark, '', Icons.dark_mode_outlined),
     ];
 
     return Container(
@@ -335,13 +348,13 @@ class _NotificationsCard extends ConsumerWidget {
       child: Column(
         children: [
           _ToggleRow(
-            label: 'Avisarme de nuevos hermanos',
+            label: context.l10n.settingsNotifyNewMembers,
             value: settings.notifyNewMembers,
             onToggle: () => notifier.toggleNotifyNewMembers(),
             showDivider: true,
           ),
           _ToggleRow(
-            label: 'Contactos a mi perfil',
+            label: context.l10n.settingsNotifyContacts,
             value: isLoggedIn ? settings.notifyContacts : false,
             enabled: isLoggedIn,
             onToggle: isLoggedIn ? () => notifier.toggleNotifyContacts() : null,
@@ -426,19 +439,19 @@ class _AccountCard extends ConsumerWidget {
       child: Column(
         children: [
           _NavRow(
-            label: 'Mi perfil',
+            label: context.l10n.settingsMyProfile,
             onTap: () => context.push(isLoggedIn ? '/my-profile' : '/login'),
             showDivider: true,
           ),
           _NavRow(
-              label: 'Ayuda y soporte', onTap: () {}, showDivider: true),
+              label: context.l10n.settingsHelp, onTap: () {}, showDivider: true),
           GestureDetector(
             onTap: () async {
               if (isLoggedIn) {
                 await ref.read(authRepositoryProvider).signOut();
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Sesión cerrada.')),
+                    SnackBar(content: Text(context.l10n.successSignedOut)),
                   );
                 }
               } else {
@@ -452,7 +465,7 @@ class _AccountCard extends ConsumerWidget {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  isLoggedIn ? 'Cerrar sesión' : 'Iniciar sesión',
+                  isLoggedIn ? context.l10n.settingsSignOut : context.l10n.btnSignIn,
                   style: AppTypography.titleLg.copyWith(
                     color: isLoggedIn ? colors.error : colors.primary,
                     fontWeight: AppTypography.medium,
@@ -462,6 +475,79 @@ class _AccountCard extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ── Idioma ────────────────────────────────────────────────────────────────────
+
+class _LanguageCard extends ConsumerWidget {
+  const _LanguageCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final current = ref.watch(localeProvider);
+    final colors = context.colors;
+    final isSpanish = current.languageCode == 'es';
+
+    final currentFlag =
+        isSpanish ? 'assets/flag_colombia.png' : 'assets/flag_usa.png';
+    final otherFlag =
+        isSpanish ? 'assets/flag_usa.png' : 'assets/flag_colombia.png';
+    final otherLabel = isSpanish
+        ? context.l10n.settingsLangEnglish
+        : context.l10n.settingsLangSpanish;
+    final next = isSpanish ? const Locale('en') : const Locale('es');
+
+    return Container(
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: AppRadius.card,
+      ),
+      child: GestureDetector(
+        onTap: () => ref.read(localeProvider.notifier).setLocale(next),
+        behavior: HitTestBehavior.opaque,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.x4, vertical: 14),
+          child: Row(
+            children: [
+              // Idioma activo
+              ClipOval(
+                child: Image.asset(
+                  currentFlag,
+                  width: 38,
+                  height: 38,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Icon(Icons.arrow_forward,
+                  color: colors.textSecondary, size: 16),
+              const SizedBox(width: 12),
+              // Idioma al que cambia
+              ClipOval(
+                child: Image.asset(
+                  otherFlag,
+                  width: 30,
+                  height: 30,
+                  fit: BoxFit.cover,
+                  color: Colors.white.withValues(alpha: 0.5),
+                  colorBlendMode: BlendMode.modulate,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                otherLabel,
+                style: AppTypography.titleLg.copyWith(
+                  color: colors.textSecondary,
+                  fontWeight: AppTypography.regular,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

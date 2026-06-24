@@ -7,6 +7,8 @@ import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../provider/login_provider.dart';
+import '../../../core/extensions/l10n_extension.dart';
+import '../../../core/utils/l10n_errors.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -61,20 +63,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Bienvenido de',
+                      context.l10n.authWelcomeTitle,
                       style: AppTypography.displayLg.copyWith(
                         color: colors.textPrimary,
                       ),
                     ),
-                    Text(
-                      'vuelta.',
-                      style: AppTypography.displayLg.copyWith(
-                        color: colors.primary,
-                      ),
-                    ),
                     const SizedBox(height: AppSpacing.x2),
                     Text(
-                      'Inicia sesión para editar tu perfil.',
+                      context.l10n.authSignInToEdit,
                       style: AppTypography.bodySm.copyWith(
                         color: colors.textSecondary,
                       ),
@@ -83,26 +79,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
               ),
               const SizedBox(height: AppSpacing.x8),
-              _Label('TU CORREO'),
+              _Label(context.l10n.authEmailLabel),
               const SizedBox(height: AppSpacing.x2),
               _Input(
                 controller: _emailController,
-                hintText: 'correo@ejemplo.com',
+                hintText: context.l10n.authEmailHint,
                 keyboardType: TextInputType.emailAddress,
                 onChanged: notifier.setEmail,
               ),
               const SizedBox(height: AppSpacing.x5),
-              _Label('CONTRASEÑA'),
+              _Label(context.l10n.authPasswordLabel),
               const SizedBox(height: AppSpacing.x2),
               _Input(
                 controller: _passwordController,
-                hintText: 'Tu contraseña',
+                hintText: context.l10n.authPasswordHint,
                 obscureText: true,
                 onChanged: notifier.setPassword,
               ),
               if (state.errorMessage != null) ...[
                 const SizedBox(height: AppSpacing.x4),
-                _ErrorBanner(message: state.errorMessage!),
+                _ErrorBanner(
+                    message: localizeError(context.l10n, state.errorMessage)),
               ],
               const SizedBox(height: AppSpacing.x7),
               SizedBox(
@@ -131,8 +128,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           child: CircularProgressIndicator(
                               strokeWidth: 2, color: Colors.white),
                         )
-                      : const Text('Iniciar sesión',
-                          style: TextStyle(
+                      : Text(context.l10n.btnSignIn,
+                          style: const TextStyle(
                               fontSize: 15, fontWeight: FontWeight.w600)),
                 ),
               ),
@@ -146,9 +143,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           color: colors.textSecondary,
                           fontSize: AppTypography.sizeBase),
                       children: [
-                        const TextSpan(text: '¿No tienes perfil? '),
+                        TextSpan(text: '${context.l10n.authNoProfile} '),
                         TextSpan(
-                          text: 'Regístrate',
+                          text: context.l10n.btnSignUp,
                           style: TextStyle(
                               color: colors.primary,
                               fontWeight: AppTypography.semibold),

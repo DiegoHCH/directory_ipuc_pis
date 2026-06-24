@@ -22,18 +22,16 @@ class AuthRepository {
   }) =>
       _auth.signInWithEmailAndPassword(email: email, password: password);
 
-  /// Traduce errores de email/password a mensajes claros.
+  /// Returns an l10n error key for the given Firebase auth exception.
+  /// The key is resolved to a localized string via localizeError().
   String friendlyAuthError(FirebaseAuthException e) => switch (e.code) {
-        'email-already-in-use' =>
-          'Ese correo ya está registrado. Inicia sesión.',
-        'invalid-email' => 'El correo no es válido.',
-        'weak-password' => 'La contraseña debe tener al menos 6 caracteres.',
-        'wrong-password' || 'invalid-credential' =>
-          'Correo o contraseña incorrectos.',
-        'user-not-found' => 'No existe una cuenta con ese correo.',
-        'network-request-failed' =>
-          'Sin conexión. Revisa tu internet e intenta de nuevo.',
-        _ => 'No se pudo completar. Intenta más tarde.',
+        'email-already-in-use'            => 'errEmailTaken',
+        'invalid-email'                   => 'errInvalidEmail',
+        'weak-password'                   => 'errWeakPassword',
+        'wrong-password' || 'invalid-credential' => 'errWrongCredentials',
+        'user-not-found'                  => 'errUserNotFound',
+        'network-request-failed'          => 'errNoConnection',
+        _                                 => 'errGeneric',
       };
 
   Future<void> signOut() => _auth.signOut();

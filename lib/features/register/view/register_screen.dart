@@ -11,6 +11,8 @@ import '../../../core/theme/app_typography.dart';
 import '../provider/register_provider.dart';
 import 'widgets/category_selector.dart';
 import 'widgets/offers_input.dart';
+import '../../../core/extensions/l10n_extension.dart';
+import '../../../core/utils/l10n_errors.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -60,20 +62,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Nuevo',
+                            context.l10n.profileNew,
                             style: AppTypography.displayLg.copyWith(
                               color: colors.textPrimary,
                             ),
                           ),
                           Text(
-                            'hermano.',
+                            context.l10n.dirSubtitle,
                             style: AppTypography.displayLg.copyWith(
                               color: colors.primary,
                             ),
                           ),
                           const SizedBox(height: AppSpacing.x2),
                           Text(
-                            'Únete al directorio y comparte tus servicios con la comunidad.',
+                            context.l10n.dirEmptySubtitle,
                             style: AppTypography.bodySm.copyWith(
                               color: colors.textSecondary,
                             ),
@@ -91,32 +93,32 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     FadeInLeft(
                       delay: const Duration(milliseconds: 300),
                       duration: const Duration(milliseconds: 400),
-                      child: _FieldLabel('TU NOMBRE'),
+                      child: _FieldLabel(context.l10n.regNameLabel),
                     ),
                     const SizedBox(height: AppSpacing.x2),
                     _InputField(
                       controller: _nameController,
-                      hintText: 'Nombre completo',
+                      hintText: context.l10n.regNameHint,
                       onChanged: notifier.setName,
                     ),
                     const SizedBox(height: AppSpacing.x5),
-                    _FieldLabel('¿EN QUÉ CATEGORÍA ENCAJAS?'),
+                    _FieldLabel(context.l10n.regCategoryQuestion),
                     const SizedBox(height: 10),
                     CategorySelector(
                       selected: state.category,
                       onSelected: notifier.setCategory,
                     ),
                     const SizedBox(height: AppSpacing.x5),
-                    _FieldLabel('DESCRIBE LO QUE OFRECES'),
+                    _FieldLabel(context.l10n.profileBioLabel),
                     const SizedBox(height: AppSpacing.x2),
                     _InputField(
                       controller: _bioController,
-                      hintText: 'Cuéntale a la comunidad qué haces...',
+                      hintText: context.l10n.regBioHint,
                       maxLines: 4,
                       onChanged: notifier.setBio,
                     ),
                     const SizedBox(height: AppSpacing.x5),
-                    _FieldLabel('TUS SERVICIOS'),
+                    _FieldLabel(context.l10n.profileServicesLabel),
                     const SizedBox(height: 10),
                     OffersInput(
                       offers: state.offers,
@@ -124,33 +126,35 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       onRemove: notifier.removeOffer,
                     ),
                     const SizedBox(height: AppSpacing.x5),
-                    _FieldLabel('TU NÚMERO DE WHATSAPP'),
+                    _FieldLabel(context.l10n.regPhoneLabel),
                     const SizedBox(height: AppSpacing.x2),
                     _PhoneField(
                       controller: _phoneController,
                       onChanged: notifier.setPhone,
                     ),
                     const SizedBox(height: AppSpacing.x5),
-                    _FieldLabel('TU CORREO'),
+                    _FieldLabel(context.l10n.authEmailLabel),
                     const SizedBox(height: AppSpacing.x2),
                     _InputField(
                       controller: _emailController,
-                      hintText: 'correo@ejemplo.com',
+                      hintText: context.l10n.authEmailHint,
                       keyboardType: TextInputType.emailAddress,
                       onChanged: notifier.setEmail,
                     ),
                     const SizedBox(height: AppSpacing.x5),
-                    _FieldLabel('CONTRASEÑA'),
+                    _FieldLabel(context.l10n.authPasswordLabel),
                     const SizedBox(height: AppSpacing.x2),
                     _InputField(
                       controller: _passwordController,
-                      hintText: 'Mínimo 6 caracteres',
+                      hintText: context.l10n.authMinPassword,
                       obscureText: true,
                       onChanged: notifier.setPassword,
                     ),
                     if (state.errorMessage != null) ...[
                       const SizedBox(height: AppSpacing.x4),
-                      _ErrorBanner(message: state.errorMessage!),
+                      _ErrorBanner(
+                          message:
+                              localizeError(context.l10n, state.errorMessage)),
                     ],
                     const SizedBox(height: AppSpacing.x7),
                     _SubmitButton(
@@ -164,8 +168,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           context.go('/directory');
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: const Text(
-                                  '¡Perfil creado! Enviando invitación por WhatsApp...'),
+                              content: Text(context.l10n.successProfileCreated),
                               backgroundColor: context.colors.success,
                             ),
                           );
@@ -219,7 +222,7 @@ class _TopBar extends StatelessWidget {
             ),
           ),
           Text(
-            'IPUC Pisarreal',
+            context.l10n.dirChurchShort,
             style: TextStyle(
               color: colors.primary,
               fontSize: AppTypography.sizeXs,
@@ -255,7 +258,7 @@ class _PhotoUploader extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.x2),
           Text(
-            'SUBIR FOTO',
+            context.l10n.btnUploadPhoto,
             style: TextStyle(
               color: colors.primary,
               fontSize: AppTypography.sizeXs,
@@ -452,9 +455,9 @@ class _SubmitButton extends StatelessWidget {
                     strokeWidth: 2, color: Colors.white),
               )
             : const Icon(Icons.check_circle_outline, size: 20),
-        label: const Text(
-          'Crear mi perfil',
-          style: TextStyle(
+        label: Text(
+          context.l10n.btnCreateProfile,
+          style: const TextStyle(
               fontSize: AppTypography.sizeLg,
               fontWeight: AppTypography.semibold),
         ),

@@ -14,6 +14,7 @@ import '../model/member.dart';
 import '../../auth/repository/auth_repository.dart';
 import '../../my_profile/provider/current_member_provider.dart';
 import '../../my_profile/provider/my_profile_provider.dart';
+import '../../../core/extensions/l10n_extension.dart';
 
 class MemberProfileScreen extends ConsumerStatefulWidget {
   final Member member;
@@ -157,7 +158,7 @@ class _MemberProfileScreenState extends ConsumerState<MemberProfileScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'LO QUE OFRECE',
+                              context.l10n.profileWhatTheyOffer,
                               style: TextStyle(
                                 color: colors.textSecondary,
                                 fontSize: AppTypography.sizeXs,
@@ -305,20 +306,19 @@ void _requireAuth(BuildContext context, WidgetRef ref, VoidCallback action) {
   showDialog<void>(
     context: context,
     builder: (ctx) => AlertDialog(
-      title: const Text('Inicia sesión'),
-      content: const Text(
-          'Debes iniciar sesión para ver la información de contacto.'),
+      title: Text(context.l10n.authDialogTitle),
+      content: Text(context.l10n.authDialogBody),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(),
-          child: const Text('Cancelar'),
+          child: Text(context.l10n.btnCancel),
         ),
         TextButton(
           onPressed: () {
             Navigator.of(ctx).pop();
             context.push('/login');
           },
-          child: const Text('Iniciar sesión'),
+          child: Text(context.l10n.btnSignIn),
         ),
       ],
     ),
@@ -338,7 +338,7 @@ class _PhoneCard extends ConsumerWidget {
     } catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudo abrir el marcador.')),
+          SnackBar(content: Text(context.l10n.errOpenDialer)),
         );
       }
     }
@@ -372,7 +372,7 @@ class _PhoneCard extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'TELÉFONO',
+                  context.l10n.profilePhone,
                   style: TextStyle(
                     color: colors.textSecondary,
                     fontSize: 10,
@@ -418,7 +418,7 @@ class _WhatsAppButton extends ConsumerWidget {
     } catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No se pudo abrir WhatsApp.')),
+          SnackBar(content: Text(context.l10n.errOpenWhatsApp)),
         );
       }
     }
@@ -434,9 +434,9 @@ class _WhatsAppButton extends ConsumerWidget {
         onPressed: () =>
             _requireAuth(context, ref, () => _openWhatsApp(context, ref)),
         icon: const FaIcon(FontAwesomeIcons.whatsapp, size: 20),
-        label: const Text(
-          'Contactar por WhatsApp',
-          style: TextStyle(
+        label: Text(
+          context.l10n.btnContactWhatsApp,
+          style: const TextStyle(
               fontSize: AppTypography.sizeLg,
               fontWeight: AppTypography.semibold),
         ),

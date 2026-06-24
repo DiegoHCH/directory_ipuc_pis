@@ -61,7 +61,7 @@ class LoginNotifier extends AutoDisposeNotifier<LoginState> {
     } catch (e, _) {
       state = state.copyWith(
         isSubmitting: false,
-        errorMessage: 'No se pudo iniciar sesión. Intenta de nuevo.',
+        errorMessage: 'errSignIn',
       );
       return false;
     }
