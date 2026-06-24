@@ -8,6 +8,7 @@ import '../../../core/widgets/member_avatar.dart';
 import '../../directory/model/member.dart';
 import '../provider/current_member_provider.dart';
 import '../provider/my_profile_provider.dart';
+import '../provider/profile_stats_provider.dart';
 
 class MyProfileScreen extends ConsumerWidget {
   const MyProfileScreen({super.key});
@@ -42,7 +43,15 @@ class _ProfileContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profileState = ref.watch(myProfileProvider);
+    final statsAsync = ref.watch(profileStatsProvider(member.id));
     final colors = context.colors;
+
+    final stats = statsAsync.valueOrNull ??
+        ProfileStats(
+          weeklyViews: 0,
+          whatsappContacts: 0,
+          activeServices: member.offers.length,
+        );
 
     return Column(
           children: [
@@ -110,7 +119,12 @@ class _ProfileContent extends ConsumerWidget {
                     FadeInUp(
                       delay: const Duration(milliseconds: 200),
                       duration: const Duration(milliseconds: 400),
-                      child: _StatsRow(stats: profileState.stats),
+                      child: _StatsRow(
+                        stats: stats.copyWith(
+                          activeServices: member.offers.length,
+                        ),
+                        isLoading: statsAsync.isLoading,
+                      ),
                     ),
                     const SizedBox(height: 24),
                     FadeInUp(
@@ -309,11 +323,13 @@ class _TopBar extends StatelessWidget {
 
 class _StatsRow extends StatelessWidget {
   final ProfileStats stats;
+  final bool isLoading;
 
-  const _StatsRow({required this.stats});
+  const _StatsRow({required this.stats, this.isLoading = false});
 
   @override
   Widget build(BuildContext context) {
+    final v = isLoading ? '—' : null;
     return Container(
       decoration: BoxDecoration(
         color: context.colors.surface,
@@ -323,10 +339,11 @@ class _StatsRow extends StatelessWidget {
         child: Row(
           children: [
             _StatCell(
-                value: '${stats.weeklyViews}', label: 'Vistas esta\nsemana'),
+                value: v ?? '${stats.weeklyViews}',
+                label: 'Vistas esta\nsemana'),
             _Divider(),
             _StatCell(
-                value: '${stats.whatsappContacts}',
+                value: v ?? '${stats.whatsappContacts}',
                 label: 'Contactos por\nWhatsApp'),
             _Divider(),
             _StatCell(

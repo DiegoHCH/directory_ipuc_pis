@@ -12,13 +12,35 @@ import '../model/member.dart';
 import '../../my_profile/provider/current_member_provider.dart';
 import '../../my_profile/provider/my_profile_provider.dart';
 
-class MemberProfileScreen extends ConsumerWidget {
+class MemberProfileScreen extends ConsumerStatefulWidget {
   final Member member;
 
   const MemberProfileScreen({super.key, required this.member});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<MemberProfileScreen> createState() =>
+      _MemberProfileScreenState();
+}
+
+class _MemberProfileScreenState extends ConsumerState<MemberProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _recordView();
+  }
+
+  Future<void> _recordView() async {
+    final myId = ref.read(currentMemberProvider).valueOrNull?.id;
+    if (myId == widget.member.id) return; // no graba vista propia
+    await FirebaseFirestore.instance.collection('profile_views').add({
+      'memberId': widget.member.id,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final member = widget.member;
     final isBookmarked = ref.watch(bookmarkProvider(member.id));
     final colors = context.colors;
     final categoryColor = kCategoryColors[member.category.tag] ?? kAccentBlue;

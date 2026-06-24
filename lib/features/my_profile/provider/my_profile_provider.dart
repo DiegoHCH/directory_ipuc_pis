@@ -22,21 +22,26 @@ class ProfileStats {
     required this.whatsappContacts,
     required this.activeServices,
   });
+
+  ProfileStats copyWith({
+    int? weeklyViews,
+    int? whatsappContacts,
+    int? activeServices,
+  }) =>
+      ProfileStats(
+        weeklyViews: weeklyViews ?? this.weeklyViews,
+        whatsappContacts: whatsappContacts ?? this.whatsappContacts,
+        activeServices: activeServices ?? this.activeServices,
+      );
 }
 
 // Estado del perfil propio (simulado, en producción vendría de un auth provider)
 @immutable
 class MyProfileState {
   final ProfileStatus status;
-  final ProfileStats stats;
 
   const MyProfileState({
     this.status = ProfileStatus.publishedVerified,
-    this.stats = const ProfileStats(
-      weeklyViews: 23,
-      whatsappContacts: 7,
-      activeServices: 5,
-    ),
   });
 }
 
