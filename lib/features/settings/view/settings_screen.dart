@@ -14,9 +14,10 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settings = ref.watch(settingsProvider);
+    final settingsAsync = ref.watch(settingsProvider);
     final notifier = ref.read(settingsProvider.notifier);
     final colors = context.colors;
+    final settings = settingsAsync.valueOrNull;
 
     return Scaffold(
       body: SafeArea(
@@ -80,7 +81,7 @@ class SettingsScreen extends ConsumerWidget {
                       delay: const Duration(milliseconds: 150),
                       duration: const Duration(milliseconds: 400),
                       child: _NotificationsCard(
-                        settings: settings,
+                        settings: settings ?? const SettingsState(),
                         notifier: notifier,
                       ),
                     ),
@@ -153,10 +154,8 @@ class _AppearanceCard extends ConsumerWidget {
     const options = [
       (ThemeMode.system, 'Automático', 'Sigue el sistema de tu teléfono',
           Icons.contrast),
-      (ThemeMode.light, 'Claro', 'Fondo blanco, texto azul',
-          Icons.wb_sunny_outlined),
-      (ThemeMode.dark, 'Oscuro', 'Fondo azul noche IPUC',
-          Icons.dark_mode_outlined),
+      (ThemeMode.light, 'Claro', '', Icons.wb_sunny_outlined),
+      (ThemeMode.dark, 'Oscuro', '', Icons.dark_mode_outlined),
     ];
 
     return Container(
@@ -247,12 +246,14 @@ class _ThemeRow extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        subtitle,
-                        style: TextStyle(
-                            color: colors.textSecondary, fontSize: 12),
-                      ),
+                      if (subtitle.isNotEmpty) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          subtitle,
+                          style: TextStyle(
+                              color: colors.textSecondary, fontSize: 12),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -308,13 +309,13 @@ class _NotificationsCard extends StatelessWidget {
           _ToggleRow(
             label: 'Avisarme de nuevos hermanos',
             value: settings.notifyNewMembers,
-            onToggle: notifier.toggleNotifyNewMembers,
+            onToggle: () => notifier.toggleNotifyNewMembers(),
             showDivider: true,
           ),
           _ToggleRow(
             label: 'Contactos a mi perfil',
             value: settings.notifyContacts,
-            onToggle: notifier.toggleNotifyContacts,
+            onToggle: () => notifier.toggleNotifyContacts(),
             showDivider: false,
           ),
         ],

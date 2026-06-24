@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+const _keyNewMembers = 'notify_new_members';
+const _keyContacts = 'notify_contacts';
 
 @immutable
 class SettingsState {
@@ -18,17 +22,31 @@ class SettingsState {
       );
 }
 
-class SettingsNotifier extends AutoDisposeNotifier<SettingsState> {
+class SettingsNotifier extends AsyncNotifier<SettingsState> {
+  late SharedPreferences _prefs;
+
   @override
-  SettingsState build() => const SettingsState();
+  Future<SettingsState> build() async {
+    _prefs = await SharedPreferences.getInstance();
+    return SettingsState(
+      notifyNewMembers: _prefs.getBool(_keyNewMembers) ?? true,
+      notifyContacts: _prefs.getBool(_keyContacts) ?? true,
+    );
+  }
 
-  void toggleNotifyNewMembers() =>
-      state = state.copyWith(notifyNewMembers: !state.notifyNewMembers);
+  Future<void> toggleNotifyNewMembers() async {
+    final current = state.valueOrNull?.notifyNewMembers ?? true;
+    await _prefs.setBool(_keyNewMembers, !current);
+    state = AsyncData(state.requireValue.copyWith(notifyNewMembers: !current));
+  }
 
-  void toggleNotifyContacts() =>
-      state = state.copyWith(notifyContacts: !state.notifyContacts);
+  Future<void> toggleNotifyContacts() async {
+    final current = state.valueOrNull?.notifyContacts ?? true;
+    await _prefs.setBool(_keyContacts, !current);
+    state = AsyncData(state.requireValue.copyWith(notifyContacts: !current));
+  }
 }
 
 final settingsProvider =
-    AutoDisposeNotifierProvider<SettingsNotifier, SettingsState>(
+    AsyncNotifierProvider<SettingsNotifier, SettingsState>(
         SettingsNotifier.new);

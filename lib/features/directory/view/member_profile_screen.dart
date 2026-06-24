@@ -1,4 +1,5 @@
 import 'package:animate_do/animate_do.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -8,6 +9,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/member_avatar.dart';
 import '../model/member.dart';
+import '../../my_profile/provider/current_member_provider.dart';
 import '../../my_profile/provider/my_profile_provider.dart';
 
 class MemberProfileScreen extends ConsumerWidget {
@@ -156,7 +158,7 @@ class MemberProfileScreen extends ConsumerWidget {
                     FadeInUp(
                       delay: const Duration(milliseconds: 420),
                       duration: const Duration(milliseconds: 400),
-                      child: _WhatsAppButton(phone: member.phone),
+                      child: _WhatsAppButton(member: member),
                     ),
                     const SizedBox(height: 24),
                   ],
@@ -341,14 +343,23 @@ class _PhoneCard extends StatelessWidget {
   }
 }
 
-class _WhatsAppButton extends StatelessWidget {
-  final String phone;
+class _WhatsAppButton extends ConsumerWidget {
+  final Member member;
 
-  const _WhatsAppButton({required this.phone});
+  const _WhatsAppButton({required this.member});
 
-  Future<void> _openWhatsApp(BuildContext context) async {
-    final digits = phone.replaceAll(RegExp(r'[^\d]'), '');
+  Future<void> _openWhatsApp(BuildContext context, WidgetRef ref) async {
+    final digits = member.phone.replaceAll(RegExp(r'[^\d]'), '');
     final uri = Uri.parse('https://wa.me/$digits');
+
+    // Registra el evento de contacto en Firestore para notificar al dueño del perfil
+    final me = ref.read(currentMemberProvider).valueOrNull;
+    FirebaseFirestore.instance.collection('contact_events').add({
+      'toId': member.id,
+      'fromName': me?.name ?? 'Un hermano',
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+
     try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (_) {
@@ -361,12 +372,12 @@ class _WhatsAppButton extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
       width: double.infinity,
       height: 52,
       child: ElevatedButton.icon(
-        onPressed: () => _openWhatsApp(context),
+        onPressed: () => _openWhatsApp(context, ref),
         icon: const FaIcon(FontAwesomeIcons.whatsapp, size: 20),
         label: const Text(
           'Contactar por WhatsApp',

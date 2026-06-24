@@ -1,4 +1,4 @@
-package com.example.directory_ipuc
+package co.ipuc.pis.directory
 
 import io.flutter.embedding.android.FlutterActivity
 

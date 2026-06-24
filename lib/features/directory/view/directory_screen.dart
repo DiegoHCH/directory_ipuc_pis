@@ -17,14 +17,16 @@ class DirectoryScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Activa el listener de notificaciones Firestore mientras la pantalla vive
+    // Activa listeners de notificaciones mientras la pantalla vive
     ref.watch(notificationListenerProvider);
+    final myId = ref.watch(currentMemberProvider).valueOrNull?.id ?? '';
+    ref.watch(contactListenerProvider(myId));
 
     final filter = ref.watch(directoryProvider);
     final notifier = ref.read(directoryProvider.notifier);
     final filteredAsync = ref.watch(filteredMembersProvider);
     final totalAsync = ref.watch(membersStreamProvider);
-    final myId = ref.watch(currentMemberProvider).valueOrNull?.id;
+    final myId2 = ref.watch(currentMemberProvider).valueOrNull?.id;
 
     return Scaffold(
       body: SafeArea(
@@ -91,10 +93,10 @@ class DirectoryScreen extends ConsumerWidget {
         delay: const Duration(milliseconds: 400),
         child: FloatingActionButton(
           onPressed: () =>
-              context.push(myId != null ? '/my-profile' : '/register'),
+              context.push(myId2 != null ? '/my-profile' : '/register'),
           backgroundColor: kAccentBlue,
           child: Icon(
-            myId != null ? Icons.person : Icons.add,
+            myId2 != null ? Icons.person : Icons.add,
             color: Colors.white,
           ),
         ),
@@ -136,8 +138,12 @@ class _Header extends StatelessWidget {
               const SizedBox(width: 8),
               GestureDetector(
                 onTap: onSettingsTap,
-                child: Icon(Icons.settings_outlined,
-                    color: colors.textSecondary, size: 22),
+                behavior: HitTestBehavior.opaque,
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Icon(Icons.settings_outlined,
+                      color: colors.textSecondary, size: 22),
+                ),
               ),
             ],
           ),
