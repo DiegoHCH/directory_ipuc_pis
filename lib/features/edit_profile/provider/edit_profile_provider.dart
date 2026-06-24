@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -129,34 +128,26 @@ class EditProfileNotifier
     }
   }
 
-  /// Elimina el perfil de Firestore y la cuenta de Firebase Auth.
-  Future<bool> delete() async {
+  /// Elimina el perfil de Firestore.
+  /// Retorna null si fue exitoso, o la clave de error si falló.
+  /// La cuenta de Auth se borra aparte con deleteAuthAccount() para no
+  /// interrumpir la navegación cuando authStateChanges dispara.
+  Future<String?> delete() async {
     state = state.copyWith(isSaving: true, errorMessage: null);
     try {
-      final uid = state.original.id;
-
-      // 1. Borrar documento del miembro
-      await ref.read(memberRepositoryProvider).delete(uid);
-
-      // 2. Borrar cuenta de Firebase Auth
-      await ref.read(authRepositoryProvider).deleteAccount();
-
-      return true;
-    } on FirebaseAuthException catch (e) {
-      state = state.copyWith(
-        isSaving: false,
-        errorMessage: e.code == 'requires-recent-login'
-            ? 'errReauthRequired'
-            : 'errDeleteProfile',
-      );
-      return false;
+      await ref.read(memberRepositoryProvider).delete(state.original.id);
+      return null;
     } catch (_) {
-      state = state.copyWith(
-        isSaving: false,
-        errorMessage: 'errDeleteProfile',
-      );
-      return false;
+      state = state.copyWith(isSaving: false, errorMessage: 'errDeleteProfile');
+      return 'errDeleteProfile';
     }
+  }
+
+  /// Borra la cuenta de Firebase Auth. Llamar después de navegar.
+  Future<void> deleteAuthAccount() async {
+    try {
+      await ref.read(authRepositoryProvider).deleteAccount();
+    } catch (_) {}
   }
 
   /// Guarda los cambios en Firestore. Retorna true si fue exitoso.

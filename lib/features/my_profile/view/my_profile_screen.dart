@@ -66,21 +66,22 @@ void _confirmDelete(BuildContext context, WidgetRef ref, Member member) {
         TextButton(
           onPressed: () async {
             Navigator.of(ctx).pop();
-            final ok = await ref
-                .read(editProfileProvider(member).notifier)
-                .delete();
+            final notifier = ref.read(editProfileProvider(member).notifier);
+            final errorKey = await notifier.delete();
             if (!context.mounted) return;
-            if (ok) {
-              context.go('/directory');
-            } else {
+            if (errorKey != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(localizeError(context.l10n,
-                      ref.read(editProfileProvider(member)).errorMessage)),
+                  content: Text(localizeError(context.l10n, errorKey)),
                   backgroundColor: colors.error,
                 ),
               );
+              return;
             }
+            // Navegar antes de borrar Auth para evitar que authStateChanges
+            // invalide el context antes de la navegación.
+            context.go('/directory');
+            notifier.deleteAuthAccount();
           },
           child: Text(context.l10n.btnDelete,
               style: TextStyle(color: colors.error)),
