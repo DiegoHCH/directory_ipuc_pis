@@ -371,23 +371,99 @@ class _EmptyView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.search_off, size: 48, color: colors.textSecondary),
-          const SizedBox(height: 16),
-          Text(
-            hasFilter
-                ? 'Sin resultados para tu búsqueda'
-                : 'El directorio está vacío',
-            style: TextStyle(
-              color: colors.textPrimary,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+
+    if (hasFilter) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  color: colors.surface,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.search_off_rounded,
+                    size: 34, color: colors.textSecondary),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Sin resultados',
+                style: TextStyle(
+                  color: colors.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Intenta con otro nombre o cambia la categoría.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    color: colors.textSecondary, fontSize: 14, height: 1.5),
+              ),
+            ],
           ),
-        ],
+        ),
+      );
+    }
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 40),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 88,
+              height: 88,
+              decoration: BoxDecoration(
+                color: kAccentBlue.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.people_outline_rounded,
+                  size: 42, color: kAccentBlue),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Sé el primero',
+              style: TextStyle(
+                color: kAccentBlue,
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                height: 1.1,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'El directorio está vacío. Únete y comparte tus servicios con la comunidad.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: colors.textSecondary, fontSize: 14, height: 1.6),
+            ),
+            const SizedBox(height: 28),
+            ElevatedButton.icon(
+              onPressed: () => context.push('/register'),
+              icon: const Icon(Icons.add, size: 18),
+              label: const Text(
+                'Crear mi perfil',
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kAccentBlue,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14)),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 24, vertical: 14),
+                elevation: 0,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
