@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 
 class OffersInput extends StatelessWidget {
   final List<String> offers;
@@ -21,10 +23,10 @@ class OffersInput extends StatelessWidget {
       context: context,
       builder: (_) => AlertDialog(
         backgroundColor: colors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.card),
         title: Text(
           'Agregar servicio',
-          style: TextStyle(color: colors.textPrimary, fontSize: 16),
+          style: AppTypography.titleLg.copyWith(color: colors.textPrimary),
         ),
         content: TextField(
           controller: controller,
@@ -36,7 +38,7 @@ class OffersInput extends StatelessWidget {
             filled: true,
             fillColor: colors.background,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: AppRadius.iconButton,
               borderSide: BorderSide.none,
             ),
           ),
@@ -56,8 +58,8 @@ class OffersInput extends StatelessWidget {
               onAdd(controller.text);
               Navigator.of(context).pop();
             },
-            child: const Text('Agregar',
-                style: TextStyle(color: kAccentBlue)),
+            child: Text('Agregar',
+                style: TextStyle(color: colors.primary)),
           ),
         ],
       ),
@@ -68,8 +70,8 @@ class OffersInput extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+      spacing: AppSpacing.x2,
+      runSpacing: AppSpacing.x2,
       children: [
         ...offers.map(
           (offer) => _OfferChip(
@@ -80,11 +82,10 @@ class OffersInput extends StatelessWidget {
         GestureDetector(
           onTap: () => _showAddDialog(context),
           child: Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.x3, vertical: 7),
             decoration: BoxDecoration(
               color: colors.surface,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: AppRadius.chip,
               border: Border.all(
                   color: colors.textSecondary.withValues(alpha: 0.3)),
             ),
@@ -92,11 +93,12 @@ class OffersInput extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.add, color: colors.textSecondary, size: 14),
-                const SizedBox(width: 4),
+                const SizedBox(width: AppSpacing.x1),
                 Text(
                   'Agregar',
                   style: TextStyle(
-                      color: colors.textSecondary, fontSize: 13),
+                      color: colors.textSecondary,
+                      fontSize: AppTypography.sizeMd),
                 ),
               ],
             ),
@@ -117,19 +119,19 @@ class _OfferChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     return Container(
-      padding:
-          const EdgeInsets.only(left: 12, right: 6, top: 7, bottom: 7),
+      padding: const EdgeInsets.only(left: AppSpacing.x3, right: 6, top: 7, bottom: 7),
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: kAccentBlue.withValues(alpha: 0.4)),
+        borderRadius: AppRadius.chip,
+        border: Border.all(color: colors.primary.withValues(alpha: 0.4)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             label,
-            style: TextStyle(color: colors.textPrimary, fontSize: 13),
+            style: TextStyle(
+                color: colors.textPrimary, fontSize: AppTypography.sizeMd),
           ),
           const SizedBox(width: 6),
           GestureDetector(

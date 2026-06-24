@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
 import '../provider/login_provider.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -33,26 +35,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.x6),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.x2),
               GestureDetector(
                 onTap: () =>
                     context.canPop() ? context.pop() : context.go('/directory'),
                 child: Container(
-                  width: 36,
-                  height: 36,
+                  width: AppSpacing.iconButtonSize,
+                  height: AppSpacing.iconButtonSize,
                   decoration: BoxDecoration(
                     color: colors.surface,
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: AppRadius.iconButton,
                   ),
                   child: Icon(Icons.chevron_left,
                       color: colors.textPrimary, size: 22),
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: AppSpacing.x6),
               FadeInDown(
                 duration: const Duration(milliseconds: 450),
                 child: Column(
@@ -60,45 +62,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   children: [
                     Text(
                       'Bienvenido de',
-                      style: TextStyle(
+                      style: AppTypography.displayLg.copyWith(
                         color: colors.textPrimary,
-                        fontSize: 28,
-                        fontWeight: FontWeight.w800,
-                        height: 1.1,
                       ),
                     ),
-                    const Text(
+                    Text(
                       'vuelta.',
-                      style: TextStyle(
-                        color: kAccentBlue,
-                        fontSize: 28,
-                        fontWeight: FontWeight.w800,
-                        height: 1.1,
+                      style: AppTypography.displayLg.copyWith(
+                        color: colors.primary,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppSpacing.x2),
                     Text(
                       'Inicia sesión para editar tu perfil.',
-                      style: TextStyle(
-                          color: colors.textSecondary,
-                          fontSize: 13,
-                          height: 1.5),
+                      style: AppTypography.bodySm.copyWith(
+                        color: colors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: AppSpacing.x8),
               _Label('TU CORREO'),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.x2),
               _Input(
                 controller: _emailController,
                 hintText: 'correo@ejemplo.com',
                 keyboardType: TextInputType.emailAddress,
                 onChanged: notifier.setEmail,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AppSpacing.x5),
               _Label('CONTRASEÑA'),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.x2),
               _Input(
                 controller: _passwordController,
                 hintText: 'Tu contraseña',
@@ -106,13 +101,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 onChanged: notifier.setPassword,
               ),
               if (state.errorMessage != null) ...[
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.x4),
                 _ErrorBanner(message: state.errorMessage!),
               ],
-              const SizedBox(height: 28),
+              const SizedBox(height: AppSpacing.x7),
               SizedBox(
                 width: double.infinity,
-                height: 52,
+                height: AppSpacing.buttonHeight,
                 child: ElevatedButton(
                   onPressed: state.isValid && !state.isSubmitting
                       ? () async {
@@ -121,12 +116,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         }
                       : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: kAccentBlue,
-                    foregroundColor: Colors.white,
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.textOnPrimary,
                     disabledBackgroundColor: colors.surface,
                     disabledForegroundColor: colors.textSecondary,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14)),
+                        borderRadius: AppRadius.button),
                     elevation: 0,
                   ),
                   child: state.isSubmitting
@@ -141,21 +136,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               fontSize: 15, fontWeight: FontWeight.w600)),
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AppSpacing.x5),
               Center(
                 child: GestureDetector(
                   onTap: () => context.push('/register'),
                   child: Text.rich(
                     TextSpan(
                       style: TextStyle(
-                          color: colors.textSecondary, fontSize: 14),
-                      children: const [
-                        TextSpan(text: '¿No tienes perfil? '),
+                          color: colors.textSecondary,
+                          fontSize: AppTypography.sizeBase),
+                      children: [
+                        const TextSpan(text: '¿No tienes perfil? '),
                         TextSpan(
                           text: 'Regístrate',
                           style: TextStyle(
-                              color: kAccentBlue,
-                              fontWeight: FontWeight.w600),
+                              color: colors.primary,
+                              fontWeight: AppTypography.semibold),
                         ),
                       ],
                     ),
@@ -180,9 +176,9 @@ class _Label extends StatelessWidget {
       text,
       style: TextStyle(
         color: context.colors.textSecondary,
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 1.2,
+        fontSize: AppTypography.sizeXs,
+        fontWeight: AppTypography.semibold,
+        letterSpacing: AppTypography.trackingWide,
       ),
     );
   }
@@ -209,7 +205,7 @@ class _Input extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.input,
       ),
       child: TextField(
         controller: controller,
@@ -218,13 +214,16 @@ class _Input extends StatelessWidget {
         keyboardType: keyboardType,
         autocorrect: !obscureText,
         enableSuggestions: !obscureText,
-        style: TextStyle(color: colors.textPrimary, fontSize: 15),
+        style: AppTypography.titleLg.copyWith(color: colors.textPrimary),
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(color: colors.textSecondary, fontSize: 15),
+          hintStyle:
+              AppTypography.titleLg.copyWith(color: colors.textSecondary),
           border: InputBorder.none,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.inputPaddingH,
+            vertical: AppSpacing.inputPaddingV,
+          ),
         ),
       ),
     );
@@ -238,20 +237,21 @@ class _ErrorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFFEF5350).withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(10),
+        color: colors.errorMuted,
+        borderRadius: AppRadius.iconButton,
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline, color: Color(0xFFEF5350), size: 18),
-          const SizedBox(width: 8),
+          Icon(Icons.error_outline, color: colors.error, size: 18),
+          const SizedBox(width: AppSpacing.x2),
           Expanded(
             child: Text(
               message,
-              style: const TextStyle(color: Color(0xFFEF5350), fontSize: 13),
+              style: TextStyle(color: colors.error, fontSize: AppTypography.sizeMd),
             ),
           ),
         ],

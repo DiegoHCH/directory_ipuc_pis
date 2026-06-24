@@ -1,22 +1,31 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
+import 'app_primitives.dart';
+import 'app_typography.dart';
 
-const kAccentBlue = Color(0xFF4FA8DE);
+// Kept for backward compatibility — prefer context.colors.primary in new code.
+const kAccentBlue = AppPrimitives.brand400;
+
+// Kept for backward compatibility — prefer context.colors.categoryColor(tag) in new code.
 const kCategoryColors = {
-  'EMPRENDIMIENTO': Color(0xFFFFB74D),
-  'SERVICIO': Color(0xFF4FC3F7),
-  'EMPRESA': Color(0xFFCE93D8),
-  'ARTE': Color(0xFF80CBC4),
+  'EMPRENDIMIENTO': AppPrimitives.amber300,
+  'SERVICIO':       AppPrimitives.lightBlue300,
+  'EMPRESA':        AppPrimitives.purple200,
+  'ARTE':           AppPrimitives.teal200,
 };
 
 final darkTheme = ThemeData(
   useMaterial3: true,
   brightness: Brightness.dark,
+  fontFamily: AppTypography.fontFamily,
   scaffoldBackgroundColor: AppColors.dark.background,
   colorScheme: ColorScheme.fromSeed(
-    seedColor: kAccentBlue,
+    seedColor: AppPrimitives.brand400,
     brightness: Brightness.dark,
-  ).copyWith(surface: AppColors.dark.surface),
+  ).copyWith(
+    surface: AppColors.dark.surface,
+    error: AppColors.dark.error,
+  ),
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
     shape: CircleBorder(),
   ),
@@ -26,11 +35,15 @@ final darkTheme = ThemeData(
 final lightTheme = ThemeData(
   useMaterial3: true,
   brightness: Brightness.light,
+  fontFamily: AppTypography.fontFamily,
   scaffoldBackgroundColor: AppColors.light.background,
   colorScheme: ColorScheme.fromSeed(
-    seedColor: kAccentBlue,
+    seedColor: AppPrimitives.brand400,
     brightness: Brightness.light,
-  ).copyWith(surface: AppColors.light.surface),
+  ).copyWith(
+    surface: AppColors.light.surface,
+    error: AppColors.light.error,
+  ),
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
     shape: CircleBorder(),
   ),

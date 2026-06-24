@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
 import '../model/member.dart';
 import '../provider/directory_provider.dart';
 import '../repository/member_repository.dart';
@@ -37,7 +39,6 @@ class _DirectoryScreenState extends ConsumerState<DirectoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Activa listener de nuevos miembros
     ref.watch(notificationListenerProvider);
     final myId = ref.watch(currentMemberProvider).valueOrNull?.id ?? '';
 
@@ -46,6 +47,7 @@ class _DirectoryScreenState extends ConsumerState<DirectoryScreen> {
     final filteredAsync = ref.watch(filteredMembersProvider);
     final totalAsync = ref.watch(membersStreamProvider);
     final myId2 = ref.watch(currentMemberProvider).valueOrNull?.id;
+    final colors = context.colors;
 
     return Scaffold(
       body: SafeArea(
@@ -59,28 +61,29 @@ class _DirectoryScreenState extends ConsumerState<DirectoryScreen> {
                 onSettingsTap: () => context.push('/settings'),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.x5),
             FadeInDown(
               delay: const Duration(milliseconds: 100),
               duration: const Duration(milliseconds: 400),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppSpacing.x5),
                 child: _SearchBar(onChanged: notifier.setSearchQuery),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.x4),
             FadeInLeft(
               delay: const Duration(milliseconds: 200),
               duration: const Duration(milliseconds: 400),
               child: Padding(
-                padding: const EdgeInsets.only(left: 20),
+                padding: const EdgeInsets.only(left: AppSpacing.x5),
                 child: CategoryFilterBar(
                   selected: filter.selectedCategory,
                   onSelected: notifier.setCategory,
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.x4),
             Expanded(
               child: filteredAsync.when(
                 loading: () => const _LoadingList(),
@@ -91,16 +94,17 @@ class _DirectoryScreenState extends ConsumerState<DirectoryScreen> {
                             filter.selectedCategory != MemberCategory.all,
                       )
                     : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.x5),
                         itemCount: members.length,
                         itemBuilder: (_, i) => FadeInUp(
                           delay: Duration(
                               milliseconds: (i * 70).clamp(0, 350)),
                           duration: const Duration(milliseconds: 400),
                           child: MemberCard(
-                          member: members[i],
-                          isMe: members[i].id == myId,
-                        ),
+                            member: members[i],
+                            isMe: members[i].id == myId,
+                          ),
                         ),
                       ),
               ),
@@ -113,10 +117,10 @@ class _DirectoryScreenState extends ConsumerState<DirectoryScreen> {
         child: FloatingActionButton(
           onPressed: () =>
               context.push(myId2 != null ? '/my-profile' : '/register'),
-          backgroundColor: kAccentBlue,
+          backgroundColor: colors.primary,
           child: Icon(
             myId2 != null ? Icons.person : Icons.add,
-            color: Colors.white,
+            color: colors.textOnPrimary,
           ),
         ),
       ),
@@ -136,7 +140,8 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.x5, AppSpacing.x4, AppSpacing.x5, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -149,12 +154,12 @@ class _Header extends StatelessWidget {
                   style: TextStyle(
                     color: colors.textSecondary,
                     fontSize: 10,
-                    letterSpacing: 1.2,
-                    fontWeight: FontWeight.w500,
+                    letterSpacing: AppTypography.trackingWide,
+                    fontWeight: AppTypography.medium,
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.x2),
               GestureDetector(
                 onTap: onSettingsTap,
                 behavior: HitTestBehavior.opaque,
@@ -172,26 +177,26 @@ class _Header extends StatelessWidget {
             style: TextStyle(
               color: colors.textPrimary,
               fontSize: 30,
-              fontWeight: FontWeight.w800,
-              height: 1.1,
+              fontWeight: AppTypography.extrabold,
+              height: AppTypography.lineHeightTight,
             ),
           ),
-          const Text(
+          Text(
             'Hermanos.',
             style: TextStyle(
-              color: kAccentBlue,
+              color: colors.primary,
               fontSize: 30,
-              fontWeight: FontWeight.w800,
-              height: 1.1,
+              fontWeight: AppTypography.extrabold,
+              height: AppTypography.lineHeightTight,
             ),
           ),
           Text(
             'IPUC Pisarreal',
             style: TextStyle(
               color: colors.textPrimary,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              height: 1.4,
+              fontSize: AppTypography.sizeXl,
+              fontWeight: AppTypography.semibold,
+              height: AppTypography.lineHeightSnug,
             ),
           ),
           const SizedBox(height: 10),
@@ -199,7 +204,9 @@ class _Header extends StatelessWidget {
             totalMembers == 0
                 ? '«Un Señor, una fe, un bautismo.»'
                 : '«Un Señor, una fe, un bautismo.» — $totalMembers hermanos ofreciendo su trabajo.',
-            style: TextStyle(color: colors.textSecondary, fontSize: 13),
+            style: TextStyle(
+                color: colors.textSecondary,
+                fontSize: AppTypography.sizeMd),
           ),
         ],
       ),
@@ -220,15 +227,17 @@ class _SearchBar extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.input,
         border: Border.all(color: colors.textSecondary.withValues(alpha: 0.2)),
       ),
       child: TextField(
         onChanged: onChanged,
-        style: TextStyle(color: colors.textPrimary, fontSize: 14),
+        style: TextStyle(
+            color: colors.textPrimary, fontSize: AppTypography.sizeBase),
         decoration: InputDecoration(
           hintText: 'Busca por nombre o servicio...',
-          hintStyle: TextStyle(color: colors.textSecondary, fontSize: 14),
+          hintStyle: TextStyle(
+              color: colors.textSecondary, fontSize: AppTypography.sizeBase),
           prefixIcon:
               Icon(Icons.search, color: colors.textSecondary, size: 20),
           border: InputBorder.none,
@@ -276,7 +285,7 @@ class _LoadingListState extends State<_LoadingList>
     return AnimatedBuilder(
       animation: _anim,
       builder: (_, _) => ListView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.x5),
         itemCount: 6,
         itemBuilder: (context, i) => _SkeletonCard(shimmerValue: _anim.value),
       ),
@@ -288,7 +297,6 @@ class _SkeletonCard extends StatelessWidget {
   final double shimmerValue;
 
   const _SkeletonCard({required this.shimmerValue});
-
 
   @override
   Widget build(BuildContext context) {
@@ -309,51 +317,48 @@ class _SkeletonCard extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.x4, vertical: 14),
       decoration: BoxDecoration(
         color: context.colors.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: AppRadius.button,
       ),
       child: ShaderMask(
         blendMode: BlendMode.srcATop,
         shaderCallback: (bounds) => gradient.createShader(bounds),
         child: Row(
           children: [
-            // Avatar
             Container(
               width: 46,
               height: 46,
               decoration: BoxDecoration(
                 color: base.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: AppRadius.input,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AppSpacing.x3),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Nombre
                   Container(
                     height: 14,
                     width: double.infinity,
                     decoration: BoxDecoration(
                       color: base.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: AppRadius.brSm,
                     ),
                   ),
                   const SizedBox(height: 7),
-                  // Descripción
                   Container(
                     height: 11,
                     width: 140,
                     decoration: BoxDecoration(
                       color: base.withValues(alpha: 0.07),
-                      borderRadius: BorderRadius.circular(6),
+                      borderRadius: AppRadius.brSm,
                     ),
                   ),
                   const SizedBox(height: 7),
-                  // Categoría
                   Row(
                     children: [
                       Container(
@@ -370,7 +375,7 @@ class _SkeletonCard extends StatelessWidget {
                         width: 70,
                         decoration: BoxDecoration(
                           color: base.withValues(alpha: 0.07),
-                          borderRadius: BorderRadius.circular(6),
+                          borderRadius: AppRadius.brSm,
                         ),
                       ),
                     ],
@@ -378,14 +383,13 @@ class _SkeletonCard extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 8),
-            // Chevron
+            const SizedBox(width: AppSpacing.x2),
             Container(
               width: 16,
               height: 16,
               decoration: BoxDecoration(
                 color: base.withValues(alpha: 0.07),
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: AppRadius.brXs,
               ),
             ),
           ],
@@ -415,26 +419,27 @@ class _ErrorView extends StatelessWidget {
     final colors = context.colors;
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AppSpacing.x8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.cloud_off_outlined,
                 size: 48, color: colors.textSecondary),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.x4),
             Text(
               'No se pudo cargar el directorio',
-              style: TextStyle(
+              style: AppTypography.titleLg.copyWith(
                 color: colors.textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+                fontWeight: AppTypography.semibold,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.x2),
             Text(
               message,
-              style: TextStyle(color: colors.textSecondary, fontSize: 12),
+              style: TextStyle(
+                  color: colors.textSecondary,
+                  fontSize: AppTypography.sizeSm),
               textAlign: TextAlign.center,
             ),
           ],
@@ -456,7 +461,7 @@ class _EmptyView extends StatelessWidget {
     if (hasFilter) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.x10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -470,21 +475,23 @@ class _EmptyView extends StatelessWidget {
                 child: Icon(Icons.search_off_rounded,
                     size: 34, color: colors.textSecondary),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: AppSpacing.x5),
               Text(
                 'Sin resultados',
                 style: TextStyle(
                   color: colors.textPrimary,
                   fontSize: 18,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: AppTypography.bold,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: AppSpacing.x2),
               Text(
                 'Intenta con otro nombre o cambia la categoría.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    color: colors.textSecondary, fontSize: 14, height: 1.5),
+                    color: colors.textSecondary,
+                    fontSize: AppTypography.sizeBase,
+                    height: AppTypography.lineHeightNormal),
               ),
             ],
           ),
@@ -494,7 +501,7 @@ class _EmptyView extends StatelessWidget {
 
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.x10),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -502,44 +509,48 @@ class _EmptyView extends StatelessWidget {
               width: 88,
               height: 88,
               decoration: BoxDecoration(
-                color: kAccentBlue.withValues(alpha: 0.1),
+                color: colors.primaryMuted,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.people_outline_rounded,
-                  size: 42, color: kAccentBlue),
+              child: Icon(Icons.people_outline_rounded,
+                  size: 42, color: colors.primary),
             ),
-            const SizedBox(height: 24),
-            const Text(
+            const SizedBox(height: AppSpacing.x6),
+            Text(
               'Sé el primero',
               style: TextStyle(
-                color: kAccentBlue,
+                color: colors.primary,
                 fontSize: 22,
-                fontWeight: FontWeight.w800,
-                height: 1.1,
+                fontWeight: AppTypography.extrabold,
+                height: AppTypography.lineHeightTight,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: AppSpacing.x2),
             Text(
               'El directorio está vacío. Únete y comparte tus servicios con la comunidad.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: colors.textSecondary, fontSize: 14, height: 1.6),
+                  color: colors.textSecondary,
+                  fontSize: AppTypography.sizeBase,
+                  height: AppTypography.lineHeightRelaxed),
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: AppSpacing.x7),
             ElevatedButton.icon(
               onPressed: () => context.push('/register'),
               icon: const Icon(Icons.add, size: 18),
               label: const Text(
                 'Crear mi perfil',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                    fontSize: AppTypography.sizeLg,
+                    fontWeight: AppTypography.semibold),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: kAccentBlue,
-                foregroundColor: Colors.white,
+                backgroundColor: colors.primary,
+                foregroundColor: colors.textOnPrimary,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14)),
+                    borderRadius: AppRadius.button),
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 24, vertical: 14),
+                    horizontal: AppSpacing.x6, vertical: 14),
                 elevation: 0,
               ),
             ),

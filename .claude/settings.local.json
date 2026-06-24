@@ -44,7 +44,10 @@
       "Bash(/Users/diego.hoyos/fvm/versions/stable/bin/flutter --version)",
       "Bash(git *)",
       "Bash(/Users/diego.hoyos/fvm/versions/3.38.1/bin/flutter pub *)",
-      "Bash(fc-list)"
+      "Bash(fc-list)",
+      "Bash(/Users/diego.hoyos/fvm/versions/3.38.1/bin/flutter analyze *)",
+      "Bash(cp /Users/diego.hoyos/Downloads/myriad-pro/*.OTF /Users/diego.hoyos/personal/directory_ipuc/assets/fonts/)",
+      "Bash(cp /Users/diego.hoyos/Downloads/myriad-pro/*.otf /Users/diego.hoyos/personal/directory_ipuc/assets/fonts/)"
     ]
   }
 }

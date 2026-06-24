@@ -5,7 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
 import '../provider/register_provider.dart';
 import 'widgets/category_selector.dart';
 import 'widgets/offers_input.dart';
@@ -47,7 +49,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             _TopBar(),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.x5, AppSpacing.x2, AppSpacing.x5, AppSpacing.x6),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -58,68 +61,61 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         children: [
                           Text(
                             'Nuevo',
-                            style: TextStyle(
+                            style: AppTypography.displayLg.copyWith(
                               color: colors.textPrimary,
-                              fontSize: 28,
-                              fontWeight: FontWeight.w800,
-                              height: 1.1,
                             ),
                           ),
-                          const Text(
+                          Text(
                             'hermano.',
-                            style: TextStyle(
-                              color: kAccentBlue,
-                              fontSize: 28,
-                              fontWeight: FontWeight.w800,
-                              height: 1.1,
+                            style: AppTypography.displayLg.copyWith(
+                              color: colors.primary,
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: AppSpacing.x2),
                           Text(
                             'Únete al directorio y comparte tus servicios con la comunidad.',
-                            style: TextStyle(
-                                color: colors.textSecondary,
-                                fontSize: 13,
-                                height: 1.5),
+                            style: AppTypography.bodySm.copyWith(
+                              color: colors.textSecondary,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppSpacing.x6),
                     ZoomIn(
                       delay: const Duration(milliseconds: 200),
                       duration: const Duration(milliseconds: 500),
                       child: const _PhotoUploader(),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppSpacing.x6),
                     FadeInLeft(
                       delay: const Duration(milliseconds: 300),
                       duration: const Duration(milliseconds: 400),
                       child: _FieldLabel('TU NOMBRE'),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppSpacing.x2),
                     _InputField(
                       controller: _nameController,
                       hintText: 'Nombre completo',
                       onChanged: notifier.setName,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: AppSpacing.x5),
                     _FieldLabel('¿EN QUÉ CATEGORÍA ENCAJAS?'),
                     const SizedBox(height: 10),
                     CategorySelector(
                       selected: state.category,
                       onSelected: notifier.setCategory,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: AppSpacing.x5),
                     _FieldLabel('DESCRIBE LO QUE OFRECES'),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppSpacing.x2),
                     _InputField(
                       controller: _bioController,
                       hintText: 'Cuéntale a la comunidad qué haces...',
                       maxLines: 4,
                       onChanged: notifier.setBio,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: AppSpacing.x5),
                     _FieldLabel('TUS SERVICIOS'),
                     const SizedBox(height: 10),
                     OffersInput(
@@ -127,25 +123,25 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       onAdd: notifier.addOffer,
                       onRemove: notifier.removeOffer,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: AppSpacing.x5),
                     _FieldLabel('TU NÚMERO DE WHATSAPP'),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppSpacing.x2),
                     _PhoneField(
                       controller: _phoneController,
                       onChanged: notifier.setPhone,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: AppSpacing.x5),
                     _FieldLabel('TU CORREO'),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppSpacing.x2),
                     _InputField(
                       controller: _emailController,
                       hintText: 'correo@ejemplo.com',
                       keyboardType: TextInputType.emailAddress,
                       onChanged: notifier.setEmail,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: AppSpacing.x5),
                     _FieldLabel('CONTRASEÑA'),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: AppSpacing.x2),
                     _InputField(
                       controller: _passwordController,
                       hintText: 'Mínimo 6 caracteres',
@@ -153,10 +149,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       onChanged: notifier.setPassword,
                     ),
                     if (state.errorMessage != null) ...[
-                      const SizedBox(height: 16),
+                      const SizedBox(height: AppSpacing.x4),
                       _ErrorBanner(message: state.errorMessage!),
                     ],
-                    const SizedBox(height: 28),
+                    const SizedBox(height: AppSpacing.x7),
                     _SubmitButton(
                       isValid: state.isValid,
                       isSubmitting: state.isSubmitting,
@@ -167,10 +163,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         if (ok) {
                           context.go('/directory');
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
+                            SnackBar(
+                              content: const Text(
                                   '¡Perfil creado! Enviando invitación por WhatsApp...'),
-                              backgroundColor: Color(0xFF4CAF50),
+                              backgroundColor: context.colors.success,
                             ),
                           );
                           final digits = phone.replaceAll(RegExp(r'[^\d]'), '');
@@ -178,8 +174,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             '¡Hola! Te registré en el Directorio de hermanos IPUC. '
                             'Ya puedes iniciar sesión con tu correo y completar tu perfil. 🙏',
                           );
-                          final uri = Uri.parse('https://wa.me/$digits?text=$message');
-                          await launchUrl(uri, mode: LaunchMode.externalApplication);
+                          final uri =
+                              Uri.parse('https://wa.me/$digits?text=$message');
+                          await launchUrl(uri,
+                              mode: LaunchMode.externalApplication);
                         }
                       },
                     ),
@@ -199,7 +197,8 @@ class _TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.x4, vertical: 10),
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -208,24 +207,24 @@ class _TopBar extends StatelessWidget {
             child: GestureDetector(
               onTap: () => context.pop(),
               child: Container(
-                width: 36,
-                height: 36,
+                width: AppSpacing.iconButtonSize,
+                height: AppSpacing.iconButtonSize,
                 decoration: BoxDecoration(
                   color: colors.surface,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: AppRadius.iconButton,
                 ),
                 child: Icon(Icons.chevron_left,
                     color: colors.textPrimary, size: 22),
               ),
             ),
           ),
-          const Text(
+          Text(
             'IPUC Pisarreal',
             style: TextStyle(
-              color: kAccentBlue,
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.2,
+              color: colors.primary,
+              fontSize: AppTypography.sizeXs,
+              fontWeight: AppTypography.bold,
+              letterSpacing: AppTypography.trackingWide,
             ),
           ),
         ],
@@ -239,6 +238,7 @@ class _PhotoUploader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Center(
       child: Column(
         children: [
@@ -246,22 +246,21 @@ class _PhotoUploader extends StatelessWidget {
             width: 76,
             height: 76,
             decoration: BoxDecoration(
-              color: context.colors.surface,
+              color: colors.surface,
               shape: BoxShape.circle,
-              border: Border.all(
-                  color: kAccentBlue.withValues(alpha: 0.4), width: 1.5),
+              border:
+                  Border.all(color: colors.primary.withValues(alpha: 0.4), width: 1.5),
             ),
-            child: const Icon(Icons.camera_alt_outlined,
-                color: kAccentBlue, size: 28),
+            child: Icon(Icons.camera_alt_outlined, color: colors.primary, size: 28),
           ),
-          const SizedBox(height: 8),
-          const Text(
+          const SizedBox(height: AppSpacing.x2),
+          Text(
             'SUBIR FOTO',
             style: TextStyle(
-              color: kAccentBlue,
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.4,
+              color: colors.primary,
+              fontSize: AppTypography.sizeXs,
+              fontWeight: AppTypography.bold,
+              letterSpacing: AppTypography.trackingWider,
             ),
           ),
         ],
@@ -280,9 +279,9 @@ class _FieldLabel extends StatelessWidget {
       text,
       style: TextStyle(
         color: context.colors.textSecondary,
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 1.2,
+        fontSize: AppTypography.sizeXs,
+        fontWeight: AppTypography.semibold,
+        letterSpacing: AppTypography.trackingWide,
       ),
     );
   }
@@ -311,7 +310,7 @@ class _InputField extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.input,
       ),
       child: TextField(
         controller: controller,
@@ -321,13 +320,16 @@ class _InputField extends StatelessWidget {
         keyboardType: keyboardType,
         autocorrect: !obscureText,
         enableSuggestions: !obscureText,
-        style: TextStyle(color: colors.textPrimary, fontSize: 15),
+        style: AppTypography.titleLg.copyWith(color: colors.textPrimary),
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(color: colors.textSecondary, fontSize: 15),
+          hintStyle:
+              AppTypography.titleLg.copyWith(color: colors.textSecondary),
           border: InputBorder.none,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.inputPaddingH,
+            vertical: AppSpacing.inputPaddingV,
+          ),
         ),
       ),
     );
@@ -341,20 +343,22 @@ class _ErrorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFFEF5350).withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(10),
+        color: colors.errorMuted,
+        borderRadius: AppRadius.iconButton,
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline, color: Color(0xFFEF5350), size: 18),
-          const SizedBox(width: 8),
+          Icon(Icons.error_outline, color: colors.error, size: 18),
+          const SizedBox(width: AppSpacing.x2),
           Expanded(
             child: Text(
               message,
-              style: const TextStyle(color: Color(0xFFEF5350), fontSize: 13),
+              style: TextStyle(
+                  color: colors.error, fontSize: AppTypography.sizeMd),
             ),
           ),
         ],
@@ -375,12 +379,15 @@ class _PhoneField extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.input,
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.inputPaddingH,
+              vertical: AppSpacing.inputPaddingV,
+            ),
             decoration: BoxDecoration(
               border: Border(
                 right: BorderSide(
@@ -391,8 +398,8 @@ class _PhoneField extends StatelessWidget {
               '+57',
               style: TextStyle(
                   color: colors.textSecondary,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500),
+                  fontSize: AppTypography.sizeLg,
+                  fontWeight: AppTypography.medium),
             ),
           ),
           Expanded(
@@ -401,14 +408,14 @@ class _PhoneField extends StatelessWidget {
               onChanged: onChanged,
               keyboardType: TextInputType.phone,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              style: TextStyle(color: colors.textPrimary, fontSize: 15),
+              style: AppTypography.titleLg.copyWith(color: colors.textPrimary),
               decoration: InputDecoration(
                 hintText: '311 412 8033',
-                hintStyle:
-                    TextStyle(color: colors.textSecondary, fontSize: 15),
+                hintStyle: AppTypography.titleLg
+                    .copyWith(color: colors.textSecondary),
                 border: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 14, vertical: 14),
+                    horizontal: 14, vertical: AppSpacing.inputPaddingV),
               ),
             ),
           ),
@@ -434,7 +441,7 @@ class _SubmitButton extends StatelessWidget {
     final colors = context.colors;
     return SizedBox(
       width: double.infinity,
-      height: 52,
+      height: AppSpacing.buttonHeight,
       child: ElevatedButton.icon(
         onPressed: isValid && !isSubmitting ? onSubmit : null,
         icon: isSubmitting
@@ -447,15 +454,16 @@ class _SubmitButton extends StatelessWidget {
             : const Icon(Icons.check_circle_outline, size: 20),
         label: const Text(
           'Crear mi perfil',
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          style: TextStyle(
+              fontSize: AppTypography.sizeLg,
+              fontWeight: AppTypography.semibold),
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: kAccentBlue,
-          foregroundColor: Colors.white,
+          backgroundColor: colors.primary,
+          foregroundColor: colors.textOnPrimary,
           disabledBackgroundColor: colors.surface,
           disabledForegroundColor: colors.textSecondary,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14)),
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.button),
           elevation: 0,
         ),
       ),

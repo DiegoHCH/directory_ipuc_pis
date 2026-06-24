@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../directory/model/member.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_typography.dart';
 
 class CategorySelector extends StatelessWidget {
   final MemberCategory? selected;
@@ -32,14 +33,14 @@ class CategorySelector extends StatelessWidget {
       childAspectRatio: 3.4,
       children: _options.map((cat) {
         final isSelected = cat == selected;
-        final dotColor = kCategoryColors[cat.tag] ?? kAccentBlue;
+        final dotColor = colors.categoryColor(cat.tag);
         return GestureDetector(
           onTap: () => onSelected(cat),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 180),
             decoration: BoxDecoration(
-              color: isSelected ? kAccentBlue : colors.surface,
-              borderRadius: BorderRadius.circular(12),
+              color: isSelected ? colors.primary : colors.surface,
+              borderRadius: AppRadius.input,
               border: isSelected
                   ? null
                   : Border.all(
@@ -61,9 +62,10 @@ class CategorySelector extends StatelessWidget {
                   cat.label,
                   style: TextStyle(
                     color: isSelected ? Colors.white : colors.textSecondary,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.w400,
-                    fontSize: 14,
+                    fontWeight: isSelected
+                        ? AppTypography.semibold
+                        : AppTypography.regular,
+                    fontSize: AppTypography.sizeBase,
                   ),
                 ),
               ],

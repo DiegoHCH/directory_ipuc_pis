@@ -67,3 +67,21 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/fonts/
+  fonts:
+    - family: MyriadPro
+      fonts:
+        - asset: assets/fonts/MyriadPro-Light.otf
+          weight: 300
+        - asset: assets/fonts/MYRIADPRO-REGULAR.OTF
+          weight: 400
+        - asset: assets/fonts/MYRIADPRO-SEMIBOLD.OTF
+          weight: 600
+        - asset: assets/fonts/MYRIADPRO-SEMIBOLDIT.OTF
+          weight: 600
+          style: italic
+        - asset: assets/fonts/MYRIADPRO-BOLD.OTF
+          weight: 700
+        - asset: assets/fonts/MYRIADPRO-BOLDIT.OTF
+          weight: 700
+          style: italic

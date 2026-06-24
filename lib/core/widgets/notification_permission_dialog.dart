@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_colors.dart';
-import '../theme/app_theme.dart';
+import '../theme/app_radius.dart';
+import '../theme/app_spacing.dart';
+import '../theme/app_typography.dart';
 
 const _prefKey = 'notification_permission_asked';
 
@@ -34,10 +36,11 @@ class _NotificationDialog extends StatelessWidget {
     final colors = context.colors;
     return Dialog(
       backgroundColor: colors.surface,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      insetPadding: const EdgeInsets.symmetric(horizontal: 32),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.dialog),
+      insetPadding: const EdgeInsets.symmetric(horizontal: AppSpacing.x8),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 32, 24, 24),
+        padding: const EdgeInsets.fromLTRB(
+            AppSpacing.x6, AppSpacing.x8, AppSpacing.x6, AppSpacing.x6),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -45,36 +48,34 @@ class _NotificationDialog extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: kAccentBlue.withValues(alpha: 0.12),
+                color: colors.primaryMuted,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.notifications_outlined,
-                color: kAccentBlue,
+                color: colors.primary,
                 size: 36,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.x5),
             Text(
               'Mantente al día',
               style: TextStyle(
                 color: colors.textPrimary,
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
+                fontSize: AppTypography.size2xl,
+                fontWeight: AppTypography.extrabold,
               ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 10),
             Text(
               'Activa las notificaciones para saber cuando un nuevo hermano se une al directorio.',
-              style: TextStyle(
+              style: AppTypography.bodyMd.copyWith(
                 color: colors.textSecondary,
-                fontSize: 14,
-                height: 1.6,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 28),
+            const SizedBox(height: AppSpacing.x7),
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -84,15 +85,17 @@ class _NotificationDialog extends StatelessWidget {
                   onAccepted?.call();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: kAccentBlue,
-                  foregroundColor: Colors.white,
+                  backgroundColor: colors.primary,
+                  foregroundColor: colors.textOnPrimary,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
+                      borderRadius: AppRadius.button),
                   elevation: 0,
                 ),
                 child: const Text(
                   'Activar notificaciones',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontSize: AppTypography.sizeLg,
+                      fontWeight: AppTypography.semibold),
                 ),
               ),
             ),
@@ -104,10 +107,9 @@ class _NotificationDialog extends StatelessWidget {
               },
               child: Text(
                 'Ahora no',
-                style: TextStyle(
+                style: AppTypography.bodyMd.copyWith(
                   color: colors.textSecondary,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: AppTypography.medium,
                 ),
               ),
             ),

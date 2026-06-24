@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
-import '../../core/theme/app_theme.dart';
+import '../../core/theme/app_primitives.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
 import '../auth/repository/auth_repository.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -53,7 +55,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF091728),
+      backgroundColor: AppPrimitives.neutral900,
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -72,7 +74,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 ),
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppSpacing.x8),
             FadeInUp(
               delay: const Duration(milliseconds: 400),
               duration: const Duration(milliseconds: 700),
@@ -80,7 +82,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 'Directorio',
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       color: Colors.white,
-                      fontWeight: FontWeight.w300,
+                      fontWeight: AppTypography.thin,
                       letterSpacing: 2,
                     ),
               ),
@@ -91,8 +93,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
               child: Text(
                 'IPUC',
                 style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                      color: kAccentBlue,
-                      fontWeight: FontWeight.bold,
+                      color: AppPrimitives.brand400,
+                      fontWeight: AppTypography.bold,
                       letterSpacing: 6,
                     ),
               ),
@@ -104,7 +106,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                 'Pisarreal',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: Colors.white70,
-                      fontWeight: FontWeight.w300,
+                      fontWeight: AppTypography.thin,
                       letterSpacing: 3,
                     ),
               ),
@@ -121,7 +123,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     ),
               ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: AppSpacing.x8),
           ],
         ),
       ),

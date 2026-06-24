@@ -6,7 +6,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/member_avatar.dart';
 import '../model/member.dart';
 import '../../auth/repository/auth_repository.dart';
@@ -32,7 +34,7 @@ class _MemberProfileScreenState extends ConsumerState<MemberProfileScreen> {
 
   Future<void> _recordView() async {
     final myId = ref.read(currentMemberProvider).valueOrNull?.id;
-    if (myId == widget.member.id) return; // no graba vista propia
+    if (myId == widget.member.id) return;
     await FirebaseFirestore.instance.collection('profile_views').add({
       'memberId': widget.member.id,
       'createdAt': FieldValue.serverTimestamp(),
@@ -44,7 +46,7 @@ class _MemberProfileScreenState extends ConsumerState<MemberProfileScreen> {
     final member = widget.member;
     final isBookmarked = ref.watch(bookmarkProvider(member.id));
     final colors = context.colors;
-    final categoryColor = kCategoryColors[member.category.tag] ?? kAccentBlue;
+    final categoryColor = colors.categoryColor(member.category.tag);
 
     return Scaffold(
       body: SafeArea(
@@ -62,19 +64,22 @@ class _MemberProfileScreenState extends ConsumerState<MemberProfileScreen> {
             ),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: AppSpacing.x6),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppSpacing.x6),
                     ZoomIn(
                       duration: const Duration(milliseconds: 500),
                       child: Center(
                         child: MemberAvatar(
-                            member: member, size: 90, circle: true),
+                            member: member,
+                            size: AppSpacing.avatarLg,
+                            circle: true),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSpacing.x4),
                     FadeInUp(
                       delay: const Duration(milliseconds: 100),
                       duration: const Duration(milliseconds: 400),
@@ -86,10 +91,8 @@ class _MemberProfileScreenState extends ConsumerState<MemberProfileScreen> {
                               textAlign: TextAlign.center,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
+                              style: AppTypography.headingMd.copyWith(
                                 color: colors.textPrimary,
-                                fontSize: 22,
-                                fontWeight: FontWeight.w800,
                               ),
                             ),
                           ),
@@ -111,9 +114,9 @@ class _MemberProfileScreenState extends ConsumerState<MemberProfileScreen> {
                                   member.category.tag,
                                   style: TextStyle(
                                     color: categoryColor,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.8,
+                                    fontSize: AppTypography.sizeSm,
+                                    fontWeight: AppTypography.semibold,
+                                    letterSpacing: AppTypography.trackingNormal,
                                   ),
                                 ),
                               ],
@@ -123,9 +126,8 @@ class _MemberProfileScreenState extends ConsumerState<MemberProfileScreen> {
                           Center(
                             child: Text(
                               member.description,
-                              style: const TextStyle(
-                                color: kAccentBlue,
-                                fontSize: 15,
+                              style: AppTypography.titleLg.copyWith(
+                                color: colors.primary,
                                 fontStyle: FontStyle.italic,
                               ),
                             ),
@@ -134,22 +136,20 @@ class _MemberProfileScreenState extends ConsumerState<MemberProfileScreen> {
                       ),
                     ),
                     if (member.bio.isNotEmpty) ...[
-                      const SizedBox(height: 20),
+                      const SizedBox(height: AppSpacing.x5),
                       FadeIn(
                         delay: const Duration(milliseconds: 200),
                         duration: const Duration(milliseconds: 500),
                         child: Text(
                           member.bio,
-                          style: TextStyle(
+                          style: AppTypography.bodyMd.copyWith(
                             color: colors.textPrimary,
-                            fontSize: 14,
-                            height: 1.6,
                           ),
                         ),
                       ),
                     ],
                     if (member.offers.isNotEmpty) ...[
-                      const SizedBox(height: 24),
+                      const SizedBox(height: AppSpacing.x6),
                       FadeInUp(
                         delay: const Duration(milliseconds: 280),
                         duration: const Duration(milliseconds: 400),
@@ -160,30 +160,30 @@ class _MemberProfileScreenState extends ConsumerState<MemberProfileScreen> {
                               'LO QUE OFRECE',
                               style: TextStyle(
                                 color: colors.textSecondary,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 1.4,
+                                fontSize: AppTypography.sizeXs,
+                                fontWeight: AppTypography.bold,
+                                letterSpacing: AppTypography.trackingWider,
                               ),
                             ),
-                            const SizedBox(height: 12),
+                            const SizedBox(height: AppSpacing.x3),
                             _OffersWrap(offers: member.offers),
                           ],
                         ),
                       ),
                     ],
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppSpacing.x6),
                     FadeInUp(
                       delay: const Duration(milliseconds: 360),
                       duration: const Duration(milliseconds: 400),
                       child: _PhoneCard(phone: member.phone),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSpacing.x4),
                     FadeInUp(
                       delay: const Duration(milliseconds: 420),
                       duration: const Duration(milliseconds: 400),
                       child: _WhatsAppButton(member: member),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppSpacing.x6),
                   ],
                 ),
               ),
@@ -210,7 +210,8 @@ class _TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.x4, vertical: AppSpacing.x2),
       child: Row(
         children: [
           _IconBtn(
@@ -224,7 +225,7 @@ class _TopBar extends StatelessWidget {
             onTap: onBookmark,
             surface: colors.surface,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppSpacing.x2),
           _IconBtn(
             icon: Icons.ios_share,
             onTap: onShare,
@@ -253,14 +254,13 @@ class _IconBtn extends StatelessWidget {
         height: 38,
         decoration: BoxDecoration(
           color: surface,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: AppRadius.iconButton,
         ),
         child: Icon(icon, color: context.colors.textPrimary, size: 20),
       ),
     );
   }
 }
-
 
 class _OffersWrap extends StatelessWidget {
   final List<String> offers;
@@ -269,23 +269,25 @@ class _OffersWrap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+      spacing: AppSpacing.x2,
+      runSpacing: AppSpacing.x2,
       children: offers
           .map(
             (o) => Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 14, vertical: AppSpacing.x2),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: AppRadius.chip,
                 border: Border.all(
-                    color: kAccentBlue.withValues(alpha: 0.5)),
+                    color: colors.primary.withValues(alpha: 0.5)),
               ),
               child: Text(
                 o,
                 style: TextStyle(
-                    color: context.colors.textPrimary, fontSize: 13),
+                    color: colors.textPrimary,
+                    fontSize: AppTypography.sizeMd),
               ),
             ),
           )
@@ -348,48 +350,48 @@ class _PhoneCard extends ConsumerWidget {
     return GestureDetector(
       onTap: () => _requireAuth(context, ref, () => _call(context)),
       child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: kAccentBlue.withValues(alpha: 0.15),
-              shape: BoxShape.circle,
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.x4, vertical: 14),
+        decoration: BoxDecoration(
+          color: colors.surface,
+          borderRadius: AppRadius.button,
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: colors.primaryMuted,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.phone, color: colors.primary, size: 20),
             ),
-            child: const Icon(Icons.phone, color: kAccentBlue, size: 20),
-          ),
-          const SizedBox(width: 14),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'TELÉFONO',
-                style: TextStyle(
-                  color: colors.textSecondary,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.2,
+            const SizedBox(width: 14),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'TELÉFONO',
+                  style: TextStyle(
+                    color: colors.textSecondary,
+                    fontSize: 10,
+                    fontWeight: AppTypography.semibold,
+                    letterSpacing: AppTypography.trackingWide,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                phone,
-                style: TextStyle(
-                  color: colors.textPrimary,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
+                const SizedBox(height: 2),
+                Text(
+                  phone,
+                  style: AppTypography.titleLg.copyWith(
+                    color: colors.textPrimary,
+                    fontWeight: AppTypography.semibold,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -404,7 +406,6 @@ class _WhatsAppButton extends ConsumerWidget {
     final digits = member.phone.replaceAll(RegExp(r'[^\d]'), '');
     final uri = Uri.parse('https://wa.me/$digits');
 
-    // Registra el evento de contacto en Firestore para notificar al dueño del perfil
     final me = ref.read(currentMemberProvider).valueOrNull;
     FirebaseFirestore.instance.collection('contact_events').add({
       'toId': member.id,
@@ -425,21 +426,24 @@ class _WhatsAppButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.colors;
     return SizedBox(
       width: double.infinity,
-      height: 52,
+      height: AppSpacing.buttonHeight,
       child: ElevatedButton.icon(
-        onPressed: () => _requireAuth(context, ref, () => _openWhatsApp(context, ref)),
+        onPressed: () =>
+            _requireAuth(context, ref, () => _openWhatsApp(context, ref)),
         icon: const FaIcon(FontAwesomeIcons.whatsapp, size: 20),
         label: const Text(
           'Contactar por WhatsApp',
-          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          style: TextStyle(
+              fontSize: AppTypography.sizeLg,
+              fontWeight: AppTypography.semibold),
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF25D366),
+          backgroundColor: colors.whatsapp,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14)),
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.button),
           elevation: 0,
         ),
       ),

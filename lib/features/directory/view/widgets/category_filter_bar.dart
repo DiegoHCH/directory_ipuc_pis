@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../model/member.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 
 class CategoryFilterBar extends StatelessWidget {
   final MemberCategory selected;
@@ -30,28 +32,29 @@ class CategoryFilterBar extends StatelessWidget {
         children: _categories.map((cat) {
           final isActive = cat == selected;
           return Padding(
-            padding: const EdgeInsets.only(right: 8),
+            padding: const EdgeInsets.only(right: AppSpacing.x2),
             child: GestureDetector(
               onTap: () => onSelected(cat),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: AppSpacing.x2),
                 decoration: BoxDecoration(
-                  color: isActive ? kAccentBlue : colors.surface,
-                  borderRadius: BorderRadius.circular(20),
+                  color: isActive ? colors.primary : colors.surface,
+                  borderRadius: AppRadius.chip,
                   border: isActive
                       ? null
                       : Border.all(
-                          color: colors.textSecondary.withValues(alpha: 0.3)),
+                          color:
+                              colors.textSecondary.withValues(alpha: 0.3)),
                 ),
                 child: Text(
                   cat.label,
                   style: TextStyle(
                     color: isActive ? Colors.white : colors.textSecondary,
-                    fontWeight:
-                        isActive ? FontWeight.w600 : FontWeight.w400,
-                    fontSize: 13,
+                    fontWeight: isActive
+                        ? AppTypography.semibold
+                        : AppTypography.regular,
+                    fontSize: AppTypography.sizeMd,
                   ),
                 ),
               ),

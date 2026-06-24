@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
 import '../../../core/widgets/member_avatar.dart';
 import '../../../features/settings/provider/settings_provider.dart';
 import '../../directory/model/member.dart';
@@ -17,12 +19,13 @@ class MyProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final memberAsync = ref.watch(currentMemberProvider);
+    final colors = context.colors;
 
     return Scaffold(
       body: SafeArea(
         child: memberAsync.when(
-          loading: () =>
-              const Center(child: CircularProgressIndicator(color: kAccentBlue)),
+          loading: () => Center(
+              child: CircularProgressIndicator(color: colors.primary)),
           error: (e, _) => _MessageView(
             icon: Icons.error_outline,
             message: 'No se pudo cargar tu perfil.',
@@ -57,120 +60,123 @@ class _ProfileContent extends ConsumerWidget {
         );
 
     return Column(
-          children: [
-            FadeInDown(
-              duration: const Duration(milliseconds: 400),
-              child: _TopBar(status: profileState.status),
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 20),
-                    ZoomIn(
-                      duration: const Duration(milliseconds: 500),
-                      child: Center(
-                        child: MemberAvatar(
-                            member: member, size: 90, circle: true),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    FadeInUp(
-                      delay: const Duration(milliseconds: 100),
-                      duration: const Duration(milliseconds: 400),
-                      child: Column(
-                        children: [
-                          const Center(
-                            child: Text(
-                              'MI PERFIL',
-                              style: TextStyle(
-                                color: kAccentBlue,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 1.4,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Center(
-                            child: Text(
-                              member.name,
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: colors.textPrimary,
-                                fontSize: 22,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Center(
-                            child: Text(
-                              member.description,
-                              style: TextStyle(
-                                  color: colors.textSecondary, fontSize: 14),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    FadeInUp(
-                      delay: const Duration(milliseconds: 200),
-                      duration: const Duration(milliseconds: 400),
-                      child: _StatsRow(
-                        stats: stats.copyWith(
-                          activeServices: member.offers.length,
-                        ),
-                        isLoading: statsAsync.isLoading,
-                        contactsEnabled: contactsEnabled,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    FadeInUp(
-                      delay: const Duration(milliseconds: 300),
-                      duration: const Duration(milliseconds: 400),
-                      child: _OffersSection(member: member),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
-                ),
-              ),
-            ),
-            FadeInUp(
-              delay: const Duration(milliseconds: 350),
-              duration: const Duration(milliseconds: 400),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
-                child: SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton.icon(
-                    onPressed: () =>
-                        context.push('/edit-profile', extra: member),
-                    icon: const Icon(Icons.edit_outlined, size: 18),
-                    label: const Text(
-                      'Editar mi perfil',
-                      style: TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.w600),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: kAccentBlue,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14)),
-                      elevation: 0,
-                    ),
+      children: [
+        FadeInDown(
+          duration: const Duration(milliseconds: 400),
+          child: _TopBar(status: profileState.status),
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.x6),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: AppSpacing.x5),
+                ZoomIn(
+                  duration: const Duration(milliseconds: 500),
+                  child: Center(
+                    child: MemberAvatar(
+                        member: member,
+                        size: AppSpacing.avatarLg,
+                        circle: true),
                   ),
                 ),
+                const SizedBox(height: AppSpacing.x4),
+                FadeInUp(
+                  delay: const Duration(milliseconds: 100),
+                  duration: const Duration(milliseconds: 400),
+                  child: Column(
+                    children: [
+                      Center(
+                        child: Text(
+                          'MI PERFIL',
+                          style: TextStyle(
+                            color: colors.primary,
+                            fontSize: AppTypography.sizeXs,
+                            fontWeight: AppTypography.semibold,
+                            letterSpacing: AppTypography.trackingWider,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Center(
+                        child: Text(
+                          member.name,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTypography.headingMd.copyWith(
+                            color: colors.textPrimary,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.x1),
+                      Center(
+                        child: Text(
+                          member.description,
+                          style: TextStyle(
+                              color: colors.textSecondary,
+                              fontSize: AppTypography.sizeBase),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.x6),
+                FadeInUp(
+                  delay: const Duration(milliseconds: 200),
+                  duration: const Duration(milliseconds: 400),
+                  child: _StatsRow(
+                    stats: stats.copyWith(
+                      activeServices: member.offers.length,
+                    ),
+                    isLoading: statsAsync.isLoading,
+                    contactsEnabled: contactsEnabled,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.x6),
+                FadeInUp(
+                  delay: const Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 400),
+                  child: _OffersSection(member: member),
+                ),
+                const SizedBox(height: AppSpacing.x6),
+              ],
+            ),
+          ),
+        ),
+        FadeInUp(
+          delay: const Duration(milliseconds: 350),
+          duration: const Duration(milliseconds: 400),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+                AppSpacing.x6, AppSpacing.x3, AppSpacing.x6, AppSpacing.x6),
+            child: SizedBox(
+              width: double.infinity,
+              height: AppSpacing.buttonHeight,
+              child: ElevatedButton.icon(
+                onPressed: () =>
+                    context.push('/edit-profile', extra: member),
+                icon: const Icon(Icons.edit_outlined, size: 18),
+                label: const Text(
+                  'Editar mi perfil',
+                  style: TextStyle(
+                      fontSize: AppTypography.sizeLg,
+                      fontWeight: AppTypography.semibold),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colors.primary,
+                  foregroundColor: colors.textOnPrimary,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: AppRadius.button),
+                  elevation: 0,
+                ),
               ),
             ),
-          ],
-        );
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -182,37 +188,37 @@ class _NotLoggedIn extends StatelessWidget {
     final colors = context.colors;
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AppSpacing.x8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.person_outline, size: 48, color: colors.textSecondary),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppSpacing.x4),
             Text(
               'Inicia sesión para ver tu perfil',
-              style: TextStyle(
+              style: AppTypography.titleLg.copyWith(
                 color: colors.textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+                fontWeight: AppTypography.semibold,
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: AppSpacing.x5),
             SizedBox(
               width: double.infinity,
               height: 48,
               child: ElevatedButton(
                 onPressed: () => context.go('/login'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: kAccentBlue,
-                  foregroundColor: Colors.white,
+                  backgroundColor: colors.primary,
+                  foregroundColor: colors.textOnPrimary,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
+                      borderRadius: AppRadius.button),
                   elevation: 0,
                 ),
                 child: const Text('Iniciar sesión',
-                    style:
-                        TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                    style: TextStyle(
+                        fontSize: AppTypography.sizeLg,
+                        fontWeight: AppTypography.semibold)),
               ),
             ),
           ],
@@ -236,9 +242,9 @@ class _MessageView extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 48, color: colors.textSecondary),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.x4),
           Text(message,
-              style: TextStyle(color: colors.textPrimary, fontSize: 15)),
+              style: AppTypography.titleLg.copyWith(color: colors.textPrimary)),
         ],
       ),
     );
@@ -254,7 +260,8 @@ class _TopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.x4, vertical: 10),
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -264,11 +271,11 @@ class _TopBar extends StatelessWidget {
               onTap: () =>
                   context.canPop() ? context.pop() : context.go('/directory'),
               child: Container(
-                width: 36,
-                height: 36,
+                width: AppSpacing.iconButtonSize,
+                height: AppSpacing.iconButtonSize,
                 decoration: BoxDecoration(
                   color: colors.surface,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: AppRadius.iconButton,
                 ),
                 child: Icon(Icons.chevron_left,
                     color: colors.textPrimary, size: 22),
@@ -276,10 +283,11 @@ class _TopBar extends StatelessWidget {
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.x3, vertical: 6),
             decoration: BoxDecoration(
               color: colors.surface,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: AppRadius.chip,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -287,8 +295,8 @@ class _TopBar extends StatelessWidget {
                 Container(
                   width: 7,
                   height: 7,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF4CAF50),
+                  decoration: BoxDecoration(
+                    color: colors.success,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -297,9 +305,9 @@ class _TopBar extends StatelessWidget {
                   status.label,
                   style: TextStyle(
                     color: colors.textPrimary,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.8,
+                    fontSize: AppTypography.sizeXs,
+                    fontWeight: AppTypography.semibold,
+                    letterSpacing: AppTypography.trackingNormal,
                   ),
                 ),
               ],
@@ -308,11 +316,11 @@ class _TopBar extends StatelessWidget {
           Align(
             alignment: Alignment.centerRight,
             child: Container(
-              width: 36,
-              height: 36,
+              width: AppSpacing.iconButtonSize,
+              height: AppSpacing.iconButtonSize,
               decoration: BoxDecoration(
                 color: colors.surface,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: AppRadius.iconButton,
               ),
               child: Icon(Icons.ios_share,
                   color: colors.textPrimary, size: 18),
@@ -323,7 +331,6 @@ class _TopBar extends StatelessWidget {
     );
   }
 }
-
 
 class _StatsRow extends StatelessWidget {
   final ProfileStats stats;
@@ -342,13 +349,15 @@ class _StatsRow extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: context.colors.surface,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: AppRadius.button,
       ),
       child: IntrinsicHeight(
         child: Row(
           children: [
             _StatCell(
-              value: contactsEnabled ? (loading ?? '${stats.weeklyViews}') : '—',
+              value: contactsEnabled
+                  ? (loading ?? '${stats.weeklyViews}')
+                  : '—',
               label: 'Vistas esta\nsemana',
               muted: !contactsEnabled,
             ),
@@ -388,24 +397,25 @@ class _StatCell extends StatelessWidget {
     final colors = context.colors;
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        padding: const EdgeInsets.symmetric(
+            vertical: AppSpacing.x4, horizontal: AppSpacing.x2),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               value,
-              style: TextStyle(
+              style: AppTypography.headingMd.copyWith(
                 color: muted ? colors.textSecondary : colors.textPrimary,
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: AppSpacing.x1),
             Text(
               label,
               textAlign: TextAlign.center,
               style: TextStyle(
-                  color: colors.textSecondary, fontSize: 11, height: 1.4),
+                  color: colors.textSecondary,
+                  fontSize: AppTypography.sizeXs,
+                  height: AppTypography.lineHeightSnug),
             ),
           ],
         ),
@@ -420,8 +430,8 @@ class _Divider extends StatelessWidget {
     return VerticalDivider(
       color: context.colors.textSecondary.withValues(alpha: 0.15),
       width: 1,
-      indent: 12,
-      endIndent: 12,
+      indent: AppSpacing.x3,
+      endIndent: AppSpacing.x3,
     );
   }
 }
@@ -444,46 +454,48 @@ class _OffersSection extends StatelessWidget {
               'LO QUE OFRECES',
               style: TextStyle(
                 color: colors.textSecondary,
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 1.4,
+                fontSize: AppTypography.sizeXs,
+                fontWeight: AppTypography.bold,
+                letterSpacing: AppTypography.trackingWider,
               ),
             ),
             GestureDetector(
               onTap: () => context.push('/edit-profile', extra: member),
-              child: const Text(
+              child: Text(
                 'EDITAR',
                 style: TextStyle(
-                  color: kAccentBlue,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1.2,
+                  color: colors.primary,
+                  fontSize: AppTypography.sizeXs,
+                  fontWeight: AppTypography.bold,
+                  letterSpacing: AppTypography.trackingWide,
                 ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppSpacing.x3),
         if (member.offers.isEmpty)
           Text('Aún no has agregado servicios.',
-              style: TextStyle(color: colors.textSecondary, fontSize: 13))
+              style: TextStyle(
+                  color: colors.textSecondary, fontSize: AppTypography.sizeMd))
         else
           Wrap(
-            spacing: 8,
-            runSpacing: 8,
+            spacing: AppSpacing.x2,
+            runSpacing: AppSpacing.x2,
             children: member.offers
                 .map(
                   (o) => Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 8),
+                        horizontal: 14, vertical: AppSpacing.x2),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: AppRadius.chip,
                       border: Border.all(
-                          color: kAccentBlue.withValues(alpha: 0.4)),
+                          color: colors.primary.withValues(alpha: 0.4)),
                     ),
                     child: Text(o,
                         style: TextStyle(
-                            color: colors.textPrimary, fontSize: 13)),
+                            color: colors.textPrimary,
+                            fontSize: AppTypography.sizeMd)),
                   ),
                 )
                 .toList(),

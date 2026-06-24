@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/providers/theme_provider.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_radius.dart';
+import '../../../core/theme/app_spacing.dart';
+import '../../../core/theme/app_typography.dart';
 import '../../auth/repository/auth_repository.dart';
 import '../../my_profile/provider/current_member_provider.dart';
 import '../provider/settings_provider.dart';
@@ -48,20 +50,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
       body: SafeArea(
         child: Column(
           children: [
-            // Top bar
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.x4, vertical: AppSpacing.x3),
               child: Row(
                 children: [
                   GestureDetector(
                     onTap: () => context.pop(),
                     child: Container(
-                      width: 36,
-                      height: 36,
+                      width: AppSpacing.iconButtonSize,
+                      height: AppSpacing.iconButtonSize,
                       decoration: BoxDecoration(
                         color: colors.surface,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: AppRadius.iconButton,
                       ),
                       child: Icon(Icons.chevron_left,
                           color: colors.textPrimary, size: 22),
@@ -72,8 +73,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                     'Configuración',
                     style: TextStyle(
                       color: colors.textPrimary,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
+                      fontSize: AppTypography.size2xl,
+                      fontWeight: AppTypography.bold,
                     ),
                   ),
                 ],
@@ -81,11 +82,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
             ),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.x5),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppSpacing.x6),
                     FadeInLeft(
                       duration: const Duration(milliseconds: 400),
                       child: _SectionLabel('APARIENCIA'),
@@ -95,7 +96,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                       duration: const Duration(milliseconds: 400),
                       child: _AppearanceCard(),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppSpacing.x6),
                     FadeInLeft(
                       delay: const Duration(milliseconds: 150),
                       duration: const Duration(milliseconds: 400),
@@ -110,7 +111,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                         notifier: notifier,
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppSpacing.x6),
                     FadeInLeft(
                       delay: const Duration(milliseconds: 300),
                       duration: const Duration(milliseconds: 400),
@@ -122,23 +123,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                       duration: const Duration(milliseconds: 400),
                       child: _AccountCard(),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: AppSpacing.x8),
                     FadeIn(
                       delay: const Duration(milliseconds: 450),
                       duration: const Duration(milliseconds: 500),
                       child: Center(
-                      child: Text(
-                        'Directorio Hermanos · v1.0\nIglesia Pentecostal Unida de Colombia\nPisarreal - Los Patios',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: colors.textSecondary,
-                          fontSize: 12,
-                          height: 1.6,
+                        child: Text(
+                          'Directorio Hermanos · v1.0\nIglesia Pentecostal Unida de Colombia\nPisarreal - Los Patios',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: colors.textSecondary,
+                            fontSize: AppTypography.sizeSm,
+                            height: AppTypography.lineHeightRelaxed,
+                          ),
                         ),
                       ),
                     ),
-                    ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppSpacing.x6),
                   ],
                 ),
               ),
@@ -160,8 +161,8 @@ class _SectionLabel extends StatelessWidget {
       text,
       style: TextStyle(
         color: context.colors.textSecondary,
-        fontSize: 11,
-        fontWeight: FontWeight.w700,
+        fontSize: AppTypography.sizeXs,
+        fontWeight: AppTypography.bold,
         letterSpacing: 1.3,
       ),
     );
@@ -186,7 +187,7 @@ class _AppearanceCard extends ConsumerWidget {
     return Container(
       decoration: BoxDecoration(
         color: colors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.card,
       ),
       child: Column(
         children: options.indexed.map(((int, dynamic) e) {
@@ -239,8 +240,8 @@ class _ThemeRow extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.x4, vertical: 14),
             child: Row(
               children: [
                 Container(
@@ -248,13 +249,13 @@ class _ThemeRow extends StatelessWidget {
                   height: 38,
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? kAccentBlue
-                        : kAccentBlue.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(10),
+                        ? colors.primary
+                        : colors.primaryMuted,
+                    borderRadius: AppRadius.iconButton,
                   ),
                   child: Icon(
                     icon,
-                    color: isSelected ? Colors.white : kAccentBlue,
+                    color: isSelected ? Colors.white : colors.primary,
                     size: 20,
                   ),
                 ),
@@ -265,10 +266,9 @@ class _ThemeRow extends StatelessWidget {
                     children: [
                       Text(
                         label,
-                        style: TextStyle(
+                        style: AppTypography.titleLg.copyWith(
                           color: colors.textPrimary,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: AppTypography.medium,
                         ),
                       ),
                       if (subtitle.isNotEmpty) ...[
@@ -276,16 +276,16 @@ class _ThemeRow extends StatelessWidget {
                         Text(
                           subtitle,
                           style: TextStyle(
-                              color: colors.textSecondary, fontSize: 12),
+                              color: colors.textSecondary,
+                              fontSize: AppTypography.sizeSm),
                         ),
                       ],
                     ],
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AppSpacing.x3),
                 isSelected
-                    ? const Icon(Icons.check_circle,
-                        color: kAccentBlue, size: 22)
+                    ? Icon(Icons.check_circle, color: colors.primary, size: 22)
                     : Container(
                         width: 22,
                         height: 22,
@@ -304,7 +304,7 @@ class _ThemeRow extends StatelessWidget {
             Divider(
               height: 1,
               indent: 68,
-              endIndent: 16,
+              endIndent: AppSpacing.x4,
               color: colors.textSecondary.withValues(alpha: 0.12),
             ),
         ],
@@ -325,11 +325,12 @@ class _NotificationsCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoggedIn = ref.watch(isLoggedInProvider);
+    final colors = context.colors;
 
     return Container(
       decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: BorderRadius.circular(16),
+        color: colors.surface,
+        borderRadius: AppRadius.card,
       ),
       child: Column(
         children: [
@@ -373,18 +374,16 @@ class _ToggleRow extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.x4, vertical: AppSpacing.x1),
           child: Row(
             children: [
               Expanded(
                 child: Text(
                   label,
-                  style: TextStyle(
-                    color: enabled
-                        ? colors.textPrimary
-                        : colors.textSecondary,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
+                  style: AppTypography.titleLg.copyWith(
+                    color: enabled ? colors.textPrimary : colors.textSecondary,
+                    fontWeight: AppTypography.regular,
                   ),
                 ),
               ),
@@ -394,7 +393,7 @@ class _ToggleRow extends StatelessWidget {
                     ? (_) => onToggle!()
                     : null,
                 activeThumbColor: Colors.white,
-                activeTrackColor: kAccentBlue,
+                activeTrackColor: colors.primary,
               ),
             ],
           ),
@@ -402,8 +401,8 @@ class _ToggleRow extends StatelessWidget {
         if (showDivider)
           Divider(
             height: 1,
-            indent: 16,
-            endIndent: 16,
+            indent: AppSpacing.x4,
+            endIndent: AppSpacing.x4,
             color: colors.textSecondary.withValues(alpha: 0.12),
           ),
       ],
@@ -417,11 +416,12 @@ class _AccountCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isLoggedIn = ref.watch(isLoggedInProvider);
+    final colors = context.colors;
 
     return Container(
       decoration: BoxDecoration(
-        color: context.colors.surface,
-        borderRadius: BorderRadius.circular(16),
+        color: colors.surface,
+        borderRadius: AppRadius.card,
       ),
       child: Column(
         children: [
@@ -447,18 +447,15 @@ class _AccountCard extends ConsumerWidget {
             },
             behavior: HitTestBehavior.opaque,
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.x4, vertical: AppSpacing.x4),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   isLoggedIn ? 'Cerrar sesión' : 'Iniciar sesión',
-                  style: TextStyle(
-                    color: isLoggedIn
-                        ? const Color(0xFFEF5350)
-                        : kAccentBlue,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
+                  style: AppTypography.titleLg.copyWith(
+                    color: isLoggedIn ? colors.error : colors.primary,
+                    fontWeight: AppTypography.medium,
                   ),
                 ),
               ),
@@ -489,15 +486,18 @@ class _NavRow extends StatelessWidget {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.x4, vertical: AppSpacing.x4),
             child: Row(
               children: [
                 Expanded(
-                  child: Text(label,
-                      style: TextStyle(
-                          color: colors.textPrimary,
-                          fontSize: 15,
-                          fontWeight: FontWeight.w400)),
+                  child: Text(
+                    label,
+                    style: AppTypography.titleLg.copyWith(
+                      color: colors.textPrimary,
+                      fontWeight: AppTypography.regular,
+                    ),
+                  ),
                 ),
                 Icon(Icons.chevron_right,
                     color: colors.textSecondary, size: 20),
@@ -507,8 +507,8 @@ class _NavRow extends StatelessWidget {
           if (showDivider)
             Divider(
               height: 1,
-              indent: 16,
-              endIndent: 16,
+              indent: AppSpacing.x4,
+              endIndent: AppSpacing.x4,
               color: colors.textSecondary.withValues(alpha: 0.12),
             ),
         ],

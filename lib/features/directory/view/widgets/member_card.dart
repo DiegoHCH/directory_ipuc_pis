@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../model/member.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/app_radius.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../../../../core/widgets/member_avatar.dart';
 
 class MemberCard extends StatelessWidget {
@@ -14,25 +16,26 @@ class MemberCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final categoryColor = kCategoryColors[member.category.tag] ?? kAccentBlue;
+    final categoryColor = colors.categoryColor(member.category.tag);
 
     return GestureDetector(
       onTap: () => context.push(isMe ? '/my-profile' : '/member',
           extra: isMe ? null : member),
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.x4, vertical: 14),
         decoration: BoxDecoration(
           color: colors.surface,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: AppRadius.button,
           border: isMe
-              ? Border.all(color: kAccentBlue.withValues(alpha: 0.6))
+              ? Border.all(color: colors.primary.withValues(alpha: 0.6))
               : null,
         ),
         child: Row(
           children: [
             MemberAvatar(member: member, size: 46),
-            const SizedBox(width: 12),
+            const SizedBox(width: AppSpacing.x3),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,10 +45,9 @@ class MemberCard extends StatelessWidget {
                       Flexible(
                         child: Text(
                           member.name,
-                          style: TextStyle(
+                          style: AppTypography.titleLg.copyWith(
                             color: colors.textPrimary,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
+                            fontWeight: AppTypography.semibold,
                           ),
                         ),
                       ),
@@ -55,8 +57,8 @@ class MemberCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 7, vertical: 2),
                           decoration: BoxDecoration(
-                            color: kAccentBlue,
-                            borderRadius: BorderRadius.circular(6),
+                            color: colors.primary,
+                            borderRadius: AppRadius.brSm,
                           ),
                           child: const Text(
                             'TÚ',
@@ -77,7 +79,8 @@ class MemberCard extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                        color: colors.textSecondary, fontSize: 13),
+                        color: colors.textSecondary,
+                        fontSize: AppTypography.sizeMd),
                   ),
                   const SizedBox(height: 6),
                   Row(
@@ -95,9 +98,9 @@ class MemberCard extends StatelessWidget {
                         member.category.tag,
                         style: TextStyle(
                           color: categoryColor,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 0.5,
+                          fontSize: AppTypography.sizeXs,
+                          fontWeight: AppTypography.semibold,
+                          letterSpacing: AppTypography.trackingTight,
                         ),
                       ),
                     ],
@@ -105,7 +108,7 @@ class MemberCard extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: AppSpacing.x1),
             Icon(Icons.chevron_right,
                 color: context.colors.textSecondary, size: 20),
           ],
@@ -114,5 +117,3 @@ class MemberCard extends StatelessWidget {
     );
   }
 }
-
-
