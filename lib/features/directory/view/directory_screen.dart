@@ -8,6 +8,7 @@ import '../model/member.dart';
 import '../provider/directory_provider.dart';
 import '../repository/member_repository.dart';
 import '../../my_profile/provider/current_member_provider.dart';
+import '../../../core/providers/notification_listener_provider.dart';
 import 'widgets/category_filter_bar.dart';
 import 'widgets/member_card.dart';
 
@@ -16,6 +17,9 @@ class DirectoryScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Activa el listener de notificaciones Firestore mientras la pantalla vive
+    ref.watch(notificationListenerProvider);
+
     final filter = ref.watch(directoryProvider);
     final notifier = ref.read(directoryProvider.notifier);
     final filteredAsync = ref.watch(filteredMembersProvider);
@@ -156,12 +160,12 @@ class _Header extends StatelessWidget {
               height: 1.1,
             ),
           ),
-          const Text(
+          Text(
             'IPUC Pisarreal',
             style: TextStyle(
-              color: Colors.white,
+              color: colors.textPrimary,
               fontSize: 16,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               height: 1.4,
             ),
           ),

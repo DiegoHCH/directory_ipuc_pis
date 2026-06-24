@@ -34,7 +34,8 @@
       "Bash(node *)",
       "Read(//private/tmp/**)",
       "Bash(npm list *)",
-      "Bash(npm install *)"
+      "Bash(npm install *)",
+      "Bash(/Users/diego.hoyos/development/flutter/bin/flutter pub *)"
     ]
   }
 }

@@ -76,7 +76,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Le enviarás un link por WhatsApp para que confirme y pueda editar su perfil.',
+                            'Únete al directorio y comparte tus servicios con la comunidad.',
                             style: TextStyle(
                                 color: colors.textSecondary,
                                 fontSize: 13,
@@ -219,28 +219,13 @@ class _TopBar extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-            decoration: BoxDecoration(
-              color: colors.surface,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: kAccentBlue.withValues(alpha: 0.4)),
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.lock_outline, color: kAccentBlue, size: 13),
-                SizedBox(width: 5),
-                Text(
-                  'ADMIN',
-                  style: TextStyle(
-                    color: kAccentBlue,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.2,
-                  ),
-                ),
-              ],
+          const Text(
+            'IPUC Pisarreal',
+            style: TextStyle(
+              color: kAccentBlue,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.2,
             ),
           ),
         ],

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/services/notification_service.dart';
 import '../../auth/repository/auth_repository.dart';
 import '../../directory/model/member.dart';
 import '../../directory/repository/member_repository.dart';
@@ -128,6 +129,12 @@ class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
           .add(member, uid: credential.user!.uid);
 
       state = state.copyWith(isSubmitting: false, createdMember: saved);
+
+      await NotificationService.publish(
+        title: '¡Nuevo hermano en el directorio!',
+        body: '${saved.name} acaba de unirse a la comunidad. 🙏',
+      );
+
       return true;
     } on FirebaseAuthException catch (e) {
       state = state.copyWith(

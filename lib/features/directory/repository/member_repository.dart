@@ -19,7 +19,7 @@ class MemberRepository {
           .toList()
         ..sort((a, b) => a.name.compareTo(b.name)));
 
-  /// Todos los miembros (uso admin).
+  /// Todos los miembros.
   Stream<List<Member>> watchAllMembers() => _col
       .snapshots()
       .map((snap) => snap.docs
