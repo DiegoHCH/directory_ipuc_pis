@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/services/notification_service.dart';
 
 const _keyNewMembers = 'notify_new_members';
 const _keyContacts = 'notify_contacts';
@@ -11,7 +13,7 @@ class SettingsState {
   final bool notifyContacts;
 
   const SettingsState({
-    this.notifyNewMembers = true,
+    this.notifyNewMembers = false,
     this.notifyContacts = true,
   });
 
@@ -29,15 +31,36 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
   Future<SettingsState> build() async {
     _prefs = await SharedPreferences.getInstance();
     return SettingsState(
-      notifyNewMembers: _prefs.getBool(_keyNewMembers) ?? true,
+      notifyNewMembers: _prefs.getBool(_keyNewMembers) ?? false,
       notifyContacts: _prefs.getBool(_keyContacts) ?? true,
     );
   }
 
   Future<void> toggleNotifyNewMembers() async {
-    final current = state.valueOrNull?.notifyNewMembers ?? true;
-    await _prefs.setBool(_keyNewMembers, !current);
-    state = AsyncData(state.requireValue.copyWith(notifyNewMembers: !current));
+    final current = state.valueOrNull?.notifyNewMembers ?? false;
+    final next = !current;
+
+    if (next) {
+      // Solo activa si el sistema concede el permiso
+      final granted = await NotificationService.requestPermission();
+      await _prefs.setBool(_keyNewMembers, granted);
+      state = AsyncData(state.requireValue.copyWith(notifyNewMembers: granted));
+    } else {
+      await _prefs.setBool(_keyNewMembers, false);
+      state = AsyncData(state.requireValue.copyWith(notifyNewMembers: false));
+    }
+  }
+
+  /// Sincroniza el toggle con el permiso real del sistema.
+  /// Solo activa (false → true); nunca desactiva automáticamente.
+  Future<void> syncPermissionStatus() async {
+    final current = state.valueOrNull?.notifyNewMembers ?? false;
+    if (current) return;
+    final granted = await Permission.notification.isGranted;
+    if (granted) {
+      await _prefs.setBool(_keyNewMembers, true);
+      state = AsyncData(state.requireValue.copyWith(notifyNewMembers: true));
+    }
   }
 
   Future<void> toggleNotifyContacts() async {

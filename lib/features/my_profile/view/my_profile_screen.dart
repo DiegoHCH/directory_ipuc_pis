@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/member_avatar.dart';
+import '../../../features/settings/provider/settings_provider.dart';
 import '../../directory/model/member.dart';
 import '../provider/current_member_provider.dart';
 import '../provider/my_profile_provider.dart';
@@ -44,6 +45,8 @@ class _ProfileContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profileState = ref.watch(myProfileProvider);
     final statsAsync = ref.watch(profileStatsProvider(member.id));
+    final contactsEnabled =
+        ref.watch(settingsProvider).valueOrNull?.notifyContacts ?? true;
     final colors = context.colors;
 
     final stats = statsAsync.valueOrNull ??
@@ -124,6 +127,7 @@ class _ProfileContent extends ConsumerWidget {
                           activeServices: member.offers.length,
                         ),
                         isLoading: statsAsync.isLoading,
+                        contactsEnabled: contactsEnabled,
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -324,12 +328,17 @@ class _TopBar extends StatelessWidget {
 class _StatsRow extends StatelessWidget {
   final ProfileStats stats;
   final bool isLoading;
+  final bool contactsEnabled;
 
-  const _StatsRow({required this.stats, this.isLoading = false});
+  const _StatsRow({
+    required this.stats,
+    this.isLoading = false,
+    this.contactsEnabled = true,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final v = isLoading ? '—' : null;
+    final loading = isLoading ? '—' : null;
     return Container(
       decoration: BoxDecoration(
         color: context.colors.surface,
@@ -339,16 +348,23 @@ class _StatsRow extends StatelessWidget {
         child: Row(
           children: [
             _StatCell(
-                value: v ?? '${stats.weeklyViews}',
-                label: 'Vistas esta\nsemana'),
+              value: contactsEnabled ? (loading ?? '${stats.weeklyViews}') : '—',
+              label: 'Vistas esta\nsemana',
+              muted: !contactsEnabled,
+            ),
             _Divider(),
             _StatCell(
-                value: v ?? '${stats.whatsappContacts}',
-                label: 'Contactos por\nWhatsApp'),
+              value: contactsEnabled
+                  ? (loading ?? '${stats.whatsappContacts}')
+                  : '—',
+              label: 'Contactos por\nWhatsApp',
+              muted: !contactsEnabled,
+            ),
             _Divider(),
             _StatCell(
-                value: '${stats.activeServices}',
-                label: 'Servicios\nactivos'),
+              value: '${stats.activeServices}',
+              label: 'Servicios\nactivos',
+            ),
           ],
         ),
       ),
@@ -359,8 +375,13 @@ class _StatsRow extends StatelessWidget {
 class _StatCell extends StatelessWidget {
   final String value;
   final String label;
+  final bool muted;
 
-  const _StatCell({required this.value, required this.label});
+  const _StatCell({
+    required this.value,
+    required this.label,
+    this.muted = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -374,7 +395,7 @@ class _StatCell extends StatelessWidget {
             Text(
               value,
               style: TextStyle(
-                color: colors.textPrimary,
+                color: muted ? colors.textSecondary : colors.textPrimary,
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
               ),

@@ -9,18 +9,37 @@ import '../provider/directory_provider.dart';
 import '../repository/member_repository.dart';
 import '../../my_profile/provider/current_member_provider.dart';
 import '../../../core/providers/notification_listener_provider.dart';
+import '../../../core/widgets/notification_permission_dialog.dart';
+import '../../../features/settings/provider/settings_provider.dart';
 import 'widgets/category_filter_bar.dart';
 import 'widgets/member_card.dart';
 
-class DirectoryScreen extends ConsumerWidget {
+class DirectoryScreen extends ConsumerStatefulWidget {
   const DirectoryScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Activa listeners de notificaciones mientras la pantalla vive
+  ConsumerState<DirectoryScreen> createState() => _DirectoryScreenState();
+}
+
+class _DirectoryScreenState extends ConsumerState<DirectoryScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      maybeAskNotificationPermission(
+        context,
+        onAccepted: () =>
+            ref.read(settingsProvider.notifier).toggleNotifyNewMembers(),
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Activa listener de nuevos miembros
     ref.watch(notificationListenerProvider);
     final myId = ref.watch(currentMemberProvider).valueOrNull?.id ?? '';
-    ref.watch(contactListenerProvider(myId));
 
     final filter = ref.watch(directoryProvider);
     final notifier = ref.read(directoryProvider.notifier);
@@ -222,36 +241,14 @@ class _SearchBar extends StatelessWidget {
 
 // ── Estados ───────────────────────────────────────────────────────────────────
 
-class _LoadingList extends StatelessWidget {
+class _LoadingList extends StatefulWidget {
   const _LoadingList();
 
   @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      itemCount: 6,
-      itemBuilder: (context, i) => Container(
-        margin: const EdgeInsets.only(bottom: 10),
-        height: 82,
-        decoration: BoxDecoration(
-          color: colors.surface,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: const _ShimmerBar(),
-      ),
-    );
-  }
+  State<_LoadingList> createState() => _LoadingListState();
 }
 
-class _ShimmerBar extends StatefulWidget {
-  const _ShimmerBar();
-
-  @override
-  State<_ShimmerBar> createState() => _ShimmerBarState();
-}
-
-class _ShimmerBarState extends State<_ShimmerBar>
+class _LoadingListState extends State<_LoadingList>
     with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl;
   late final Animation<double> _anim;
@@ -261,9 +258,11 @@ class _ShimmerBarState extends State<_ShimmerBar>
     super.initState();
     _ctrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
-    )..repeat(reverse: true);
-    _anim = Tween<double>(begin: 0.3, end: 0.7).animate(_ctrl);
+      duration: const Duration(milliseconds: 1400),
+    )..repeat();
+    _anim = Tween<double>(begin: -1.5, end: 2.5).animate(
+      CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut),
+    );
   }
 
   @override
@@ -276,51 +275,133 @@ class _ShimmerBarState extends State<_ShimmerBar>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: _anim,
-      builder: (_, child) => Opacity(
-        opacity: _anim.value,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Container(
-                width: 46,
-                height: 46,
-                decoration: BoxDecoration(
-                  color: kAccentBlue.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
+      builder: (_, _) => ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        itemCount: 6,
+        itemBuilder: (context, i) => _SkeletonCard(shimmerValue: _anim.value),
+      ),
+    );
+  }
+}
+
+class _SkeletonCard extends StatelessWidget {
+  final double shimmerValue;
+
+  const _SkeletonCard({required this.shimmerValue});
+
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final base = isDark ? Colors.white : Colors.black;
+
+    final gradient = LinearGradient(
+      begin: Alignment.centerLeft,
+      end: Alignment.centerRight,
+      colors: [
+        base.withValues(alpha: 0.06),
+        base.withValues(alpha: 0.13),
+        base.withValues(alpha: 0.06),
+      ],
+      stops: const [0.0, 0.5, 1.0],
+      transform: _ShimmerTransform(shimmerValue),
+    );
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: context.colors.surface,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: ShaderMask(
+        blendMode: BlendMode.srcATop,
+        shaderCallback: (bounds) => gradient.createShader(bounds),
+        child: Row(
+          children: [
+            // Avatar
+            Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                color: base.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
               ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      height: 14,
-                      width: 160,
-                      decoration: BoxDecoration(
-                        color: kAccentBlue.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Nombre
+                  Container(
+                    height: 14,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: base.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(6),
                     ),
-                    const SizedBox(height: 8),
-                    Container(
-                      height: 10,
-                      width: 100,
-                      decoration: BoxDecoration(
-                        color: kAccentBlue.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
+                  ),
+                  const SizedBox(height: 7),
+                  // Descripción
+                  Container(
+                    height: 11,
+                    width: 140,
+                    decoration: BoxDecoration(
+                      color: base.withValues(alpha: 0.07),
+                      borderRadius: BorderRadius.circular(6),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 7),
+                  // Categoría
+                  Row(
+                    children: [
+                      Container(
+                        width: 7,
+                        height: 7,
+                        decoration: BoxDecoration(
+                          color: base.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      Container(
+                        height: 10,
+                        width: 70,
+                        decoration: BoxDecoration(
+                          color: base.withValues(alpha: 0.07),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            const SizedBox(width: 8),
+            // Chevron
+            Container(
+              width: 16,
+              height: 16,
+              decoration: BoxDecoration(
+                color: base.withValues(alpha: 0.07),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ],
         ),
       ),
     );
+  }
+}
+
+class _ShimmerTransform extends GradientTransform {
+  final double value;
+  const _ShimmerTransform(this.value);
+
+  @override
+  Matrix4? transform(Rect bounds, {TextDirection? textDirection}) {
+    return Matrix4.translationValues(bounds.width * value, 0, 0);
   }
 }
 
