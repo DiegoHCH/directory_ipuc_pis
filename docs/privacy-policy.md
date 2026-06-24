@@ -1,3 +1,8 @@
+---
+layout: default
+title: Política de Privacidad
+---
+
 # Política de Privacidad — Directorio IPUC Pisarreal
 
 **Última actualización:** 24 de junio de 2025
