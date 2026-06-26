@@ -51,7 +51,8 @@
       "Bash(grep -oP \"'[A-ZÁÉÍÓÚÑña-záéíóúñ][^']{3,}'\")",
       "Bash(grep -oP \"\\(?<='\\)[^']{4,}\\(?='\\)\")",
       "Bash(/Users/diego.hoyos/fvm/versions/3.38.1/bin/flutter gen-l10n *)",
-      "Bash(grep -rn \"'\\\\\\([A-ZÁÉÍÓÚÑña-záéíóúñ¿¡][^']\\\\{4,\\\\}\\\\\\)'\" /Users/diego.hoyos/personal/directory_ipuc/lib --include=\"*.dart\")"
+      "Bash(grep -rn \"'\\\\\\([A-ZÁÉÍÓÚÑña-záéíóúñ¿¡][^']\\\\{4,\\\\}\\\\\\)'\" /Users/diego.hoyos/personal/directory_ipuc/lib --include=\"*.dart\")",
+      "Bash(xargs cat)"
     ]
   }
 }
