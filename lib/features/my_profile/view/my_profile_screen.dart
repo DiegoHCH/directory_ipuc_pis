@@ -173,32 +173,11 @@ void _confirmDelete(BuildContext context, WidgetRef ref, Member member) {
                           task: () async {
                             try { await memberRepo.delete(memberId); } catch (_) {}
                             try { await authRepo.deleteAccount(); } catch (_) {}
+                            return true;
                           },
-                          onDone: () {
-                            if (!context.mounted) return;
-                            showGeneralDialog<void>(
-                              context: context,
-                              barrierDismissible: false,
-                              barrierColor: Colors.transparent,
-                              transitionDuration:
-                                  const Duration(milliseconds: 300),
-                              pageBuilder: (gCtx, a1, a2) =>
-                                  _DeleteSuccessScreen(
-                                onContinue: () {
-                                  Navigator.of(gCtx).pop();
-                                  router.go('/directory');
-                                },
-                              ),
-                              transitionBuilder:
-                                  (gCtx, anim, secondary, child) =>
-                                      FadeTransition(
-                                        opacity: CurvedAnimation(
-                                            parent: anim,
-                                            curve: Curves.easeOut),
-                                        child: child,
-                                      ),
-                            );
-                          },
+                          onDone: () => router.go('/directory'),
+                          successBuilder: (close) =>
+                              _DeleteSuccessScreen(onContinue: close),
                         );
                       },
                       style: ElevatedButton.styleFrom(

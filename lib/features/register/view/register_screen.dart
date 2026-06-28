@@ -191,38 +191,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       isValid: state.isValid,
                       isSubmitting: state.isSubmitting,
                       onSubmit: () async {
-                        bool ok = false;
+                        final router = GoRouter.of(context);
+                        final successMsg = context.l10n.successProfileCreated;
                         await showLottieLoader(
                           context,
-                          task: () async {
-                            ok = await notifier.submit();
-                          },
-                          onDone: () {
-                            if (!context.mounted) return;
-                            if (!ok) return;
-                            showGeneralDialog<void>(
-                              context: context,
-                              barrierDismissible: false,
-                              barrierColor: Colors.transparent,
-                              transitionDuration:
-                                  const Duration(milliseconds: 300),
-                              pageBuilder: (ctx, a1, a2) => _SuccessSheet(
-                                message: ctx.l10n.successProfileCreated,
-                                onContinue: () {
-                                  Navigator.of(ctx).pop();
-                                  context.go('/directory');
-                                },
-                              ),
-                              transitionBuilder:
-                                  (ctx, anim, secondary, child) =>
-                                      FadeTransition(
-                                        opacity: CurvedAnimation(
-                                            parent: anim,
-                                            curve: Curves.easeOut),
-                                        child: child,
-                                      ),
-                            );
-                          },
+                          task: () => notifier.submit(),
+                          onDone: () => router.go('/directory'),
+                          successBuilder: (close) => _SuccessSheet(
+                            message: successMsg,
+                            onContinue: close,
+                          ),
                         );
                       },
                     ),
