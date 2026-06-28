@@ -3,10 +3,16 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
+import 'dart:convert';
 
 const _channelId = 'ipuc_directorio';
 const _channelName = 'Directorio IPUC';
+
+// URL del Cloudflare Worker — reemplazar tras hacer wrangler deploy
+const _workerUrl = 'https://ipuc-notifications.educacion-cristiana-pis.workers.dev';
+const _workerSecret = 'c20b1f503aa779f24837cc11354b62a6f700ac3004ed34d6f589d6b47cad9e29';
 
 @pragma('vm:entry-point')
 Future<void> _backgroundHandler(RemoteMessage _) async {}
@@ -97,15 +103,51 @@ class NotificationService {
         result.authorizationStatus == AuthorizationStatus.provisional;
   }
 
-  /// Publica una notificación en Firestore para que todos los dispositivos
-  /// activos la reciban vía stream.
+  static Future<void> subscribeToNewMembers() =>
+      _messaging.subscribeToTopic('directorio_ipuc');
+
+  static Future<void> unsubscribeFromNewMembers() =>
+      _messaging.unsubscribeFromTopic('directorio_ipuc');
+
+  static Future<void> subscribeToNewMembers() =>
+      _messaging.subscribeToTopic('directorio_ipuc');
+
+  static Future<void> unsubscribeFromNewMembers() =>
+      _messaging.unsubscribeFromTopic('directorio_ipuc');
+
+  /// Publica una notificación:
+  /// - Escribe en Firestore → dispositivos con la app abierta la muestran
+  /// - Llama al Cloudflare Worker → FCM push para dispositivos con app cerrada
   static Future<void> publish({
     required String title,
     required String body,
-  }) =>
+  }) async {
+    await Future.wait([
       FirebaseFirestore.instance.collection('notifications').add({
         'title': title,
         'body': body,
         'createdAt': FieldValue.serverTimestamp(),
-      });
+      }),
+      _pushViaWorker(title: title, body: body),
+    ]);
+  }
+
+  static Future<void> _pushViaWorker({
+    required String title,
+    required String body,
+  }) async {
+    try {
+      await http.post(
+        Uri.parse(_workerUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'title': title,
+          'body': body,
+          'secret': _workerSecret,
+        }),
+      );
+    } catch (_) {
+      // No bloquea el registro si el Worker falla
+    }
+  }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/providers/locale_provider.dart';
+import 'core/providers/notification_listener_provider.dart';
 import 'core/providers/theme_provider.dart';
 import 'core/router/app_router.dart';
 import 'core/services/notification_service.dart';
@@ -22,6 +23,7 @@ class DirectoryApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(notificationListenerProvider);
     final themeMode = ref.watch(themeProvider);
     final locale = ref.watch(localeProvider);
     final router = ref.watch(routerProvider);

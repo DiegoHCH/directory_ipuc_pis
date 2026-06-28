@@ -56,7 +56,24 @@
       "Bash(firebase deploy *)",
       "Bash(firebase login *)",
       "Bash(kill %1)",
-      "Bash(firebase projects:list)"
+      "Bash(firebase projects:list)",
+      "Bash(wrangler whoami *)",
+      "Bash(wrangler secret *)",
+      "Bash(openssl rand *)",
+      "Bash(wrangler deploy *)",
+      "Bash(wrangler subdomain *)",
+      "Bash(wrangler auth *)",
+      "Bash(curl -s -X GET https://api.cloudflare.com/client/v4/accounts/7ed865f3c522b2d8f4c19271d31beda3/workers/subdomain -H 'Authorization: Bearer __CMDSUB_OUTPUT__')",
+      "Read(//Users/diego.hoyos/.wrangler/config/**)",
+      "Read(//Users/diego.hoyos/Library/Preferences/.wrangler/config/**)",
+      "Bash(curl *)",
+      "Bash(/opt/homebrew/opt/curl/bin/curl --version)",
+      "Bash(brew install *)",
+      "Bash(wrangler dev *)",
+      "Bash(lsof -ti:8787)",
+      "Bash(xargs kill -9)",
+      "Bash(lsof -ti:8788)",
+      "Bash(/opt/homebrew/opt/curl/bin/curl *)"
     ]
   }
 }

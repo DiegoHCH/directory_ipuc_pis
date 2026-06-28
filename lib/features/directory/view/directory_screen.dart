@@ -10,7 +10,6 @@ import '../model/member.dart';
 import '../provider/directory_provider.dart';
 import '../repository/member_repository.dart';
 import '../../my_profile/provider/current_member_provider.dart';
-import '../../../core/providers/notification_listener_provider.dart';
 import '../../../core/widgets/notification_permission_dialog.dart';
 import '../../../features/settings/provider/settings_provider.dart';
 import 'widgets/category_filter_bar.dart';
@@ -40,7 +39,6 @@ class _DirectoryScreenState extends ConsumerState<DirectoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(notificationListenerProvider);
     final myId = ref.watch(currentMemberProvider).valueOrNull?.id ?? '';
 
     final filter = ref.watch(directoryProvider);

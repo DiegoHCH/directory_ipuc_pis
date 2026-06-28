@@ -30,8 +30,13 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
   @override
   Future<SettingsState> build() async {
     _prefs = await SharedPreferences.getInstance();
+    final notifyNewMembers = _prefs.getBool(_keyNewMembers) ?? false;
+    if (notifyNewMembers) {
+      // Re-suscribe al topic en cada arranque por si cambió el token FCM
+      NotificationService.subscribeToNewMembers();
+    }
     return SettingsState(
-      notifyNewMembers: _prefs.getBool(_keyNewMembers) ?? false,
+      notifyNewMembers: notifyNewMembers,
       notifyContacts: _prefs.getBool(_keyContacts) ?? true,
     );
   }
@@ -43,9 +48,11 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
     if (next) {
       // Solo activa si el sistema concede el permiso
       final granted = await NotificationService.requestPermission();
+      if (granted) await NotificationService.subscribeToNewMembers();
       await _prefs.setBool(_keyNewMembers, granted);
       state = AsyncData(state.requireValue.copyWith(notifyNewMembers: granted));
     } else {
+      await NotificationService.unsubscribeFromNewMembers();
       await _prefs.setBool(_keyNewMembers, false);
       state = AsyncData(state.requireValue.copyWith(notifyNewMembers: false));
     }

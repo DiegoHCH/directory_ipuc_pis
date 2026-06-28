@@ -8,7 +8,7 @@ exports.notifyNewMember = onDocumentCreated('members/{memberId}', async (event) 
   const member = event.data.data();
   const name = member?.name ?? 'Un hermano';
 
-  await getMessaging().sendEachForMulticast({
+  await getMessaging().send({
     topic: 'directorio_ipuc',
     notification: {
       title: '¡Nuevo hermano en el directorio!',
@@ -18,6 +18,11 @@ exports.notifyNewMember = onDocumentCreated('members/{memberId}', async (event) 
       notification: {
         channelId: 'ipuc_directorio',
         sound: 'default',
+      },
+    },
+    apns: {
+      payload: {
+        aps: { sound: 'default' },
       },
     },
   });
