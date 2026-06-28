@@ -35,6 +35,7 @@ var worker_default = {
     }
   }
 };
+var ICON_URL = "https://ipuc-pis-directory.web.app/icons/Icon-512.png";
 async function sendToTopic({ title, body, accessToken, projectId }) {
   const res = await fetch(
     `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
@@ -45,8 +46,16 @@ async function sendToTopic({ title, body, accessToken, projectId }) {
         message: {
           topic: "directorio_ipuc",
           notification: { title, body },
-          android: { notification: { channel_id: "ipuc_directorio", sound: "default" } },
-          apns: { payload: { aps: { sound: "default" } } }
+          android: {
+            notification: {
+              channel_id: "ipuc_directorio",
+              sound: "default",
+              image: ICON_URL
+            }
+          },
+          apns: {
+            payload: { aps: { sound: "default" } }
+          }
         }
       })
     }
@@ -65,7 +74,11 @@ async function sendToWebToken({ title, body, accessToken, projectId, token }) {
           token,
           notification: { title, body },
           webpush: {
-            notification: { icon: "/icons/Icon-192.png", badge: "/icons/Icon-192.png" }
+            notification: {
+              icon: ICON_URL,
+              badge: ICON_URL,
+              image: ICON_URL
+            }
           }
         }
       })

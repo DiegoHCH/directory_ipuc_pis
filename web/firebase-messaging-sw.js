@@ -13,11 +13,12 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
-  const title = payload.notification?.title ?? 'Directorio IPUC';
+  const title = payload.notification?.title ?? 'Directorio Pisarreal';
   const body  = payload.notification?.body  ?? '';
   self.registration.showNotification(title, {
     body,
-    icon: '/icons/Icon-192.png',
+    icon: '/icons/Icon-512.png',
     badge: '/icons/Icon-192.png',
+    image: '/icons/Icon-512.png',
   });
 });

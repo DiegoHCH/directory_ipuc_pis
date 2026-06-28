@@ -69,6 +69,8 @@ class NotificationService {
           _channelName,
           importance: Importance.high,
           priority: Priority.high,
+          largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
+          styleInformation: DefaultStyleInformation(true, true),
         ),
       ),
     );
