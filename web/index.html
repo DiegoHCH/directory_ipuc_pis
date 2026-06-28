@@ -109,6 +109,45 @@
       document.body.style.background = "transparent";
     }
   </script>
+
+  <style>
+    #landscape-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: #091728;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    #landscape-overlay svg {
+      animation: rotate-hint 1.5s ease-in-out infinite alternate;
+    }
+    @keyframes rotate-hint {
+      from { transform: rotate(-20deg); }
+      to   { transform: rotate(20deg); }
+    }
+    #landscape-overlay p {
+      color: #ffffff;
+      font-family: sans-serif;
+      font-size: 16px;
+      margin: 0;
+      text-align: center;
+    }
+    @media screen and (orientation: landscape) {
+      #landscape-overlay { display: flex; }
+    }
+  </style>
+
+  <div id="landscape-overlay">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="5" y="2" width="14" height="20" rx="2"/>
+      <line x1="12" y1="18" x2="12" y2="18.5" stroke-width="2"/>
+    </svg>
+    <p>Por favor gira tu dispositivo<br>a modo vertical</p>
+  </div>
 </head>
 <body>
   <picture id="splash-branding">
