@@ -1,6 +1,6 @@
 {
-    "name": "directory_ipuc",
-    "short_name": "directory_ipuc",
+    "name": "Directorio Pisarreal",
+    "short_name": "Pisarreal",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
