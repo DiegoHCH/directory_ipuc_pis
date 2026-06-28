@@ -73,7 +73,7 @@
   "authPasswordLabel": "PASSWORD",
   "authEmailHint": "email@example.com",
   "authPasswordHint": "Your password",
-  "authMinPassword": "Minimum 6 characters",
+  "authMinPassword": "Min. 8 chars, 1 uppercase and 1 number",
   "authNoProfile": "Don't have a profile?",
   "authSignInPrompt": "Sign in",
 
@@ -138,7 +138,7 @@
   "errNoConnection": "No connection. Check your internet and try again.",
   "errEmailTaken": "That email is already registered. Sign in.",
   "errInvalidEmail": "The email is not valid.",
-  "errWeakPassword": "The password must have at least 6 characters.",
+  "errWeakPassword": "Password must have at least 8 characters, one uppercase letter and one number.",
   "errWrongCredentials": "Email or password incorrect.",
   "errUserNotFound": "No account exists with that email.",
   "errPhoneTaken": "That number is already registered. If it's yours, sign in.",

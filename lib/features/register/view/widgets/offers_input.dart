@@ -18,52 +18,110 @@ class OffersInput extends StatelessWidget {
   });
 
   void _showAddDialog(BuildContext context) {
-    final colors = context.colors;
     final controller = TextEditingController();
-    showDialog<void>(
+    showModalBottomSheet<void>(
       context: context,
-      builder: (_) => AlertDialog(
-        backgroundColor: colors.surface,
-        shape: RoundedRectangleBorder(borderRadius: AppRadius.card),
-        title: Text(
-          context.l10n.btnAddService,
-          style: AppTypography.titleLg.copyWith(color: colors.textPrimary),
-        ),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          style: TextStyle(color: colors.textPrimary),
-          decoration: InputDecoration(
-            hintText: context.l10n.regServiceHint,
-            hintStyle: TextStyle(color: colors.textSecondary),
-            filled: true,
-            fillColor: colors.background,
-            border: OutlineInputBorder(
-              borderRadius: AppRadius.iconButton,
-              borderSide: BorderSide.none,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        final colors = ctx.colors;
+        return Padding(
+          padding: EdgeInsets.only(
+              bottom: MediaQuery.of(ctx).viewInsets.bottom),
+          child: Container(
+            decoration: BoxDecoration(
+              color: colors.surface,
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            padding: EdgeInsets.fromLTRB(
+              AppSpacing.x6,
+              AppSpacing.x6,
+              AppSpacing.x6,
+              AppSpacing.x6 + MediaQuery.of(ctx).padding.bottom,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40, height: 4,
+                    decoration: BoxDecoration(
+                      color: colors.textSecondary.withValues(alpha: 0.3),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.x5),
+                Text(
+                  ctx.l10n.btnAddService,
+                  style: AppTypography.titleLg
+                      .copyWith(color: colors.textPrimary,
+                          fontWeight: AppTypography.bold),
+                ),
+                const SizedBox(height: AppSpacing.x3),
+                TextField(
+                  controller: controller,
+                  autofocus: true,
+                  style: TextStyle(color: colors.textPrimary),
+                  decoration: InputDecoration(
+                    hintText: ctx.l10n.regServiceHint,
+                    hintStyle: TextStyle(color: colors.textSecondary),
+                    filled: true,
+                    fillColor: colors.background,
+                    border: OutlineInputBorder(
+                      borderRadius: AppRadius.iconButton,
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                  onSubmitted: (v) {
+                    onAdd(v);
+                    Navigator.of(ctx).pop();
+                  },
+                ),
+                const SizedBox(height: AppSpacing.x4),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(ctx).pop(),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: colors.textSecondary,
+                          side: BorderSide(
+                              color: colors.textSecondary.withValues(alpha: 0.3)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: AppRadius.button),
+                          minimumSize: const Size.fromHeight(48),
+                        ),
+                        child: Text(ctx.l10n.btnCancel),
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.x3),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          onAdd(controller.text);
+                          Navigator.of(ctx).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: colors.primary,
+                          foregroundColor: colors.textOnPrimary,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: AppRadius.button),
+                          elevation: 0,
+                          minimumSize: const Size.fromHeight(48),
+                        ),
+                        child: Text(ctx.l10n.btnAdd),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-          onSubmitted: (v) {
-            onAdd(v);
-            Navigator.of(context).pop();
-          },
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(context.l10n.btnCancel,
-                style: TextStyle(color: colors.textSecondary)),
-          ),
-          TextButton(
-            onPressed: () {
-              onAdd(controller.text);
-              Navigator.of(context).pop();
-            },
-            child: Text(context.l10n.btnAdd,
-                style: TextStyle(color: colors.primary)),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 

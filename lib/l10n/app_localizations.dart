@@ -479,7 +479,7 @@ abstract class AppLocalizations {
   /// No description provided for @authMinPassword.
   ///
   /// In en, this message translates to:
-  /// **'Minimum 6 characters'**
+  /// **'Min. 8 chars, 1 uppercase and 1 number'**
   String get authMinPassword;
 
   /// No description provided for @authNoProfile.
@@ -821,7 +821,7 @@ abstract class AppLocalizations {
   /// No description provided for @errWeakPassword.
   ///
   /// In en, this message translates to:
-  /// **'The password must have at least 6 characters.'**
+  /// **'Password must have at least 8 characters, one uppercase letter and one number.'**
   String get errWeakPassword;
 
   /// No description provided for @errWrongCredentials.

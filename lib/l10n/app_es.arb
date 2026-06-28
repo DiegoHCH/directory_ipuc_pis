@@ -68,7 +68,7 @@
   "authPasswordLabel": "CONTRASEÑA",
   "authEmailHint": "correo@ejemplo.com",
   "authPasswordHint": "Tu contraseña",
-  "authMinPassword": "Mínimo 6 caracteres",
+  "authMinPassword": "Mín. 8 caracteres, 1 mayúscula y 1 número",
   "authNoProfile": "¿No tienes perfil?",
   "authSignInPrompt": "Inicia sesión",
 
@@ -133,7 +133,7 @@
   "errNoConnection": "Sin conexión. Revisa tu internet e intenta de nuevo.",
   "errEmailTaken": "Ese correo ya está registrado. Inicia sesión.",
   "errInvalidEmail": "El correo no es válido.",
-  "errWeakPassword": "La contraseña debe tener al menos 6 caracteres.",
+  "errWeakPassword": "La contraseña debe tener mínimo 8 caracteres, una mayúscula y un número.",
   "errWrongCredentials": "Correo o contraseña incorrectos.",
   "errUserNotFound": "No existe una cuenta con ese correo.",
   "errPhoneTaken": "Ese número ya está registrado. Si es tuyo, inicia sesión.",

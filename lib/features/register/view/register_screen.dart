@@ -27,6 +27,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   @override
   void dispose() {
@@ -36,6 +37,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     _phoneController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -159,6 +161,24 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       obscureText: true,
                       onChanged: notifier.setPassword,
                     ),
+                    if (state.password.isNotEmpty) ...[
+                      const SizedBox(height: AppSpacing.x2),
+                      _PasswordRules(password: state.password),
+                    ],
+                    const SizedBox(height: AppSpacing.x5),
+                    _FieldLabel('CONFIRMAR CONTRASEÑA'),
+                    const SizedBox(height: AppSpacing.x2),
+                    _InputField(
+                      controller: _confirmPasswordController,
+                      hintText: 'Repite tu contraseña',
+                      obscureText: true,
+                      onChanged: notifier.setConfirmPassword,
+                    ),
+                    if (state.confirmPassword.isNotEmpty &&
+                        !state.passwordsMatch) ...[
+                      const SizedBox(height: AppSpacing.x2),
+                      _PasswordMismatch(),
+                    ],
                     if (state.errorMessage != null) ...[
                       const SizedBox(height: AppSpacing.x4),
                       _ErrorBanner(
@@ -314,7 +334,7 @@ class _FieldLabel extends StatelessWidget {
   }
 }
 
-class _InputField extends StatelessWidget {
+class _InputField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   final int maxLines;
@@ -332,24 +352,32 @@ class _InputField extends StatelessWidget {
   });
 
   @override
+  State<_InputField> createState() => _InputFieldState();
+}
+
+class _InputFieldState extends State<_InputField> {
+  bool _hidden = true;
+
+  @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    final isPassword = widget.obscureText;
     return Container(
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: AppRadius.input,
       ),
       child: TextField(
-        controller: controller,
-        onChanged: onChanged,
-        maxLines: obscureText ? 1 : maxLines,
-        obscureText: obscureText,
-        keyboardType: keyboardType,
-        autocorrect: !obscureText,
-        enableSuggestions: !obscureText,
+        controller: widget.controller,
+        onChanged: widget.onChanged,
+        maxLines: isPassword ? 1 : widget.maxLines,
+        obscureText: isPassword && _hidden,
+        keyboardType: widget.keyboardType,
+        autocorrect: !isPassword,
+        enableSuggestions: !isPassword,
         style: AppTypography.titleLg.copyWith(color: colors.textPrimary),
         decoration: InputDecoration(
-          hintText: hintText,
+          hintText: widget.hintText,
           hintStyle:
               AppTypography.titleLg.copyWith(color: colors.textSecondary),
           border: InputBorder.none,
@@ -357,6 +385,16 @@ class _InputField extends StatelessWidget {
             horizontal: AppSpacing.inputPaddingH,
             vertical: AppSpacing.inputPaddingV,
           ),
+          suffixIcon: isPassword
+              ? IconButton(
+                  icon: Icon(
+                    _hidden ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                    color: colors.textSecondary,
+                    size: 20,
+                  ),
+                  onPressed: () => setState(() => _hidden = !_hidden),
+                )
+              : null,
         ),
       ),
     );
@@ -386,6 +424,90 @@ class _ErrorBanner extends StatelessWidget {
               message,
               style: TextStyle(
                   color: colors.error, fontSize: AppTypography.sizeMd),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PasswordMismatch extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Row(
+      children: [
+        Icon(Icons.error_outline, size: 14, color: colors.error),
+        const SizedBox(width: 6),
+        Text(
+          'Las contraseñas no coinciden',
+          style: TextStyle(
+            fontSize: AppTypography.sizeXs,
+            color: colors.error,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PasswordRules extends StatelessWidget {
+  final String password;
+
+  const _PasswordRules({required this.password});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _Rule(
+          met: password.length >= 8,
+          label: 'Mínimo 8 caracteres',
+          colors: colors,
+        ),
+        _Rule(
+          met: password.contains(RegExp(r'[A-Z]')),
+          label: 'Al menos una mayúscula',
+          colors: colors,
+        ),
+        _Rule(
+          met: password.contains(RegExp(r'[0-9]')),
+          label: 'Al menos un número',
+          colors: colors,
+        ),
+      ],
+    );
+  }
+}
+
+class _Rule extends StatelessWidget {
+  final bool met;
+  final String label;
+  final dynamic colors;
+
+  const _Rule({required this.met, required this.label, required this.colors});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.colors;
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Row(
+        children: [
+          Icon(
+            met ? Icons.check_circle_outline : Icons.radio_button_unchecked,
+            size: 14,
+            color: met ? c.success : c.textSecondary,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: AppTypography.sizeXs,
+              color: met ? c.success : c.textSecondary,
             ),
           ),
         ],

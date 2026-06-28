@@ -303,24 +303,11 @@ void _requireAuth(BuildContext context, WidgetRef ref, VoidCallback action) {
     action();
     return;
   }
-  showDialog<void>(
+  showModalBottomSheet<void>(
     context: context,
-    builder: (ctx) => AlertDialog(
-      title: Text(context.l10n.authDialogTitle),
-      content: Text(context.l10n.authDialogBody),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(ctx).pop(),
-          child: Text(context.l10n.btnCancel),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.of(ctx).pop();
-            context.push('/login');
-          },
-          child: Text(context.l10n.btnSignIn),
-        ),
-      ],
+    backgroundColor: Colors.transparent,
+    builder: (_) => _AuthRequiredSheet(
+      onSignIn: () => context.push('/login'),
     ),
   );
 }
@@ -450,3 +437,92 @@ class _WhatsAppButton extends ConsumerWidget {
     );
   }
 }
+
+class _AuthRequiredSheet extends StatelessWidget {
+  final VoidCallback onSignIn;
+  const _AuthRequiredSheet({required this.onSignIn});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return Container(
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      padding: EdgeInsets.fromLTRB(
+        AppSpacing.x6,
+        AppSpacing.x6,
+        AppSpacing.x6,
+        AppSpacing.x6 + MediaQuery.of(context).padding.bottom,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 40, height: 4,
+            decoration: BoxDecoration(
+              color: colors.textSecondary.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.x6),
+          Container(
+            width: 64, height: 64,
+            decoration: BoxDecoration(
+              color: colors.primaryMuted, shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.lock_outline, color: colors.primary, size: 30),
+          ),
+          const SizedBox(height: AppSpacing.x4),
+          Text(
+            context.l10n.authDialogTitle,
+            style: TextStyle(
+              color: colors.textPrimary,
+              fontSize: AppTypography.size2xl,
+              fontWeight: AppTypography.extrabold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            context.l10n.authDialogBody,
+            style: AppTypography.bodyMd.copyWith(color: colors.textSecondary),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppSpacing.x6),
+          SizedBox(
+            width: double.infinity, height: 50,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                onSignIn();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: colors.primary,
+                foregroundColor: colors.textOnPrimary,
+                shape: RoundedRectangleBorder(borderRadius: AppRadius.button),
+                elevation: 0,
+              ),
+              child: Text(
+                context.l10n.btnSignIn,
+                style: const TextStyle(
+                    fontSize: AppTypography.sizeLg,
+                    fontWeight: AppTypography.semibold),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              context.l10n.btnCancel,
+              style: AppTypography.bodyMd.copyWith(color: colors.textSecondary),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+

@@ -201,7 +201,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authPasswordHint => 'Your password';
 
   @override
-  String get authMinPassword => 'Minimum 6 characters';
+  String get authMinPassword => 'Min. 8 chars, 1 uppercase and 1 number';
 
   @override
   String get authNoProfile => 'Don\'t have a profile?';
@@ -380,7 +380,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errInvalidEmail => 'The email is not valid.';
 
   @override
-  String get errWeakPassword => 'The password must have at least 6 characters.';
+  String get errWeakPassword =>
+      'Password must have at least 8 characters, one uppercase letter and one number.';
 
   @override
   String get errWrongCredentials => 'Email or password incorrect.';

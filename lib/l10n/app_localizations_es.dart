@@ -202,7 +202,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authPasswordHint => 'Tu contraseña';
 
   @override
-  String get authMinPassword => 'Mínimo 6 caracteres';
+  String get authMinPassword => 'Mín. 8 caracteres, 1 mayúscula y 1 número';
 
   @override
   String get authNoProfile => '¿No tienes perfil?';
@@ -386,7 +386,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get errWeakPassword =>
-      'La contraseña debe tener al menos 6 caracteres.';
+      'La contraseña debe tener mínimo 8 caracteres, una mayúscula y un número.';
 
   @override
   String get errWrongCredentials => 'Correo o contraseña incorrectos.';

@@ -18,6 +18,7 @@ class RegisterState {
   final String phone;
   final String email;
   final String password;
+  final String confirmPassword;
   final String? photoUrl;
   final bool isUploadingPhoto;
   final bool isSubmitting;
@@ -33,6 +34,7 @@ class RegisterState {
     this.phone = '',
     this.email = '',
     this.password = '',
+    this.confirmPassword = '',
     this.photoUrl,
     this.isUploadingPhoto = false,
     this.isSubmitting = false,
@@ -40,12 +42,20 @@ class RegisterState {
     this.createdMember,
   });
 
+  bool get isPasswordStrong =>
+      password.length >= 8 &&
+      password.contains(RegExp(r'[A-Z]')) &&
+      password.contains(RegExp(r'[0-9]'));
+
+  bool get passwordsMatch => password == confirmPassword;
+
   bool get isValid =>
       name.trim().isNotEmpty &&
       category != null &&
       phone.trim().length == 10 &&
       email.trim().isNotEmpty &&
-      password.length >= 6 &&
+      isPasswordStrong &&
+      passwordsMatch &&
       !isUploadingPhoto;
 
   String get fullPhone => '+57${phone.trim()}';
@@ -59,6 +69,7 @@ class RegisterState {
     String? phone,
     String? email,
     String? password,
+    String? confirmPassword,
     String? photoUrl,
     bool? isUploadingPhoto,
     bool? isSubmitting,
@@ -74,6 +85,7 @@ class RegisterState {
         phone: phone ?? this.phone,
         email: email ?? this.email,
         password: password ?? this.password,
+        confirmPassword: confirmPassword ?? this.confirmPassword,
         photoUrl: photoUrl ?? this.photoUrl,
         isUploadingPhoto: isUploadingPhoto ?? this.isUploadingPhoto,
         isSubmitting: isSubmitting ?? this.isSubmitting,
@@ -93,6 +105,7 @@ class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
   void setPhone(String v) => state = state.copyWith(phone: v);
   void setEmail(String v) => state = state.copyWith(email: v);
   void setPassword(String v) => state = state.copyWith(password: v);
+  void setConfirmPassword(String v) => state = state.copyWith(confirmPassword: v);
 
   Future<void> pickPhoto() async {
     final picked = await ImagePicker().pickImage(

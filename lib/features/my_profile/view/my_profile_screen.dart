@@ -47,88 +47,145 @@ void _confirmDelete(BuildContext context, WidgetRef ref, Member member) {
   final colors = context.colors;
   final passwordController = TextEditingController();
 
-  showDialog<void>(
+  showModalBottomSheet<void>(
     context: context,
-    builder: (ctx) => AlertDialog(
-      backgroundColor: colors.surface,
-      shape: RoundedRectangleBorder(borderRadius: AppRadius.dialog),
-      title: Text(context.l10n.deleteDialogTitle,
-          style: TextStyle(color: colors.textPrimary)),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            context.l10n.deleteDialogBody,
-            style: TextStyle(
-                color: colors.textSecondary,
-                height: AppTypography.lineHeightNormal),
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (ctx) {
+      return Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+        child: Container(
+          decoration: BoxDecoration(
+            color: colors.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: passwordController,
-            obscureText: true,
-            style: TextStyle(color: colors.textPrimary),
-            decoration: InputDecoration(
-              labelText: context.l10n.authPasswordLabel,
-              labelStyle: TextStyle(color: colors.textSecondary),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: colors.textSecondary),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: colors.error),
-              ),
-            ),
+          padding: EdgeInsets.fromLTRB(
+            AppSpacing.x6,
+            AppSpacing.x6,
+            AppSpacing.x6,
+            AppSpacing.x6 + MediaQuery.of(ctx).padding.bottom,
           ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(ctx).pop(),
-          child: Text(context.l10n.btnCancel,
-              style: TextStyle(color: colors.textSecondary)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40, height: 4,
+                  decoration: BoxDecoration(
+                    color: colors.textSecondary.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.x5),
+              Center(
+                child: Container(
+                  width: 64, height: 64,
+                  decoration: BoxDecoration(
+                    color: colors.error.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.delete_outline, color: colors.error, size: 30),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.x4),
+              Text(
+                context.l10n.deleteDialogTitle,
+                style: TextStyle(
+                  color: colors.textPrimary,
+                  fontSize: AppTypography.size2xl,
+                  fontWeight: AppTypography.extrabold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                context.l10n.deleteDialogBody,
+                style: TextStyle(
+                    color: colors.textSecondary,
+                    height: AppTypography.lineHeightNormal),
+              ),
+              const SizedBox(height: AppSpacing.x4),
+              TextField(
+                controller: passwordController,
+                obscureText: true,
+                autofocus: true,
+                style: TextStyle(color: colors.textPrimary),
+                decoration: InputDecoration(
+                  labelText: context.l10n.authPasswordLabel,
+                  labelStyle: TextStyle(color: colors.textSecondary),
+                  filled: true,
+                  fillColor: colors.background,
+                  border: OutlineInputBorder(
+                    borderRadius: AppRadius.iconButton,
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.x4),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: colors.textSecondary,
+                        side: BorderSide(
+                            color: colors.textSecondary.withValues(alpha: 0.3)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: AppRadius.button),
+                        minimumSize: const Size.fromHeight(48),
+                      ),
+                      child: Text(context.l10n.btnCancel),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.x3),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final password = passwordController.text.trim();
+                        Navigator.of(ctx).pop();
+                        if (password.isEmpty) return;
+
+                        final authRepo   = ref.read(authRepositoryProvider);
+                        final memberRepo = ref.read(memberRepositoryProvider);
+                        final router     = GoRouter.of(context);
+                        final messenger  = ScaffoldMessenger.of(context);
+                        final l10n       = context.l10n;
+                        final errorColor = colors.error;
+                        final memberId   = member.id;
+
+                        final errorKey = await authRepo.tryReauthenticate(password: password);
+                        if (errorKey != null) {
+                          messenger.showSnackBar(SnackBar(
+                            content: Text(localizeError(l10n, errorKey)),
+                            backgroundColor: errorColor,
+                          ));
+                          return;
+                        }
+
+                        router.go('/directory');
+                        try { await memberRepo.delete(memberId); } catch (_) {}
+                        try { await authRepo.deleteAccount(); } catch (_) {}
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colors.error,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: AppRadius.button),
+                        elevation: 0,
+                        minimumSize: const Size.fromHeight(48),
+                      ),
+                      child: Text(context.l10n.btnDelete),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
-        TextButton(
-          onPressed: () async {
-            final password = passwordController.text.trim();
-            Navigator.of(ctx).pop();
-            if (password.isEmpty) return;
-
-            // Capturar todo antes del primer await — el widget puede desmontarse
-            // cuando Firestore emita null (miembro eliminado) y el context/ref
-            // quedarían inválidos si los usáramos después.
-            final authRepo   = ref.read(authRepositoryProvider);
-            final memberRepo = ref.read(memberRepositoryProvider);
-            final router     = GoRouter.of(context);
-            final messenger  = ScaffoldMessenger.of(context);
-            final l10n       = context.l10n;
-            final errorColor = colors.error;
-            final memberId   = member.id;
-
-            // 1. Re-autenticar (no cambia estado del árbol)
-            final errorKey = await authRepo.tryReauthenticate(password: password);
-            if (errorKey != null) {
-              messenger.showSnackBar(SnackBar(
-                content: Text(localizeError(l10n, errorKey)),
-                backgroundColor: errorColor,
-              ));
-              return;
-            }
-
-            // 2. Navegar ANTES de borrar para que el context ya no importe
-            router.go('/directory');
-
-            // 3. Borrar Firestore primero, Auth después — en ese orden
-            // porque Firestore rechaza el delete si el usuario ya no está autenticado.
-            // Se puede await aunque el widget esté desmontado (los repos son locales).
-            try { await memberRepo.delete(memberId); } catch (_) {}
-            try { await authRepo.deleteAccount(); } catch (_) {}
-          },
-          child: Text(context.l10n.btnDelete,
-              style: TextStyle(color: colors.error)),
-        ),
-      ],
-    ),
+      );
+    },
   );
 }
 
