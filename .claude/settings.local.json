@@ -81,7 +81,8 @@
       "Bash(identify /Users/diego.hoyos/personal/directory_ipuc/web/icons/Icon-192.png)",
       "Bash(/Users/diego.hoyos/fvm/versions/3.41.8/bin/flutter pub *)",
       "Bash(/Users/diego.hoyos/fvm/versions/3.41.8/bin/flutter analyze *)",
-      "Bash(npx wrangler *)"
+      "Bash(npx wrangler *)",
+      "Bash(/Users/diego.hoyos/fvm/versions/3.41.8/bin/flutter gen-l10n *)"
     ]
   }
 }

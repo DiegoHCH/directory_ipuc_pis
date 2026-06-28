@@ -18,6 +18,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get btnSave => 'Guardar';
 
   @override
+  String get btnContinue => 'Continuar';
+
+  @override
   String get btnCancel => 'Cancelar';
 
   @override
@@ -323,6 +326,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get deleteDialogBody => 'Esta acción no se puede deshacer.';
+
+  @override
+  String get deleteSuccessTitle => 'Perfil eliminado';
+
+  @override
+  String get deleteSuccessBody =>
+      'Tu perfil ha sido eliminado de la comunidad.';
 
   @override
   String get successSaved => 'Cambios guardados.';

@@ -12,6 +12,7 @@ import 'widgets/category_selector.dart';
 import 'widgets/offers_input.dart';
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/utils/l10n_errors.dart';
+import '../../../core/widgets/lottie_loader_screen.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -190,17 +191,39 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       isValid: state.isValid,
                       isSubmitting: state.isSubmitting,
                       onSubmit: () async {
-                        final ok = await notifier.submit();
-                        if (!context.mounted) return;
-                        if (ok) {
-                          context.go('/directory');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(context.l10n.successProfileCreated),
-                              backgroundColor: context.colors.success,
-                            ),
-                          );
-                        }
+                        bool ok = false;
+                        await showLottieLoader(
+                          context,
+                          task: () async {
+                            ok = await notifier.submit();
+                          },
+                          onDone: () {
+                            if (!context.mounted) return;
+                            if (!ok) return;
+                            showGeneralDialog<void>(
+                              context: context,
+                              barrierDismissible: false,
+                              barrierColor: Colors.transparent,
+                              transitionDuration:
+                                  const Duration(milliseconds: 300),
+                              pageBuilder: (ctx, a1, a2) => _SuccessSheet(
+                                message: ctx.l10n.successProfileCreated,
+                                onContinue: () {
+                                  Navigator.of(ctx).pop();
+                                  context.go('/directory');
+                                },
+                              ),
+                              transitionBuilder:
+                                  (ctx, anim, secondary, child) =>
+                                      FadeTransition(
+                                        opacity: CurvedAnimation(
+                                            parent: anim,
+                                            curve: Curves.easeOut),
+                                        child: child,
+                                      ),
+                            );
+                          },
+                        );
                       },
                     ),
                   ],
@@ -614,6 +637,74 @@ class _SubmitButton extends StatelessWidget {
           disabledForegroundColor: colors.textSecondary,
           shape: RoundedRectangleBorder(borderRadius: AppRadius.button),
           elevation: 0,
+        ),
+      ),
+    );
+  }
+}
+
+class _SuccessSheet extends StatelessWidget {
+  final String message;
+  final VoidCallback onContinue;
+  const _SuccessSheet({required this.message, required this.onContinue});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final padding = MediaQuery.of(context).padding;
+    return Material(
+      color: colors.background,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.x8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Spacer(),
+              Container(
+                width: 96,
+                height: 96,
+                decoration: BoxDecoration(
+                  color: colors.success.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.check_circle_outline,
+                    color: colors.success, size: 48),
+              ),
+              const SizedBox(height: AppSpacing.x6),
+              Text(
+                message,
+                style: TextStyle(
+                  color: colors.textPrimary,
+                  fontSize: AppTypography.size2xl,
+                  fontWeight: AppTypography.extrabold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const Spacer(),
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: onContinue,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.textOnPrimary,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: AppRadius.button),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    context.l10n.btnContinue,
+                    style: const TextStyle(
+                        fontSize: AppTypography.sizeLg,
+                        fontWeight: AppTypography.semibold),
+                  ),
+                ),
+              ),
+              SizedBox(height: padding.bottom > 0 ? 0 : AppSpacing.x4),
+            ],
+          ),
         ),
       ),
     );

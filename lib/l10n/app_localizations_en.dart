@@ -18,6 +18,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get btnSave => 'Save';
 
   @override
+  String get btnContinue => 'Continue';
+
+  @override
   String get btnCancel => 'Cancel';
 
   @override
@@ -321,6 +324,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deleteDialogBody => 'This action cannot be undone.';
+
+  @override
+  String get deleteSuccessTitle => 'Profile deleted';
+
+  @override
+  String get deleteSuccessBody =>
+      'Your profile has been removed from the community.';
 
   @override
   String get successSaved => 'Changes saved.';

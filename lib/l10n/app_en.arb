@@ -5,6 +5,7 @@
   "appTagline": "Connecting our community",
 
   "btnSave": "Save",
+  "btnContinue": "Continue",
   "btnCancel": "Cancel",
   "btnDelete": "Delete",
   "btnEdit": "EDIT",
@@ -117,6 +118,8 @@
 
   "deleteDialogTitle": "Delete profile?",
   "deleteDialogBody": "This action cannot be undone.",
+  "deleteSuccessTitle": "Profile deleted",
+  "deleteSuccessBody": "Your profile has been removed from the community.",
 
   "successSaved": "Changes saved.",
   "successSignedOut": "Session closed.",

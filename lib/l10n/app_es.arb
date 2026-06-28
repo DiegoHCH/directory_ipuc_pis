@@ -5,6 +5,7 @@
   "appTagline": "Conectando nuestra comunidad",
 
   "btnSave": "Guardar",
+  "btnContinue": "Continuar",
   "btnCancel": "Cancelar",
   "btnDelete": "Eliminar",
   "btnEdit": "EDITAR",
@@ -112,6 +113,8 @@
 
   "deleteDialogTitle": "¿Eliminar perfil?",
   "deleteDialogBody": "Esta acción no se puede deshacer.",
+  "deleteSuccessTitle": "Perfil eliminado",
+  "deleteSuccessBody": "Tu perfil ha sido eliminado de la comunidad.",
 
   "successSaved": "Cambios guardados.",
   "successSignedOut": "Sesión cerrada.",

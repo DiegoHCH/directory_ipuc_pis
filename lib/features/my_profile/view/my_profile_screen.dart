@@ -18,6 +18,7 @@ import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/utils/l10n_errors.dart';
 import '../../auth/repository/auth_repository.dart';
 import '../../directory/repository/member_repository.dart';
+import '../../../core/widgets/lottie_loader_screen.dart';
 
 class MyProfileScreen extends ConsumerWidget {
   const MyProfileScreen({super.key});
@@ -166,9 +167,39 @@ void _confirmDelete(BuildContext context, WidgetRef ref, Member member) {
                           return;
                         }
 
-                        router.go('/directory');
-                        try { await memberRepo.delete(memberId); } catch (_) {}
-                        try { await authRepo.deleteAccount(); } catch (_) {}
+                        if (!context.mounted) return;
+                        await showLottieLoader(
+                          context,
+                          task: () async {
+                            try { await memberRepo.delete(memberId); } catch (_) {}
+                            try { await authRepo.deleteAccount(); } catch (_) {}
+                          },
+                          onDone: () {
+                            if (!context.mounted) return;
+                            showGeneralDialog<void>(
+                              context: context,
+                              barrierDismissible: false,
+                              barrierColor: Colors.transparent,
+                              transitionDuration:
+                                  const Duration(milliseconds: 300),
+                              pageBuilder: (gCtx, a1, a2) =>
+                                  _DeleteSuccessScreen(
+                                onContinue: () {
+                                  Navigator.of(gCtx).pop();
+                                  router.go('/directory');
+                                },
+                              ),
+                              transitionBuilder:
+                                  (gCtx, anim, secondary, child) =>
+                                      FadeTransition(
+                                        opacity: CurvedAnimation(
+                                            parent: anim,
+                                            curve: Curves.easeOut),
+                                        child: child,
+                                      ),
+                            );
+                          },
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: colors.error,
@@ -689,6 +720,80 @@ class _OffersSection extends StatelessWidget {
                 .toList(),
           ),
       ],
+    );
+  }
+}
+
+class _DeleteSuccessScreen extends StatelessWidget {
+  final VoidCallback onContinue;
+  const _DeleteSuccessScreen({required this.onContinue});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final padding = MediaQuery.of(context).padding;
+    return Material(
+      color: colors.background,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.x8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Spacer(),
+              Container(
+                width: 96,
+                height: 96,
+                decoration: BoxDecoration(
+                  color: colors.error.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.delete_outline,
+                    color: colors.error, size: 48),
+              ),
+              const SizedBox(height: AppSpacing.x6),
+              Text(
+                context.l10n.deleteSuccessTitle,
+                style: TextStyle(
+                  color: colors.textPrimary,
+                  fontSize: AppTypography.size2xl,
+                  fontWeight: AppTypography.extrabold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.x2),
+              Text(
+                context.l10n.deleteSuccessBody,
+                style: AppTypography.bodyMd
+                    .copyWith(color: colors.textSecondary),
+                textAlign: TextAlign.center,
+              ),
+              const Spacer(),
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: onContinue,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.textOnPrimary,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: AppRadius.button),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    context.l10n.btnContinue,
+                    style: const TextStyle(
+                        fontSize: AppTypography.sizeLg,
+                        fontWeight: AppTypography.semibold),
+                  ),
+                ),
+              ),
+              SizedBox(height: padding.bottom > 0 ? 0 : AppSpacing.x4),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

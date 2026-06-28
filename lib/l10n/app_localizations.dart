@@ -116,6 +116,12 @@ abstract class AppLocalizations {
   /// **'Save'**
   String get btnSave;
 
+  /// No description provided for @btnContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get btnContinue;
+
   /// No description provided for @btnCancel.
   ///
   /// In en, this message translates to:
@@ -709,6 +715,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This action cannot be undone.'**
   String get deleteDialogBody;
+
+  /// No description provided for @deleteSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile deleted'**
+  String get deleteSuccessTitle;
+
+  /// No description provided for @deleteSuccessBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile has been removed from the community.'**
+  String get deleteSuccessBody;
 
   /// No description provided for @successSaved.
   ///
