@@ -1,7 +1,9 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -213,7 +215,7 @@ class _ProfileContent extends ConsumerWidget {
       children: [
         FadeInDown(
           duration: const Duration(milliseconds: 400),
-          child: _TopBar(status: profileState.status),
+          child: _TopBar(status: profileState.status, member: member),
         ),
         Expanded(
           child: SingleChildScrollView(
@@ -420,8 +422,24 @@ class _MessageView extends StatelessWidget {
 
 class _TopBar extends StatelessWidget {
   final ProfileStatus status;
+  final Member member;
 
-  const _TopBar({required this.status});
+  const _TopBar({required this.status, required this.member});
+
+  Future<void> _share(BuildContext context) async {
+    final url = 'https://ipuc-pis-directory.web.app/member?id=${member.id}';
+    final text = '${member.name} está en el Directorio IPUC Pisarreal 🙏\n$url';
+    try {
+      await SharePlus.instance.share(ShareParams(text: text));
+    } catch (_) {
+      await Clipboard.setData(ClipboardData(text: url));
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Enlace copiado al portapapeles')),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -482,15 +500,18 @@ class _TopBar extends StatelessWidget {
           ),
           Align(
             alignment: Alignment.centerRight,
-            child: Container(
-              width: AppSpacing.iconButtonSize,
-              height: AppSpacing.iconButtonSize,
-              decoration: BoxDecoration(
-                color: colors.surface,
-                borderRadius: AppRadius.iconButton,
+            child: GestureDetector(
+              onTap: () => _share(context),
+              child: Container(
+                width: AppSpacing.iconButtonSize,
+                height: AppSpacing.iconButtonSize,
+                decoration: BoxDecoration(
+                  color: colors.surface,
+                  borderRadius: AppRadius.iconButton,
+                ),
+                child: Icon(Icons.ios_share,
+                    color: colors.textPrimary, size: 18),
               ),
-              child: Icon(Icons.ios_share,
-                  color: colors.textPrimary, size: 18),
             ),
           ),
         ],
