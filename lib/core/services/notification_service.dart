@@ -117,14 +117,35 @@ class NotificationService {
         result.authorizationStatus == AuthorizationStatus.provisional;
   }
 
+  /// Guarda el token Android en Firestore para recibir push individualmente.
+  /// Reemplaza la suscripción por topic (que no permite excluir tokens).
   static Future<void> subscribeToNewMembers() async {
     if (kIsWeb) return;
-    await _messaging.subscribeToTopic('directorio_ipuc');
+    // Limpia suscripción al topic viejo si aún existe
+    try { await _messaging.unsubscribeFromTopic('directorio_ipuc'); } catch (_) {}
+    final token = await _messaging.getToken();
+    if (token == null) return;
+    await FirebaseFirestore.instance.collection('fcm_tokens').doc(token).set({
+      'token': token,
+      'platform': 'android',
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
   }
 
   static Future<void> unsubscribeFromNewMembers() async {
     if (kIsWeb) return;
-    await _messaging.unsubscribeFromTopic('directorio_ipuc');
+    final token = await _messaging.getToken();
+    if (token == null) return;
+    await FirebaseFirestore.instance
+        .collection('fcm_tokens')
+        .doc(token)
+        .delete();
+  }
+
+  /// Devuelve el FCM token del dispositivo actual (Android o web).
+  static Future<String?> getCurrentToken() async {
+    if (kIsWeb) return _messaging.getToken(vapidKey: vapidKey);
+    return _messaging.getToken();
   }
 
   /// Registra el token FCM web en Firestore para recibir push en la PWA.
@@ -154,23 +175,29 @@ class NotificationService {
   /// Publica una notificación:
   /// - Escribe en Firestore → dispositivos con la app abierta la muestran
   /// - Llama al Cloudflare Worker → FCM push para dispositivos con app cerrada
+  /// [excludeToken] excluye un token específico del push (para evitar
+  /// que el dispositivo que dispara la notificación la reciba a sí mismo).
   static Future<void> publish({
     required String title,
     required String body,
+    String? excludeToken,
+    String? excludeUid,
   }) async {
     await Future.wait([
       FirebaseFirestore.instance.collection('notifications').add({
         'title': title,
         'body': body,
         'createdAt': FieldValue.serverTimestamp(),
+        'triggeredBy': ?excludeUid,
       }),
-      _pushViaWorker(title: title, body: body),
+      _pushViaWorker(title: title, body: body, excludeToken: excludeToken),
     ]);
   }
 
   static Future<void> _pushViaWorker({
     required String title,
     required String body,
+    String? excludeToken,
   }) async {
     try {
       await http.post(
@@ -180,6 +207,8 @@ class NotificationService {
           'title': title,
           'body': body,
           'secret': _workerSecret,
+          // ignore: use_null_aware_elements
+          if (excludeToken != null) 'excludeToken': excludeToken,
         }),
       );
     } catch (_) {

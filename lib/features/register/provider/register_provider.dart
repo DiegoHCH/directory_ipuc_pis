@@ -172,9 +172,14 @@ class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
       // Notificaciones: no bloquean el registro si fallan
       try {
         await ref.read(settingsProvider.notifier).enableContactsNotification();
+
+        final excludeToken = await NotificationService.getCurrentToken();
+
         await NotificationService.publish(
           title: '¡Nuevo hermano en el directorio!',
           body: '${saved.name} acaba de unirse a la comunidad. 🙏',
+          excludeToken: excludeToken,
+          excludeUid: credential.user?.uid,
         );
       } catch (_) {}
 

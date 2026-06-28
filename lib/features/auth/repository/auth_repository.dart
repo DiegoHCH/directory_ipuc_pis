@@ -43,6 +43,18 @@ class AuthRepository {
     await user.reauthenticateWithCredential(credential);
   }
 
+  /// Intenta re-autenticar y devuelve una clave de error l10n, o null si OK.
+  Future<String?> tryReauthenticate({required String password}) async {
+    try {
+      await reauthenticate(password: password);
+      return null;
+    } on FirebaseAuthException catch (e) {
+      return friendlyAuthError(e);
+    } catch (_) {
+      return 'errGeneric';
+    }
+  }
+
   Future<void> deleteAccount() => _auth.currentUser!.delete();
 
   Future<void> signOut() => _auth.signOut();

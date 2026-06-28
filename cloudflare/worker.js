@@ -11,7 +11,7 @@ export default {
       return new Response('Invalid JSON', { status: 400 });
     }
 
-    const { title, body: notifBody, secret } = body;
+    const { title, body: notifBody, secret, excludeToken } = body;
 
     if (!secret || secret !== env.WORKER_SECRET) {
       return new Response('Unauthorized', { status: 401 });
@@ -21,19 +21,23 @@ export default {
       const accessToken = await getAccessToken(env.FIREBASE_SERVICE_ACCOUNT);
       const projectId = env.FIREBASE_PROJECT_ID;
 
-      // 1. Envía al topic → reciben usuarios Android con la app nativa
-      const topicResult = await sendToTopic({ title, body: notifBody, accessToken, projectId });
+      // Obtiene todos los tokens (Android + web) y excluye el del registrante
+      // para que no se auto-notifique. Se envía individualmente a cada token
+      // (en lugar de topics) para poder excluir tokens específicos.
+      const allTokens = await getAllTokens(accessToken, projectId);
+      const tokens = excludeToken
+        ? allTokens.filter((t) => t.token !== excludeToken)
+        : allTokens;
 
-      // 2. Envía a tokens web → reciben usuarios iOS con la PWA
-      const webTokens = await getWebTokens(accessToken, projectId);
-      const webResults = await Promise.allSettled(
-        webTokens.map((token) => sendToWebToken({ title, body: notifBody, accessToken, projectId, token }))
+      const results = await Promise.allSettled(
+        tokens.map(({ token, platform }) =>
+          sendToToken({ title, body: notifBody, accessToken, projectId, token, platform })
+        )
       );
 
       return Response.json({
-        topic: topicResult,
-        webTokensSent: webTokens.length,
-        webErrors: webResults.filter((r) => r.status === 'rejected').length,
+        tokensSent: tokens.length,
+        errors: results.filter((r) => r.status === 'rejected').length,
       });
     } catch (e) {
       return Response.json({ error: e.message }, { status: 500 });
@@ -45,61 +49,36 @@ export default {
 
 const ICON_URL = 'https://ipuc-pis-directory.web.app/icons/Icon-512.png';
 
-async function sendToTopic({ title, body, accessToken, projectId }) {
-  const res = await fetch(
-    `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
-    {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: {
-          topic: 'directorio_ipuc',
-          notification: { title, body },
+async function sendToToken({ title, body, accessToken, projectId, token, platform }) {
+  const isWeb = platform === 'web';
+  const message = {
+    token,
+    notification: { title, body },
+    ...(isWeb
+      ? { webpush: { notification: { icon: ICON_URL, badge: ICON_URL, image: ICON_URL } } }
+      : {
           android: {
-            notification: {
-              channel_id: 'ipuc_directorio',
-              sound: 'default',
-              image: ICON_URL,
-            },
+            notification: { channel_id: 'ipuc_directorio', sound: 'default', image: ICON_URL },
           },
-          apns: {
-            payload: { aps: { sound: 'default' } },
-          },
-        },
-      }),
-    }
-  );
-  return res.json();
-}
+          apns: { payload: { aps: { sound: 'default' } } },
+        }),
+  };
 
-async function sendToWebToken({ title, body, accessToken, projectId, token }) {
   const res = await fetch(
     `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
     {
       method: 'POST',
       headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: {
-          token,
-          notification: { title, body },
-          webpush: {
-            notification: {
-              icon: ICON_URL,
-              badge: ICON_URL,
-              image: ICON_URL,
-            },
-          },
-        },
-      }),
+      body: JSON.stringify({ message }),
     }
   );
-  if (!res.ok) throw new Error(`FCM web token error: ${await res.text()}`);
+  if (!res.ok) throw new Error(`FCM error [${platform}]: ${await res.text()}`);
   return res.json();
 }
 
 // ── Firestore ────────────────────────────────────────────────────────────────
 
-async function getWebTokens(accessToken, projectId) {
+async function getAllTokens(accessToken, projectId) {
   const res = await fetch(
     `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/fcm_tokens`,
     { headers: { Authorization: `Bearer ${accessToken}` } }
@@ -107,8 +86,11 @@ async function getWebTokens(accessToken, projectId) {
   const data = await res.json();
   if (!data.documents) return [];
   return data.documents
-    .map((doc) => doc.fields?.token?.stringValue)
-    .filter(Boolean);
+    .map((doc) => ({
+      token: doc.fields?.token?.stringValue,
+      platform: doc.fields?.platform?.stringValue ?? 'android',
+    }))
+    .filter((t) => t.token);
 }
 
 // ── OAuth2 / JWT ──────────────────────────────────────────────────────────────

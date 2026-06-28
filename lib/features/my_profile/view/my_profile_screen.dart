@@ -15,7 +15,7 @@ import '../provider/profile_stats_provider.dart';
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/utils/l10n_errors.dart';
 import '../../auth/repository/auth_repository.dart';
-import '../../edit_profile/provider/edit_profile_provider.dart';
+import '../../directory/repository/member_repository.dart';
 
 class MyProfileScreen extends ConsumerWidget {
   const MyProfileScreen({super.key});
@@ -90,28 +90,39 @@ void _confirmDelete(BuildContext context, WidgetRef ref, Member member) {
         ),
         TextButton(
           onPressed: () async {
-            final password = passwordController.text;
+            final password = passwordController.text.trim();
             Navigator.of(ctx).pop();
-            final notifier = ref.read(editProfileProvider(member).notifier);
-            final errorKey = await notifier.delete(password: password);
-            if (!context.mounted) return;
+            if (password.isEmpty) return;
+
+            // Capturar todo antes del primer await — el widget puede desmontarse
+            // cuando Firestore emita null (miembro eliminado) y el context/ref
+            // quedarían inválidos si los usáramos después.
+            final authRepo   = ref.read(authRepositoryProvider);
+            final memberRepo = ref.read(memberRepositoryProvider);
+            final router     = GoRouter.of(context);
+            final messenger  = ScaffoldMessenger.of(context);
+            final l10n       = context.l10n;
+            final errorColor = colors.error;
+            final memberId   = member.id;
+
+            // 1. Re-autenticar (no cambia estado del árbol)
+            final errorKey = await authRepo.tryReauthenticate(password: password);
             if (errorKey != null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(localizeError(context.l10n, errorKey)),
-                  backgroundColor: colors.error,
-                ),
-              );
+              messenger.showSnackBar(SnackBar(
+                content: Text(localizeError(l10n, errorKey)),
+                backgroundColor: errorColor,
+              ));
               return;
             }
-            context.go('/directory');
-            // Usar authRepositoryProvider directamente (no AutoDispose)
-            // para garantizar que la eliminación de Auth complete sin importar
-            // el ciclo de vida del editProfileProvider.
-            ref
-                .read(authRepositoryProvider)
-                .deleteAccount()
-                .catchError((_) {});
+
+            // 2. Navegar ANTES de borrar para que el context ya no importe
+            router.go('/directory');
+
+            // 3. Borrar Firestore primero, Auth después — en ese orden
+            // porque Firestore rechaza el delete si el usuario ya no está autenticado.
+            // Se puede await aunque el widget esté desmontado (los repos son locales).
+            try { await memberRepo.delete(memberId); } catch (_) {}
+            try { await authRepo.deleteAccount(); } catch (_) {}
           },
           child: Text(context.l10n.btnDelete,
               style: TextStyle(color: colors.error)),
