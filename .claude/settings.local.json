@@ -52,7 +52,11 @@
       "Bash(grep -oP \"\\(?<='\\)[^']{4,}\\(?='\\)\")",
       "Bash(/Users/diego.hoyos/fvm/versions/3.38.1/bin/flutter gen-l10n *)",
       "Bash(grep -rn \"'\\\\\\([A-ZÁÉÍÓÚÑña-záéíóúñ¿¡][^']\\\\{4,\\\\}\\\\\\)'\" /Users/diego.hoyos/personal/directory_ipuc/lib --include=\"*.dart\")",
-      "Bash(xargs cat)"
+      "Bash(xargs cat)",
+      "Bash(firebase deploy *)",
+      "Bash(firebase login *)",
+      "Bash(kill %1)",
+      "Bash(firebase projects:list)"
     ]
   }
 }

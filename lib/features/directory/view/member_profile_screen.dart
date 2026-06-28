@@ -34,8 +34,8 @@ class _MemberProfileScreenState extends ConsumerState<MemberProfileScreen> {
   }
 
   Future<void> _recordView() async {
-    final myId = ref.read(currentMemberProvider).valueOrNull?.id;
-    if (myId == widget.member.id) return;
+    final myUid = ref.read(authRepositoryProvider).currentUser?.uid;
+    if (myUid == widget.member.id) return;
     await FirebaseFirestore.instance.collection('profile_views').add({
       'memberId': widget.member.id,
       'createdAt': FieldValue.serverTimestamp(),
