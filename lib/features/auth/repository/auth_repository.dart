@@ -34,6 +34,15 @@ class AuthRepository {
         _                                 => 'errGeneric',
       };
 
+  Future<void> reauthenticate({required String password}) async {
+    final user = _auth.currentUser!;
+    final credential = EmailAuthProvider.credential(
+      email: user.email!,
+      password: password,
+    );
+    await user.reauthenticateWithCredential(credential);
+  }
+
   Future<void> deleteAccount() => _auth.currentUser!.delete();
 
   Future<void> signOut() => _auth.signOut();

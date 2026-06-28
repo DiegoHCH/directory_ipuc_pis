@@ -128,26 +128,20 @@ class EditProfileNotifier
     }
   }
 
-  /// Elimina el perfil de Firestore.
+  /// Re-autentica y elimina el perfil de Firestore.
   /// Retorna null si fue exitoso, o la clave de error si falló.
-  /// La cuenta de Auth se borra aparte con deleteAuthAccount() para no
-  /// interrumpir la navegación cuando authStateChanges dispara.
-  Future<String?> delete() async {
+  /// La cuenta de Auth se borra aparte con deleteAuthAccount() DESPUÉS de
+  /// navegar, para evitar que authStateChanges desmonte el context activo.
+  Future<String?> delete({required String password}) async {
     state = state.copyWith(isSaving: true, errorMessage: null);
     try {
+      await ref.read(authRepositoryProvider).reauthenticate(password: password);
       await ref.read(memberRepositoryProvider).delete(state.original.id);
       return null;
     } catch (_) {
       state = state.copyWith(isSaving: false, errorMessage: 'errDeleteProfile');
       return 'errDeleteProfile';
     }
-  }
-
-  /// Borra la cuenta de Firebase Auth. Llamar después de navegar.
-  Future<void> deleteAuthAccount() async {
-    try {
-      await ref.read(authRepositoryProvider).deleteAccount();
-    } catch (_) {}
   }
 
   /// Guarda los cambios en Firestore. Retorna true si fue exitoso.

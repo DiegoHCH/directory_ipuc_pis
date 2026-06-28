@@ -14,6 +14,7 @@ import '../provider/my_profile_provider.dart';
 import '../provider/profile_stats_provider.dart';
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/utils/l10n_errors.dart';
+import '../../auth/repository/auth_repository.dart';
 import '../../edit_profile/provider/edit_profile_provider.dart';
 
 class MyProfileScreen extends ConsumerWidget {
@@ -44,6 +45,8 @@ class MyProfileScreen extends ConsumerWidget {
 
 void _confirmDelete(BuildContext context, WidgetRef ref, Member member) {
   final colors = context.colors;
+  final passwordController = TextEditingController();
+
   showDialog<void>(
     context: context,
     builder: (ctx) => AlertDialog(
@@ -51,11 +54,33 @@ void _confirmDelete(BuildContext context, WidgetRef ref, Member member) {
       shape: RoundedRectangleBorder(borderRadius: AppRadius.dialog),
       title: Text(context.l10n.deleteDialogTitle,
           style: TextStyle(color: colors.textPrimary)),
-      content: Text(
-        context.l10n.deleteDialogBody,
-        style: TextStyle(
-            color: colors.textSecondary,
-            height: AppTypography.lineHeightNormal),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            context.l10n.deleteDialogBody,
+            style: TextStyle(
+                color: colors.textSecondary,
+                height: AppTypography.lineHeightNormal),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: passwordController,
+            obscureText: true,
+            style: TextStyle(color: colors.textPrimary),
+            decoration: InputDecoration(
+              labelText: context.l10n.authPasswordLabel,
+              labelStyle: TextStyle(color: colors.textSecondary),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: colors.textSecondary),
+              ),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: colors.error),
+              ),
+            ),
+          ),
+        ],
       ),
       actions: [
         TextButton(
@@ -65,9 +90,10 @@ void _confirmDelete(BuildContext context, WidgetRef ref, Member member) {
         ),
         TextButton(
           onPressed: () async {
+            final password = passwordController.text;
             Navigator.of(ctx).pop();
             final notifier = ref.read(editProfileProvider(member).notifier);
-            final errorKey = await notifier.delete();
+            final errorKey = await notifier.delete(password: password);
             if (!context.mounted) return;
             if (errorKey != null) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -78,10 +104,14 @@ void _confirmDelete(BuildContext context, WidgetRef ref, Member member) {
               );
               return;
             }
-            // Navegar antes de borrar Auth para evitar que authStateChanges
-            // invalide el context antes de la navegación.
             context.go('/directory');
-            notifier.deleteAuthAccount();
+            // Usar authRepositoryProvider directamente (no AutoDispose)
+            // para garantizar que la eliminación de Auth complete sin importar
+            // el ciclo de vida del editProfileProvider.
+            ref
+                .read(authRepositoryProvider)
+                .deleteAccount()
+                .catchError((_) {});
           },
           child: Text(context.l10n.btnDelete,
               style: TextStyle(color: colors.error)),
