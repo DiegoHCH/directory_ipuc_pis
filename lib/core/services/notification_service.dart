@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,7 +6,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
-import 'dart:convert';
 
 const _channelId = 'ipuc_directorio';
 const _channelName = 'Directorio IPUC';
@@ -102,12 +102,6 @@ class NotificationService {
     return result.authorizationStatus == AuthorizationStatus.authorized ||
         result.authorizationStatus == AuthorizationStatus.provisional;
   }
-
-  static Future<void> subscribeToNewMembers() =>
-      _messaging.subscribeToTopic('directorio_ipuc');
-
-  static Future<void> unsubscribeFromNewMembers() =>
-      _messaging.unsubscribeFromTopic('directorio_ipuc');
 
   static Future<void> subscribeToNewMembers() =>
       _messaging.subscribeToTopic('directorio_ipuc');
