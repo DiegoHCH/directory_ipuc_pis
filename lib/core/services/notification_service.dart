@@ -29,7 +29,7 @@ class NotificationService {
     FirebaseMessaging.onBackgroundMessage(_backgroundHandler);
 
     const androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@drawable/ic_notification');
     const iosSettings = DarwinInitializationSettings();
     await _local.initialize(const InitializationSettings(
       android: androidSettings,
@@ -69,6 +69,7 @@ class NotificationService {
           _channelName,
           importance: Importance.high,
           priority: Priority.high,
+          icon: '@drawable/ic_notification',
           largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
           styleInformation: DefaultStyleInformation(true, true),
         ),
