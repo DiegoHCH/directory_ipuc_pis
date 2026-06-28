@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/services/notification_service.dart';
+import '../../auth/repository/auth_repository.dart';
 
 const _keyNewMembers = 'notify_new_members';
 const _keyContacts = 'notify_contacts';
@@ -31,17 +33,30 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
   Future<SettingsState> build() async {
     _prefs = await SharedPreferences.getInstance();
     final notifyNewMembers = _prefs.getBool(_keyNewMembers) ?? false;
+
     if (notifyNewMembers) {
-      if (kIsWeb) {
-        NotificationService.registerWebToken();
-      } else {
-        NotificationService.subscribeToNewMembers();
-      }
+      // Registrar el token cuando el usuario está autenticado.
+      // Usamos ref.listen para cubrirlo también cuando el usuario
+      // inicia sesión después del arranque (ej: luego de crear cuenta).
+      ref.listen<AsyncValue<User?>>(authStateProvider, (_, next) {
+        if (next.valueOrNull != null) _registerToken();
+      });
+      // Intentarlo también si ya hay sesión activa ahora mismo.
+      if (ref.read(authStateProvider).valueOrNull != null) _registerToken();
     }
+
     return SettingsState(
       notifyNewMembers: notifyNewMembers,
       notifyContacts: _prefs.getBool(_keyContacts) ?? true,
     );
+  }
+
+  void _registerToken() {
+    if (kIsWeb) {
+      NotificationService.registerWebToken();
+    } else {
+      NotificationService.subscribeToNewMembers();
+    }
   }
 
   Future<void> toggleNotifyNewMembers() async {
