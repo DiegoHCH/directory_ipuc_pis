@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart'
 
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
-    if (kIsWeb) throw UnsupportedError('Web no configurado.');
+    if (kIsWeb) return web;
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
@@ -18,6 +18,15 @@ class DefaultFirebaseOptions {
         );
     }
   }
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDnZaFsHLJgF87cKqq0ccT90mXessNJtaY',
+    appId: '1:804660931161:web:e60cef4256dc9a0dc79f48',
+    messagingSenderId: '804660931161',
+    projectId: 'ipuc-pis-directory',
+    storageBucket: 'ipuc-pis-directory.firebasestorage.app',
+    authDomain: 'ipuc-pis-directory.firebaseapp.com',
+  );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDlt9s3wKeaM1W2Hsp3txpNUIb63tim5l0',

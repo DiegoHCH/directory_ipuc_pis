@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:permission_handler/permission_handler.dart';
@@ -10,9 +10,11 @@ import 'package:permission_handler/permission_handler.dart';
 const _channelId = 'ipuc_directorio';
 const _channelName = 'Directorio IPUC';
 
-// URL del Cloudflare Worker — reemplazar tras hacer wrangler deploy
 const _workerUrl = 'https://ipuc-notifications.educacion-cristiana-pis.workers.dev';
 const _workerSecret = 'c20b1f503aa779f24837cc11354b62a6f700ac3004ed34d6f589d6b47cad9e29';
+
+// Generar en: Firebase Console → Project Settings → Cloud Messaging → Web Push certificates
+const vapidKey = 'BF7W-EQwoeQJ88paHXmY3ZBm08ttEeYd54vgsCms9de0n_qE40zRhqpr9yY-YDaDjvs-FBL5P7htlrn5TeFA46s';
 
 @pragma('vm:entry-point')
 Future<void> _backgroundHandler(RemoteMessage _) async {}
@@ -22,6 +24,8 @@ class NotificationService {
   static final _local = FlutterLocalNotificationsPlugin();
 
   static Future<void> init() async {
+    if (kIsWeb) return;
+
     FirebaseMessaging.onBackgroundMessage(_backgroundHandler);
 
     const androidSettings =
@@ -53,23 +57,30 @@ class NotificationService {
   static Future<void> showLocal({
     required String title,
     required String body,
-  }) =>
-      _local.show(
-        DateTime.now().millisecondsSinceEpoch ~/ 1000,
-        title,
-        body,
-        const NotificationDetails(
-          android: AndroidNotificationDetails(
-            _channelId,
-            _channelName,
-            importance: Importance.high,
-            priority: Priority.high,
-          ),
+  }) async {
+    if (kIsWeb) return;
+    await _local.show(
+      DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      title,
+      body,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          _channelId,
+          _channelName,
+          importance: Importance.high,
+          priority: Priority.high,
         ),
-      );
+      ),
+    );
+  }
 
   static Future<bool> requestPermission() async {
-    if (Platform.isAndroid) {
+    if (kIsWeb) {
+      final result = await _messaging.requestPermission();
+      return result.authorizationStatus == AuthorizationStatus.authorized ||
+          result.authorizationStatus == AuthorizationStatus.provisional;
+    }
+    if (defaultTargetPlatform == TargetPlatform.android) {
       final status = await Permission.notification.status;
       if (status.isGranted) return true;
       // Ya era permanente antes de pedir → abre ajustes y sale
@@ -103,11 +114,39 @@ class NotificationService {
         result.authorizationStatus == AuthorizationStatus.provisional;
   }
 
-  static Future<void> subscribeToNewMembers() =>
-      _messaging.subscribeToTopic('directorio_ipuc');
+  static Future<void> subscribeToNewMembers() async {
+    if (kIsWeb) return;
+    await _messaging.subscribeToTopic('directorio_ipuc');
+  }
 
-  static Future<void> unsubscribeFromNewMembers() =>
-      _messaging.unsubscribeFromTopic('directorio_ipuc');
+  static Future<void> unsubscribeFromNewMembers() async {
+    if (kIsWeb) return;
+    await _messaging.unsubscribeFromTopic('directorio_ipuc');
+  }
+
+  /// Registra el token FCM web en Firestore para recibir push en la PWA.
+  static Future<void> registerWebToken() async {
+    if (!kIsWeb) return;
+    final token = await _messaging.getToken(vapidKey: vapidKey);
+    if (token == null) return;
+    await _saveWebToken(token);
+    _messaging.onTokenRefresh.listen(_saveWebToken);
+  }
+
+  static Future<void> _saveWebToken(String token) =>
+      FirebaseFirestore.instance.collection('fcm_tokens').doc(token).set({
+        'token': token,
+        'platform': 'web',
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+  static Future<void> unregisterWebToken() async {
+    if (!kIsWeb) return;
+    final token = await _messaging.getToken(vapidKey: vapidKey);
+    if (token == null) return;
+    await FirebaseFirestore.instance.collection('fcm_tokens').doc(token).delete();
+    await _messaging.deleteToken();
+  }
 
   /// Publica una notificación:
   /// - Escribe en Firestore → dispositivos con la app abierta la muestran

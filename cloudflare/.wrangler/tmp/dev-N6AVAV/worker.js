@@ -19,41 +19,79 @@ var worker_default = {
     }
     try {
       const accessToken = await getAccessToken(env.FIREBASE_SERVICE_ACCOUNT);
-      const fcmResponse = await fetch(
-        `https://fcm.googleapis.com/v1/projects/${env.FIREBASE_PROJECT_ID}/messages:send`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            message: {
-              topic: "directorio_ipuc",
-              notification: { title, body: notifBody },
-              android: {
-                notification: { channel_id: "ipuc_directorio", sound: "default" }
-              },
-              apns: {
-                payload: { aps: { sound: "default" } }
-              }
-            }
-          })
-        }
+      const projectId = env.FIREBASE_PROJECT_ID;
+      const topicResult = await sendToTopic({ title, body: notifBody, accessToken, projectId });
+      const webTokens = await getWebTokens(accessToken, projectId);
+      const webResults = await Promise.allSettled(
+        webTokens.map((token) => sendToWebToken({ title, body: notifBody, accessToken, projectId, token }))
       );
-      const result = await fcmResponse.json();
-      return Response.json(result, { status: fcmResponse.status });
+      return Response.json({
+        topic: topicResult,
+        webTokensSent: webTokens.length,
+        webErrors: webResults.filter((r) => r.status === "rejected").length
+      });
     } catch (e) {
       return Response.json({ error: e.message }, { status: 500 });
     }
   }
 };
+async function sendToTopic({ title, body, accessToken, projectId }) {
+  const res = await fetch(
+    `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: {
+          topic: "directorio_ipuc",
+          notification: { title, body },
+          android: { notification: { channel_id: "ipuc_directorio", sound: "default" } },
+          apns: { payload: { aps: { sound: "default" } } }
+        }
+      })
+    }
+  );
+  return res.json();
+}
+__name(sendToTopic, "sendToTopic");
+async function sendToWebToken({ title, body, accessToken, projectId, token }) {
+  const res = await fetch(
+    `https://fcm.googleapis.com/v1/projects/${projectId}/messages:send`,
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: {
+          token,
+          notification: { title, body },
+          webpush: {
+            notification: { icon: "/icons/Icon-192.png", badge: "/icons/Icon-192.png" }
+          }
+        }
+      })
+    }
+  );
+  if (!res.ok) throw new Error(`FCM web token error: ${await res.text()}`);
+  return res.json();
+}
+__name(sendToWebToken, "sendToWebToken");
+async function getWebTokens(accessToken, projectId) {
+  const res = await fetch(
+    `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/fcm_tokens`,
+    { headers: { Authorization: `Bearer ${accessToken}` } }
+  );
+  const data = await res.json();
+  if (!data.documents) return [];
+  return data.documents.map((doc) => doc.fields?.token?.stringValue).filter(Boolean);
+}
+__name(getWebTokens, "getWebTokens");
 async function getAccessToken(serviceAccountJson) {
   const sa = JSON.parse(serviceAccountJson);
   const now = Math.floor(Date.now() / 1e3);
   const payload = {
     iss: sa.client_email,
-    scope: "https://www.googleapis.com/auth/firebase.messaging",
+    // cloud-platform cubre tanto FCM como Firestore
+    scope: "https://www.googleapis.com/auth/cloud-platform",
     aud: "https://oauth2.googleapis.com/token",
     iat: now,
     exp: now + 3600

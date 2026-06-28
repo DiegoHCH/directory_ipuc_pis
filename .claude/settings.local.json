@@ -74,7 +74,10 @@
       "Bash(xargs kill -9)",
       "Bash(lsof -ti:8788)",
       "Bash(/opt/homebrew/opt/curl/bin/curl *)",
-      "Bash(/Users/diego.hoyos/fvm/versions/3.41.8/bin/flutter build *)"
+      "Bash(/Users/diego.hoyos/fvm/versions/3.41.8/bin/flutter build *)",
+      "Bash(firebase apps:list *)",
+      "Bash(firebase apps:create *)",
+      "Bash(firebase apps:sdkconfig *)"
     ]
   }
 }

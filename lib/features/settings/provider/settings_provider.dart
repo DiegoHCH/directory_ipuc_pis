@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -32,8 +33,11 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
     _prefs = await SharedPreferences.getInstance();
     final notifyNewMembers = _prefs.getBool(_keyNewMembers) ?? false;
     if (notifyNewMembers) {
-      // Re-suscribe al topic en cada arranque por si cambió el token FCM
-      NotificationService.subscribeToNewMembers();
+      if (kIsWeb) {
+        NotificationService.registerWebToken();
+      } else {
+        NotificationService.subscribeToNewMembers();
+      }
     }
     return SettingsState(
       notifyNewMembers: notifyNewMembers,
@@ -46,13 +50,22 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
     final next = !current;
 
     if (next) {
-      // Solo activa si el sistema concede el permiso
       final granted = await NotificationService.requestPermission();
-      if (granted) await NotificationService.subscribeToNewMembers();
+      if (granted) {
+        if (kIsWeb) {
+          await NotificationService.registerWebToken();
+        } else {
+          await NotificationService.subscribeToNewMembers();
+        }
+      }
       await _prefs.setBool(_keyNewMembers, granted);
       state = AsyncData(state.requireValue.copyWith(notifyNewMembers: granted));
     } else {
-      await NotificationService.unsubscribeFromNewMembers();
+      if (kIsWeb) {
+        await NotificationService.unregisterWebToken();
+      } else {
+        await NotificationService.unsubscribeFromNewMembers();
+      }
       await _prefs.setBool(_keyNewMembers, false);
       state = AsyncData(state.requireValue.copyWith(notifyNewMembers: false));
     }
@@ -61,6 +74,7 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
   /// Sincroniza el toggle con el permiso real del sistema.
   /// Solo activa (false → true); nunca desactiva automáticamente.
   Future<void> syncPermissionStatus() async {
+    if (kIsWeb) return;
     final current = state.valueOrNull?.notifyNewMembers ?? false;
     if (current) return;
     final granted = await Permission.notification.isGranted;
