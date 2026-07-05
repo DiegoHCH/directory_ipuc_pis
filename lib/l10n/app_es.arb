@@ -72,6 +72,14 @@
   "authMinPassword": "Mín. 8 caracteres, 1 mayúscula y 1 número",
   "authNoProfile": "¿No tienes perfil?",
   "authSignInPrompt": "Inicia sesión",
+  "authForgotPasswordPrompt": "¿Olvidaste tu contraseña?",
+
+  "forgotPasswordTitle": "Recupera tu contraseña",
+  "forgotPasswordSubtitle": "Ingresa tu correo y te enviaremos un enlace para restablecerla.",
+  "forgotPasswordSuccessTitle": "Revisa tu correo",
+  "forgotPasswordSuccessBody": "Si el correo existe en nuestro sistema, te enviamos un enlace para restablecer tu contraseña.",
+  "btnSendResetLink": "Enviar enlace",
+  "btnBackToLogin": "Volver a iniciar sesión",
 
   "regNameLabel": "TU NOMBRE",
   "regNameHint": "Nombre completo",

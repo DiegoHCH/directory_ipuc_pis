@@ -214,6 +214,29 @@ class AppLocalizationsEs extends AppLocalizations {
   String get authSignInPrompt => 'Inicia sesión';
 
   @override
+  String get authForgotPasswordPrompt => '¿Olvidaste tu contraseña?';
+
+  @override
+  String get forgotPasswordTitle => 'Recupera tu contraseña';
+
+  @override
+  String get forgotPasswordSubtitle =>
+      'Ingresa tu correo y te enviaremos un enlace para restablecerla.';
+
+  @override
+  String get forgotPasswordSuccessTitle => 'Revisa tu correo';
+
+  @override
+  String get forgotPasswordSuccessBody =>
+      'Si el correo existe en nuestro sistema, te enviamos un enlace para restablecer tu contraseña.';
+
+  @override
+  String get btnSendResetLink => 'Enviar enlace';
+
+  @override
+  String get btnBackToLogin => 'Volver a iniciar sesión';
+
+  @override
   String get regNameLabel => 'TU NOMBRE';
 
   @override

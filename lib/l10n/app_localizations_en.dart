@@ -213,6 +213,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authSignInPrompt => 'Sign in';
 
   @override
+  String get authForgotPasswordPrompt => 'Forgot your password?';
+
+  @override
+  String get forgotPasswordTitle => 'Reset your password';
+
+  @override
+  String get forgotPasswordSubtitle =>
+      'Enter your email and we\'ll send you a link to reset it.';
+
+  @override
+  String get forgotPasswordSuccessTitle => 'Check your email';
+
+  @override
+  String get forgotPasswordSuccessBody =>
+      'If that email exists in our system, we\'ve sent a link to reset your password.';
+
+  @override
+  String get btnSendResetLink => 'Send reset link';
+
+  @override
+  String get btnBackToLogin => 'Back to sign in';
+
+  @override
   String get regNameLabel => 'YOUR NAME';
 
   @override

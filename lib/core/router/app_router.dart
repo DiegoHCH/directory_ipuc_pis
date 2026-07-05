@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/directory/model/member.dart';
 import '../../features/directory/view/directory_screen.dart';
 import '../../features/auth/view/login_screen.dart';
+import '../../features/auth/view/forgot_password_screen.dart';
 import '../../features/directory/view/member_profile_screen.dart';
 import '../../features/directory/view/member_deep_link_screen.dart';
 import '../../features/edit_profile/view/edit_profile_screen.dart';
@@ -34,6 +35,10 @@ final routerProvider = Provider<GoRouter>(
       GoRoute(
         path: '/login',
         builder: (ctx, _) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/forgot-password',
+        builder: (ctx, _) => const ForgotPasswordScreen(),
       ),
       GoRoute(
         path: '/member',

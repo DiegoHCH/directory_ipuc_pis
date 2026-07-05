@@ -77,6 +77,14 @@
   "authMinPassword": "Min. 8 chars, 1 uppercase and 1 number",
   "authNoProfile": "Don't have a profile?",
   "authSignInPrompt": "Sign in",
+  "authForgotPasswordPrompt": "Forgot your password?",
+
+  "forgotPasswordTitle": "Reset your password",
+  "forgotPasswordSubtitle": "Enter your email and we'll send you a link to reset it.",
+  "forgotPasswordSuccessTitle": "Check your email",
+  "forgotPasswordSuccessBody": "If that email exists in our system, we've sent a link to reset your password.",
+  "btnSendResetLink": "Send reset link",
+  "btnBackToLogin": "Back to sign in",
 
   "regNameLabel": "YOUR NAME",
   "regNameHint": "Full name",

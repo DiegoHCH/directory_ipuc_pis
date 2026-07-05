@@ -22,6 +22,12 @@ class AuthRepository {
   }) =>
       _auth.signInWithEmailAndPassword(email: email, password: password);
 
+  /// Envía un correo de recuperación de contraseña, siempre en español.
+  Future<void> sendPasswordResetEmail({required String email}) async {
+    await _auth.setLanguageCode('es');
+    await _auth.sendPasswordResetEmail(email: email);
+  }
+
   /// Returns an l10n error key for the given Firebase auth exception.
   /// The key is resolved to a localized string via localizeError().
   String friendlyAuthError(FirebaseAuthException e) => switch (e.code) {

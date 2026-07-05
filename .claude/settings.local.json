@@ -82,7 +82,9 @@
       "Bash(/Users/diego.hoyos/fvm/versions/3.41.8/bin/flutter pub *)",
       "Bash(/Users/diego.hoyos/fvm/versions/3.41.8/bin/flutter analyze *)",
       "Bash(npx wrangler *)",
-      "Bash(/Users/diego.hoyos/fvm/versions/3.41.8/bin/flutter gen-l10n *)"
+      "Bash(/Users/diego.hoyos/fvm/versions/3.41.8/bin/flutter gen-l10n *)",
+      "Bash(flutter gen-l10n *)",
+      "Bash(fvm flutter *)"
     ]
   }
 }
