@@ -11,6 +11,7 @@ import '../../directory/repository/member_repository.dart';
 class EditProfileState {
   final Member original;
   final String name;
+  final bool offersServices;
   final String businessName;
   final String bio;
   final MemberCategory category;
@@ -24,6 +25,7 @@ class EditProfileState {
   const EditProfileState({
     required this.original,
     required this.name,
+    required this.offersServices,
     required this.businessName,
     required this.bio,
     required this.category,
@@ -38,6 +40,7 @@ class EditProfileState {
   factory EditProfileState.fromMember(Member m) => EditProfileState(
         original: m,
         name: m.name,
+        offersServices: m.category != MemberCategory.buscador,
         businessName: m.description,
         bio: m.bio,
         category: m.category == MemberCategory.all ||
@@ -51,6 +54,7 @@ class EditProfileState {
 
   bool get isDirty =>
       name != original.name ||
+      offersServices != (original.category != MemberCategory.buscador) ||
       businessName != original.description ||
       bio != original.bio ||
       category != original.category ||
@@ -61,6 +65,7 @@ class EditProfileState {
 
   EditProfileState copyWith({
     String? name,
+    bool? offersServices,
     String? businessName,
     String? bio,
     MemberCategory? category,
@@ -74,6 +79,7 @@ class EditProfileState {
       EditProfileState(
         original: original,
         name: name ?? this.name,
+        offersServices: offersServices ?? this.offersServices,
         businessName: businessName ?? this.businessName,
         bio: bio ?? this.bio,
         category: category ?? this.category,
@@ -94,6 +100,7 @@ class EditProfileNotifier extends Notifier<EditProfileState> {
   EditProfileState build() => EditProfileState.fromMember(arg);
 
   void setName(String v) => state = state.copyWith(name: v);
+  void setOffersServices(bool v) => state = state.copyWith(offersServices: v);
   void setBusinessName(String v) => state = state.copyWith(businessName: v);
   void setBio(String v) => state = state.copyWith(bio: v);
   void setCategory(MemberCategory v) => state = state.copyWith(category: v);
@@ -154,10 +161,10 @@ class EditProfileNotifier extends Notifier<EditProfileState> {
     try {
       final updated = state.original.copyWith(
         name: state.name.trim(),
-        description: state.businessName.trim(),
-        bio: state.bio.trim(),
-        category: state.category,
-        offers: state.offers,
+        description: state.offersServices ? state.businessName.trim() : '',
+        bio: state.offersServices ? state.bio.trim() : '',
+        category: state.offersServices ? state.category : MemberCategory.buscador,
+        offers: state.offersServices ? state.offers : const [],
         visible: state.visible,
         photoUrl: state.photoUrl,
       );

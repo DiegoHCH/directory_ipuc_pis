@@ -13,6 +13,7 @@ import 'widgets/offers_input.dart';
 import '../../../core/extensions/l10n_extension.dart';
 import '../../../core/utils/l10n_errors.dart';
 import '../../../core/widgets/lottie_loader_screen.dart';
+import '../../../core/widgets/offer_mode_selector.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -108,7 +109,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     const SizedBox(height: AppSpacing.x5),
                     _FieldLabel(context.l10n.regOfferQuestion),
                     const SizedBox(height: 10),
-                    _OfferModeSelector(
+                    OfferModeSelector(
                       offersServices: state.offersServices,
                       onSelected: notifier.setOffersServices,
                     ),
@@ -317,107 +318,6 @@ class _PhotoUploader extends ConsumerWidget {
                 fontSize: AppTypography.sizeXs,
                 fontWeight: AppTypography.bold,
                 letterSpacing: AppTypography.trackingWider,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _OfferModeSelector extends StatelessWidget {
-  final bool offersServices;
-  final ValueChanged<bool> onSelected;
-
-  const _OfferModeSelector({
-    required this.offersServices,
-    required this.onSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _OfferModeCard(
-          icon: Icons.storefront_outlined,
-          title: context.l10n.regOfferService,
-          subtitle: context.l10n.regOfferServiceDesc,
-          selected: offersServices,
-          onTap: () => onSelected(true),
-        ),
-        const SizedBox(height: AppSpacing.x2),
-        _OfferModeCard(
-          icon: Icons.search,
-          title: context.l10n.regSearchOnly,
-          subtitle: context.l10n.regSearchOnlyDesc,
-          selected: !offersServices,
-          onTap: () => onSelected(false),
-        ),
-      ],
-    );
-  }
-}
-
-class _OfferModeCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _OfferModeCard({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.all(AppSpacing.x4),
-        decoration: BoxDecoration(
-          color: selected ? colors.primary : colors.surface,
-          borderRadius: AppRadius.input,
-          border: selected
-              ? null
-              : Border.all(color: colors.textSecondary.withValues(alpha: 0.25)),
-        ),
-        child: Row(
-          children: [
-            Icon(icon,
-                size: 22,
-                color: selected ? Colors.white : colors.textSecondary),
-            const SizedBox(width: AppSpacing.x3),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      color: selected ? Colors.white : colors.textPrimary,
-                      fontWeight: AppTypography.semibold,
-                      fontSize: AppTypography.sizeBase,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      color: selected
-                          ? Colors.white.withValues(alpha: 0.85)
-                          : colors.textSecondary,
-                      fontSize: AppTypography.sizeXs,
-                    ),
-                  ),
-                ],
               ),
             ),
           ],

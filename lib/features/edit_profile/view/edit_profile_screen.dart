@@ -6,6 +6,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/widgets/offer_mode_selector.dart';
 import '../../directory/model/member.dart';
 import '../../register/view/widgets/category_selector.dart';
 import '../../register/view/widgets/offers_input.dart';
@@ -151,35 +152,44 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       onChanged: notifier.setName,
                     ),
                     const SizedBox(height: AppSpacing.x4),
-                    _FieldLabel(context.l10n.profileServiceLabel),
-                    const SizedBox(height: AppSpacing.x2),
-                    _InputField(
-                      controller: _businessController,
-                      onChanged: notifier.setBusinessName,
-                    ),
-                    const SizedBox(height: AppSpacing.x4),
-                    _FieldLabel(context.l10n.profileCategory),
+                    _FieldLabel(context.l10n.regOfferQuestion),
                     const SizedBox(height: 10),
-                    CategorySelector(
-                      selected: state.category,
-                      onSelected: notifier.setCategory,
+                    OfferModeSelector(
+                      offersServices: state.offersServices,
+                      onSelected: notifier.setOffersServices,
                     ),
-                    const SizedBox(height: AppSpacing.x4),
-                    _FieldLabel(context.l10n.profileBioLabel),
-                    const SizedBox(height: AppSpacing.x2),
-                    _InputField(
-                      controller: _bioController,
-                      onChanged: notifier.setBio,
-                      maxLines: 4,
-                    ),
-                    const SizedBox(height: AppSpacing.x4),
-                    _FieldLabel(context.l10n.profileServicesLabel),
-                    const SizedBox(height: 10),
-                    OffersInput(
-                      offers: state.offers,
-                      onAdd: notifier.addOffer,
-                      onRemove: notifier.removeOffer,
-                    ),
+                    if (state.offersServices) ...[
+                      const SizedBox(height: AppSpacing.x4),
+                      _FieldLabel(context.l10n.profileServiceLabel),
+                      const SizedBox(height: AppSpacing.x2),
+                      _InputField(
+                        controller: _businessController,
+                        onChanged: notifier.setBusinessName,
+                      ),
+                      const SizedBox(height: AppSpacing.x4),
+                      _FieldLabel(context.l10n.profileCategory),
+                      const SizedBox(height: 10),
+                      CategorySelector(
+                        selected: state.category,
+                        onSelected: notifier.setCategory,
+                      ),
+                      const SizedBox(height: AppSpacing.x4),
+                      _FieldLabel(context.l10n.profileBioLabel),
+                      const SizedBox(height: AppSpacing.x2),
+                      _InputField(
+                        controller: _bioController,
+                        onChanged: notifier.setBio,
+                        maxLines: 4,
+                      ),
+                      const SizedBox(height: AppSpacing.x4),
+                      _FieldLabel(context.l10n.profileServicesLabel),
+                      const SizedBox(height: 10),
+                      OffersInput(
+                        offers: state.offers,
+                        onAdd: notifier.addOffer,
+                        onRemove: notifier.removeOffer,
+                      ),
+                    ],
                     const SizedBox(height: AppSpacing.x4),
                     _FieldLabel(context.l10n.profilePhoneVerified),
                     const SizedBox(height: AppSpacing.x2),
