@@ -8,6 +8,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/widgets/buscador_badge.dart';
 import '../../../core/widgets/member_avatar.dart';
 import '../../../features/settings/provider/settings_provider.dart';
 import '../../directory/model/member.dart';
@@ -274,12 +275,14 @@ class _ProfileContent extends ConsumerWidget {
                       ),
                       const SizedBox(height: AppSpacing.x1),
                       Center(
-                        child: Text(
-                          member.description,
-                          style: TextStyle(
-                              color: colors.textSecondary,
-                              fontSize: AppTypography.sizeBase),
-                        ),
+                        child: member.category == MemberCategory.buscador
+                            ? const BuscadorBadge()
+                            : Text(
+                                member.description,
+                                style: TextStyle(
+                                    color: colors.textSecondary,
+                                    fontSize: AppTypography.sizeBase),
+                              ),
                       ),
                     ],
                   ),
@@ -294,14 +297,18 @@ class _ProfileContent extends ConsumerWidget {
                     ),
                     isLoading: statsAsync.isLoading,
                     contactsEnabled: contactsEnabled,
+                    showActiveServices:
+                        member.category != MemberCategory.buscador,
                   ),
                 ),
-                const SizedBox(height: AppSpacing.x6),
-                FadeInUp(
-                  delay: const Duration(milliseconds: 300),
-                  duration: const Duration(milliseconds: 400),
-                  child: _OffersSection(member: member),
-                ),
+                if (member.category != MemberCategory.buscador) ...[
+                  const SizedBox(height: AppSpacing.x6),
+                  FadeInUp(
+                    delay: const Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 400),
+                    child: _OffersSection(member: member),
+                  ),
+                ],
                 const SizedBox(height: AppSpacing.x6),
               ],
             ),
@@ -534,11 +541,13 @@ class _StatsRow extends StatelessWidget {
   final ProfileStats stats;
   final bool isLoading;
   final bool contactsEnabled;
+  final bool showActiveServices;
 
   const _StatsRow({
     required this.stats,
     this.isLoading = false,
     this.contactsEnabled = true,
+    this.showActiveServices = true,
   });
 
   @override
@@ -567,11 +576,13 @@ class _StatsRow extends StatelessWidget {
               label: context.l10n.profileContacts,
               muted: !contactsEnabled,
             ),
-            _Divider(),
-            _StatCell(
-              value: '${stats.activeServices}',
-              label: context.l10n.profileActiveServices,
-            ),
+            if (showActiveServices) ...[
+              _Divider(),
+              _StatCell(
+                value: '${stats.activeServices}',
+                label: context.l10n.profileActiveServices,
+              ),
+            ],
           ],
         ),
       ),

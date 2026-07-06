@@ -9,6 +9,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
+import '../../../core/widgets/buscador_badge.dart';
 import '../../../core/widgets/member_avatar.dart';
 import '../model/member.dart';
 import '../../auth/repository/auth_repository.dart';
@@ -97,34 +98,35 @@ class _MemberProfileScreenState extends ConsumerState<MemberProfileScreen> {
                               ),
                             ),
                           ),
-                          if (member.category != MemberCategory.buscador) ...[
-                            const SizedBox(height: 6),
-                            Center(
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Container(
-                                    width: 7,
-                                    height: 7,
-                                    decoration: BoxDecoration(
-                                      color: categoryColor,
-                                      shape: BoxShape.circle,
-                                    ),
+                          const SizedBox(height: 6),
+                          Center(
+                            child: member.category == MemberCategory.buscador
+                                ? const BuscadorBadge()
+                                : Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        width: 7,
+                                        height: 7,
+                                        decoration: BoxDecoration(
+                                          color: categoryColor,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        member.category.tag,
+                                        style: TextStyle(
+                                          color: categoryColor,
+                                          fontSize: AppTypography.sizeSm,
+                                          fontWeight: AppTypography.semibold,
+                                          letterSpacing:
+                                              AppTypography.trackingNormal,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    member.category.tag,
-                                    style: TextStyle(
-                                      color: categoryColor,
-                                      fontSize: AppTypography.sizeSm,
-                                      fontWeight: AppTypography.semibold,
-                                      letterSpacing: AppTypography.trackingNormal,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                          ),
                           if (member.description.isNotEmpty) ...[
                             const SizedBox(height: 6),
                             Center(

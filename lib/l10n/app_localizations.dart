@@ -350,6 +350,18 @@ abstract class AppLocalizations {
   /// **'WHAT YOU OFFER'**
   String get profileWhatYouOffer;
 
+  /// No description provided for @profileBuscadorBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Looking for services'**
+  String get profileBuscadorBadge;
+
+  /// No description provided for @profileBuscadorOwnSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re browsing the directory for services'**
+  String get profileBuscadorOwnSubtitle;
+
   /// No description provided for @profileViews.
   ///
   /// In en, this message translates to:

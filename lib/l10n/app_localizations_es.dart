@@ -139,6 +139,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get profileWhatYouOffer => 'LO QUE OFRECES';
 
   @override
+  String get profileBuscadorBadge => 'Busca servicios';
+
+  @override
+  String get profileBuscadorOwnSubtitle =>
+      'Estás buscando servicios en el directorio';
+
+  @override
   String get profileViews => 'Vistas esta\nsemana';
 
   @override
