@@ -31,10 +31,12 @@ class NotificationService {
     const androidSettings =
         AndroidInitializationSettings('@drawable/ic_notification');
     const iosSettings = DarwinInitializationSettings();
-    await _local.initialize(const InitializationSettings(
-      android: androidSettings,
-      iOS: iosSettings,
-    ));
+    await _local.initialize(
+      settings: const InitializationSettings(
+        android: androidSettings,
+        iOS: iosSettings,
+      ),
+    );
 
     await _local
         .resolvePlatformSpecificImplementation<
@@ -60,10 +62,10 @@ class NotificationService {
   }) async {
     if (kIsWeb) return;
     await _local.show(
-      DateTime.now().millisecondsSinceEpoch ~/ 1000,
-      title,
-      body,
-      const NotificationDetails(
+      id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      title: title,
+      body: body,
+      notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           _channelId,
           _channelName,
