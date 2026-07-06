@@ -40,7 +40,8 @@ class EditProfileState {
         name: m.name,
         businessName: m.description,
         bio: m.bio,
-        category: m.category == MemberCategory.all
+        category: m.category == MemberCategory.all ||
+                m.category == MemberCategory.buscador
             ? MemberCategory.emprendimiento
             : m.category,
         offers: List.from(m.offers),

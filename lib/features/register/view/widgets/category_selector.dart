@@ -28,6 +28,7 @@ class CategorySelector extends StatelessWidget {
         MemberCategory.emprendimiento => context.l10n.catEmprendimiento,
         MemberCategory.arte          => context.l10n.catArte,
         MemberCategory.servicio      => context.l10n.catServicio,
+        MemberCategory.buscador      => cat.label,
       };
 
   @override

@@ -97,42 +97,46 @@ class _MemberProfileScreenState extends ConsumerState<MemberProfileScreen> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 6),
-                          Center(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Container(
-                                  width: 7,
-                                  height: 7,
-                                  decoration: BoxDecoration(
-                                    color: categoryColor,
-                                    shape: BoxShape.circle,
+                          if (member.category != MemberCategory.buscador) ...[
+                            const SizedBox(height: 6),
+                            Center(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    width: 7,
+                                    height: 7,
+                                    decoration: BoxDecoration(
+                                      color: categoryColor,
+                                      shape: BoxShape.circle,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  member.category.tag,
-                                  style: TextStyle(
-                                    color: categoryColor,
-                                    fontSize: AppTypography.sizeSm,
-                                    fontWeight: AppTypography.semibold,
-                                    letterSpacing: AppTypography.trackingNormal,
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    member.category.tag,
+                                    style: TextStyle(
+                                      color: categoryColor,
+                                      fontSize: AppTypography.sizeSm,
+                                      fontWeight: AppTypography.semibold,
+                                      letterSpacing: AppTypography.trackingNormal,
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Center(
-                            child: Text(
-                              member.description,
-                              style: AppTypography.titleLg.copyWith(
-                                color: colors.primary,
-                                fontStyle: FontStyle.italic,
+                                ],
                               ),
                             ),
-                          ),
+                          ],
+                          if (member.description.isNotEmpty) ...[
+                            const SizedBox(height: 6),
+                            Center(
+                              child: Text(
+                                member.description,
+                                style: AppTypography.titleLg.copyWith(
+                                  color: colors.primary,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),

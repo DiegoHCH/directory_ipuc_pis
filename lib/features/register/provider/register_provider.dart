@@ -11,6 +11,7 @@ import '../../settings/provider/settings_provider.dart';
 
 class RegisterState {
   final String name;
+  final bool offersServices;
   final String description;
   final MemberCategory? category;
   final String bio;
@@ -27,6 +28,7 @@ class RegisterState {
 
   const RegisterState({
     this.name = '',
+    this.offersServices = true,
     this.description = '',
     this.category,
     this.bio = '',
@@ -51,7 +53,7 @@ class RegisterState {
 
   bool get isValid =>
       name.trim().isNotEmpty &&
-      category != null &&
+      (!offersServices || category != null) &&
       phone.trim().length == 10 &&
       email.trim().isNotEmpty &&
       isPasswordStrong &&
@@ -62,6 +64,7 @@ class RegisterState {
 
   RegisterState copyWith({
     String? name,
+    bool? offersServices,
     String? description,
     MemberCategory? category,
     String? bio,
@@ -78,6 +81,7 @@ class RegisterState {
   }) =>
       RegisterState(
         name: name ?? this.name,
+        offersServices: offersServices ?? this.offersServices,
         description: description ?? this.description,
         category: category ?? this.category,
         bio: bio ?? this.bio,
@@ -99,6 +103,7 @@ class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
   RegisterState build() => const RegisterState();
 
   void setName(String v) => state = state.copyWith(name: v);
+  void setOffersServices(bool v) => state = state.copyWith(offersServices: v);
   void setDescription(String v) => state = state.copyWith(description: v);
   void setCategory(MemberCategory v) => state = state.copyWith(category: v);
   void setBio(String v) => state = state.copyWith(bio: v);
@@ -168,11 +173,11 @@ class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
       final member = Member(
         id: '',
         name: state.name.trim(),
-        description: state.description.trim(),
+        description: state.offersServices ? state.description.trim() : '',
         phone: state.fullPhone,
-        category: state.category!,
-        bio: state.bio.trim(),
-        offers: state.offers,
+        category: state.offersServices ? state.category! : MemberCategory.buscador,
+        bio: state.offersServices ? state.bio.trim() : '',
+        offers: state.offersServices ? state.offers : const [],
         photoUrl: state.photoUrl,
       );
 

@@ -88,6 +88,11 @@
 
   "regNameLabel": "YOUR NAME",
   "regNameHint": "Full name",
+  "regOfferQuestion": "WHAT WOULD YOU LIKE TO DO?",
+  "regOfferService": "Offer a service",
+  "regOfferServiceDesc": "Publish what you do so the community can find you.",
+  "regSearchOnly": "Only search and contact",
+  "regSearchOnlyDesc": "Join to find and contact other members.",
   "regPhoneLabel": "YOUR WHATSAPP NUMBER",
   "regCategoryQuestion": "WHICH CATEGORY FITS YOU?",
   "regServiceHint": "E.g.: Birthday cakes",

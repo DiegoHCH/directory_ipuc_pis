@@ -554,6 +554,36 @@ abstract class AppLocalizations {
   /// **'Full name'**
   String get regNameHint;
 
+  /// No description provided for @regOfferQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'WHAT WOULD YOU LIKE TO DO?'**
+  String get regOfferQuestion;
+
+  /// No description provided for @regOfferService.
+  ///
+  /// In en, this message translates to:
+  /// **'Offer a service'**
+  String get regOfferService;
+
+  /// No description provided for @regOfferServiceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish what you do so the community can find you.'**
+  String get regOfferServiceDesc;
+
+  /// No description provided for @regSearchOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Only search and contact'**
+  String get regSearchOnly;
+
+  /// No description provided for @regSearchOnlyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Join to find and contact other members.'**
+  String get regSearchOnlyDesc;
+
   /// No description provided for @regPhoneLabel.
   ///
   /// In en, this message translates to:

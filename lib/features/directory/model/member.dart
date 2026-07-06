@@ -1,4 +1,4 @@
-enum MemberCategory { all, empresa, emprendimiento, arte, servicio }
+enum MemberCategory { all, empresa, emprendimiento, arte, servicio, buscador }
 
 extension MemberCategoryLabel on MemberCategory {
   String get label => switch (this) {
@@ -7,6 +7,7 @@ extension MemberCategoryLabel on MemberCategory {
         MemberCategory.emprendimiento => 'Emprendimiento',
         MemberCategory.arte => 'Arte',
         MemberCategory.servicio => 'Servicio',
+        MemberCategory.buscador => 'Solo busco',
       };
 
   String get tag => switch (this) {
@@ -15,6 +16,7 @@ extension MemberCategoryLabel on MemberCategory {
         MemberCategory.emprendimiento => 'EMPRENDIMIENTO',
         MemberCategory.arte => 'ARTE',
         MemberCategory.servicio => 'SERVICIO',
+        MemberCategory.buscador => 'BUSCA',
       };
 }
 

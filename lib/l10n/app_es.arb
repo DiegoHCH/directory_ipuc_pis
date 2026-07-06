@@ -83,6 +83,11 @@
 
   "regNameLabel": "TU NOMBRE",
   "regNameHint": "Nombre completo",
+  "regOfferQuestion": "¿QUÉ QUIERES HACER?",
+  "regOfferService": "Ofrecer un servicio",
+  "regOfferServiceDesc": "Publica lo que haces para que la comunidad te encuentre.",
+  "regSearchOnly": "Solo buscar y contactar",
+  "regSearchOnlyDesc": "Únete para encontrar y contactar a otros hermanos.",
   "regPhoneLabel": "TU NÚMERO DE WHATSAPP",
   "regCategoryQuestion": "¿EN QUÉ CATEGORÍA ENCAJAS?",
   "regServiceHint": "Ej: Tortas de cumpleaños",

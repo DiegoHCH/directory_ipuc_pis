@@ -242,6 +242,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get regNameHint => 'Full name';
 
   @override
+  String get regOfferQuestion => 'WHAT WOULD YOU LIKE TO DO?';
+
+  @override
+  String get regOfferService => 'Offer a service';
+
+  @override
+  String get regOfferServiceDesc =>
+      'Publish what you do so the community can find you.';
+
+  @override
+  String get regSearchOnly => 'Only search and contact';
+
+  @override
+  String get regSearchOnlyDesc => 'Join to find and contact other members.';
+
+  @override
   String get regPhoneLabel => 'YOUR WHATSAPP NUMBER';
 
   @override

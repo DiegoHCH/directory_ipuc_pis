@@ -73,38 +73,42 @@ class MemberCard extends StatelessWidget {
                       ],
                     ],
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    member.description,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                        color: colors.textSecondary,
-                        fontSize: AppTypography.sizeMd),
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    children: [
-                      Container(
-                        width: 7,
-                        height: 7,
-                        decoration: BoxDecoration(
-                          color: categoryColor,
-                          shape: BoxShape.circle,
+                  if (member.description.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      member.description,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          color: colors.textSecondary,
+                          fontSize: AppTypography.sizeMd),
+                    ),
+                  ],
+                  if (member.category != MemberCategory.buscador) ...[
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Container(
+                          width: 7,
+                          height: 7,
+                          decoration: BoxDecoration(
+                            color: categoryColor,
+                            shape: BoxShape.circle,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        member.category.tag,
-                        style: TextStyle(
-                          color: categoryColor,
-                          fontSize: AppTypography.sizeXs,
-                          fontWeight: AppTypography.semibold,
-                          letterSpacing: AppTypography.trackingTight,
+                        const SizedBox(width: 5),
+                        Text(
+                          member.category.tag,
+                          style: TextStyle(
+                            color: categoryColor,
+                            fontSize: AppTypography.sizeXs,
+                            fontWeight: AppTypography.semibold,
+                            letterSpacing: AppTypography.trackingTight,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),
