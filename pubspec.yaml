@@ -71,6 +71,8 @@ flutter_native_splash:
 flutter:
   generate: true
   uses-material-design: true
+  config:
+    enable-swift-package-manager: true
   assets:
     - assets/
     - assets/fonts/
