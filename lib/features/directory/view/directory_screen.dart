@@ -39,13 +39,13 @@ class _DirectoryScreenState extends ConsumerState<DirectoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final myId = ref.watch(currentMemberProvider).valueOrNull?.id ?? '';
+    final myId = ref.watch(currentMemberProvider).value?.id ?? '';
 
     final filter = ref.watch(directoryProvider);
     final notifier = ref.read(directoryProvider.notifier);
     final filteredAsync = ref.watch(filteredMembersProvider);
     final totalAsync = ref.watch(membersStreamProvider);
-    final myId2 = ref.watch(currentMemberProvider).valueOrNull?.id;
+    final myId2 = ref.watch(currentMemberProvider).value?.id;
     final colors = context.colors;
 
     return Scaffold(
@@ -56,7 +56,7 @@ class _DirectoryScreenState extends ConsumerState<DirectoryScreen> {
             FadeInDown(
               duration: const Duration(milliseconds: 500),
               child: _Header(
-                totalMembers: totalAsync.valueOrNull?.length ?? 0,
+                totalMembers: totalAsync.value?.length ?? 0,
                 onSettingsTap: () => context.push('/settings'),
               ),
             ),

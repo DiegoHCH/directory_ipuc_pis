@@ -8,7 +8,7 @@ import '../../directory/repository/member_repository.dart';
 /// - Reacciona a cambios de sesión y a ediciones del perfil en vivo.
 final currentMemberProvider = StreamProvider<Member?>((ref) {
   final authState = ref.watch(authStateProvider);
-  final user = authState.valueOrNull;
+  final user = authState.value;
 
   if (user == null) return Stream.value(null);
 
@@ -17,5 +17,5 @@ final currentMemberProvider = StreamProvider<Member?>((ref) {
 
 /// True si hay un hermano autenticado con perfil.
 final isLoggedInProvider = Provider<bool>((ref) {
-  return ref.watch(authStateProvider).valueOrNull != null;
+  return ref.watch(authStateProvider).value != null;
 });

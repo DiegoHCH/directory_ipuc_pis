@@ -31,7 +31,7 @@ class ForgotPasswordState {
       );
 }
 
-class ForgotPasswordNotifier extends AutoDisposeNotifier<ForgotPasswordState> {
+class ForgotPasswordNotifier extends Notifier<ForgotPasswordState> {
   @override
   ForgotPasswordState build() => const ForgotPasswordState();
 
@@ -65,5 +65,5 @@ class ForgotPasswordNotifier extends AutoDisposeNotifier<ForgotPasswordState> {
 }
 
 final forgotPasswordProvider =
-    AutoDisposeNotifierProvider<ForgotPasswordNotifier, ForgotPasswordState>(
+    NotifierProvider.autoDispose<ForgotPasswordNotifier, ForgotPasswordState>(
         ForgotPasswordNotifier.new);

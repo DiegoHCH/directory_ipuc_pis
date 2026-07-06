@@ -86,10 +86,12 @@ class EditProfileState {
       );
 }
 
-class EditProfileNotifier
-    extends AutoDisposeFamilyNotifier<EditProfileState, Member> {
+class EditProfileNotifier extends Notifier<EditProfileState> {
+  EditProfileNotifier(this.arg);
+  final Member arg;
+
   @override
-  EditProfileState build(Member arg) => EditProfileState.fromMember(arg);
+  EditProfileState build() => EditProfileState.fromMember(arg);
 
   void setName(String v) => state = state.copyWith(name: v);
   void setBusinessName(String v) => state = state.copyWith(businessName: v);
@@ -174,5 +176,5 @@ class EditProfileNotifier
   }
 }
 
-final editProfileProvider = AutoDisposeNotifierProvider.family<
+final editProfileProvider = NotifierProvider.autoDispose.family<
     EditProfileNotifier, EditProfileState, Member>(EditProfileNotifier.new);

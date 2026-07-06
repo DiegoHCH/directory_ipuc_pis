@@ -397,7 +397,7 @@ class _WhatsAppButton extends ConsumerWidget {
     final digits = member.phone.replaceAll(RegExp(r'[^\d]'), '');
     final uri = Uri.parse('https://wa.me/$digits');
 
-    final me = ref.read(currentMemberProvider).valueOrNull;
+    final me = ref.read(currentMemberProvider).value;
     FirebaseFirestore.instance.collection('contact_events').add({
       'toId': member.id,
       'fromName': me?.name ?? 'Un hermano',

@@ -32,7 +32,7 @@ class LoginState {
       );
 }
 
-class LoginNotifier extends AutoDisposeNotifier<LoginState> {
+class LoginNotifier extends Notifier<LoginState> {
   @override
   LoginState build() => const LoginState();
 
@@ -69,4 +69,4 @@ class LoginNotifier extends AutoDisposeNotifier<LoginState> {
 }
 
 final loginProvider =
-    AutoDisposeNotifierProvider<LoginNotifier, LoginState>(LoginNotifier.new);
+    NotifierProvider.autoDispose<LoginNotifier, LoginState>(LoginNotifier.new);

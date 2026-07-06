@@ -39,10 +39,10 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
       // Usamos ref.listen para cubrirlo también cuando el usuario
       // inicia sesión después del arranque (ej: luego de crear cuenta).
       ref.listen<AsyncValue<User?>>(authStateProvider, (_, next) {
-        if (next.valueOrNull != null) _registerToken();
+        if (next.value != null) _registerToken();
       });
       // Intentarlo también si ya hay sesión activa ahora mismo.
-      if (ref.read(authStateProvider).valueOrNull != null) _registerToken();
+      if (ref.read(authStateProvider).value != null) _registerToken();
     }
 
     return SettingsState(
@@ -60,7 +60,7 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
   }
 
   Future<void> toggleNotifyNewMembers() async {
-    final current = state.valueOrNull?.notifyNewMembers ?? false;
+    final current = state.value?.notifyNewMembers ?? false;
     final next = !current;
 
     if (next) {
@@ -89,7 +89,7 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
   /// Solo activa (false → true); nunca desactiva automáticamente.
   Future<void> syncPermissionStatus() async {
     if (kIsWeb) return;
-    final current = state.valueOrNull?.notifyNewMembers ?? false;
+    final current = state.value?.notifyNewMembers ?? false;
     if (current) return;
     final granted = await Permission.notification.isGranted;
     if (granted) {
@@ -99,7 +99,7 @@ class SettingsNotifier extends AsyncNotifier<SettingsState> {
   }
 
   Future<void> toggleNotifyContacts() async {
-    final current = state.valueOrNull?.notifyContacts ?? true;
+    final current = state.value?.notifyContacts ?? true;
     await _prefs.setBool(_keyContacts, !current);
     state = AsyncData(state.requireValue.copyWith(notifyContacts: !current));
   }

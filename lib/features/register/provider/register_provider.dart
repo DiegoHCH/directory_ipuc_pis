@@ -98,7 +98,7 @@ class RegisterState {
       );
 }
 
-class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
+class RegisterNotifier extends Notifier<RegisterState> {
   @override
   RegisterState build() => const RegisterState();
 
@@ -219,5 +219,5 @@ class RegisterNotifier extends AutoDisposeNotifier<RegisterState> {
 }
 
 final registerProvider =
-    AutoDisposeNotifierProvider<RegisterNotifier, RegisterState>(
+    NotifierProvider.autoDispose<RegisterNotifier, RegisterState>(
         RegisterNotifier.new);

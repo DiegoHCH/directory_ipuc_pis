@@ -7,7 +7,7 @@ import '../services/notification_service.dart';
 /// Escucha nuevos registros en Firestore y muestra notificación local
 /// solo si el usuario tiene activado "Avisarme de nuevos hermanos".
 final notificationListenerProvider = StreamProvider<void>((ref) {
-  final settings = ref.watch(settingsProvider).valueOrNull;
+  final settings = ref.watch(settingsProvider).value;
   final enabled = settings?.notifyNewMembers ?? false;
 
   if (!enabled) return const Stream.empty();

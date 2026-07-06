@@ -48,7 +48,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
     final settingsAsync = ref.watch(settingsProvider);
     final notifier = ref.read(settingsProvider.notifier);
     final colors = context.colors;
-    final settings = settingsAsync.valueOrNull;
+    final settings = settingsAsync.value;
 
     return Scaffold(
       body: SafeArea(
