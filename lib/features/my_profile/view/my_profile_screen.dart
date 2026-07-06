@@ -211,10 +211,10 @@ class _ProfileContent extends ConsumerWidget {
     final profileState = ref.watch(myProfileProvider);
     final statsAsync = ref.watch(profileStatsProvider(member.id));
     final contactsEnabled =
-        ref.watch(settingsProvider).valueOrNull?.notifyContacts ?? true;
+        ref.watch(settingsProvider).value?.notifyContacts ?? true;
     final colors = context.colors;
 
-    final stats = statsAsync.valueOrNull ??
+    final stats = statsAsync.value ??
         ProfileStats(
           weeklyViews: 0,
           whatsappContacts: 0,
