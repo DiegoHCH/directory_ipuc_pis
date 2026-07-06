@@ -12,6 +12,8 @@
   [![License](https://img.shields.io/badge/license-private-0A1628)](#)
 
   [🌐 Sitio web](https://ipuc-pis-directory.web.app) · [✨ Landing page](https://diegohch.github.io/directory_ipuc_pis/) · [🔒 Privacidad](https://diegohch.github.io/directory_ipuc_pis/privacy-policy)
+
+  <sub>`flutter` `dart` `firebase` `riverpod` `go-router` `pwa` `firebase-auth` `firestore` `push-notifications` `church-app` `directory-app` `mobile-app`</sub>
 </div>
 
 <br>
