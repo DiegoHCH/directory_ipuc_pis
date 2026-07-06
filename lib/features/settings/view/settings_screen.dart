@@ -219,7 +219,7 @@ class _AppearanceCard extends ConsumerWidget {
             icon: icon,
             isSelected: isSelected,
             showDivider: !isLast,
-            onTap: () => ref.read(themeProvider.notifier).state = mode,
+            onTap: () => ref.read(themeProvider.notifier).setMode(mode),
           );
         }).toList(),
       ),

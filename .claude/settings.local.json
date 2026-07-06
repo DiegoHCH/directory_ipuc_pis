@@ -84,7 +84,13 @@
       "Bash(npx wrangler *)",
       "Bash(/Users/diego.hoyos/fvm/versions/3.41.8/bin/flutter gen-l10n *)",
       "Bash(flutter gen-l10n *)",
-      "Bash(fvm flutter *)"
+      "Bash(fvm flutter *)",
+      "Bash(gh api *)",
+      "WebFetch(domain:diegohch.github.io)",
+      "Bash(open *)",
+      "Bash(sips *)",
+      "Bash(convert google-play-badge.png -trim +repage google-play-badge-trimmed.png)",
+      "Bash(gh run *)"
     ]
   }
 }
