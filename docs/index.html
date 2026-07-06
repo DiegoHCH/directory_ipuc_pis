@@ -18,10 +18,50 @@
     --brand: #4FA8DE;
     --brand-light: #5BAFD7;
     --brand-dark: #3A8FBF;
+    --brand-text: #5BAFD7;
+    --scroll-hint-color: rgba(255,255,255,0.55);
     --whatsapp: #25D366;
     --amber: #FFB74D;
     --purple: #CE93D8;
     --teal: #80CBC4;
+  }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) {
+      --bg: #F0F3FA;
+      --bg-alt: #E4EAF4;
+      --surface: #FFFFFF;
+      --surface-2: #E4EAF4;
+      --border: rgba(0,0,0,0.10);
+      --text: #0A1628;
+      --text-secondary: #6B7D8F;
+      --brand-text: #2870A0;
+      --scroll-hint-color: rgba(10,22,40,0.4);
+    }
+  }
+
+  :root[data-theme="light"] {
+    --bg: #F0F3FA;
+    --bg-alt: #E4EAF4;
+    --surface: #FFFFFF;
+    --surface-2: #E4EAF4;
+    --border: rgba(0,0,0,0.10);
+    --text: #0A1628;
+    --text-secondary: #6B7D8F;
+    --brand-text: #2870A0;
+    --scroll-hint-color: rgba(10,22,40,0.4);
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #091728;
+    --bg-alt: #0A1628;
+    --surface: #0C1F38;
+    --surface-2: #102844;
+    --border: rgba(255,255,255,0.08);
+    --text: #F0F3FA;
+    --text-secondary: #8899AA;
+    --brand-text: #5BAFD7;
+    --scroll-hint-color: rgba(255,255,255,0.55);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -216,7 +256,7 @@
     justify-content: center;
     width: 128px;
     height: 128px;
-    color: rgba(255,255,255,0.55);
+    color: var(--scroll-hint-color);
     text-decoration: none;
     animation: scroll-bounce 2.2s ease-in-out infinite;
   }
@@ -265,7 +305,7 @@
     gap: 8px;
     background: var(--surface);
     border: 1px solid var(--border);
-    color: var(--brand-light);
+    color: var(--brand-text);
     font-size: 12.5px;
     font-weight: 700;
     letter-spacing: 0.6px;
@@ -283,7 +323,7 @@
     margin-bottom: 20px;
   }
 
-  h1 span { color: var(--brand-light); }
+  h1 span { color: var(--brand-text); }
 
   .hero p.lead {
     font-size: 17.5px;
@@ -332,6 +372,67 @@
     border-radius: 20px;
   }
 
+  .img-dark  { display: block; }
+  .img-light { display: none; }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) .img-dark  { display: none; }
+    :root:not([data-theme]) .img-light { display: block; }
+  }
+
+  :root[data-theme="light"] .img-dark  { display: none; }
+  :root[data-theme="light"] .img-light { display: block; }
+  :root[data-theme="dark"] .img-dark   { display: block; }
+  :root[data-theme="dark"] .img-light  { display: none; }
+
+  /* ── Theme toggle ───────────────────────────────────────────────── */
+
+  .theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 20px -6px rgba(0,0,0,0.45);
+    backdrop-filter: blur(8px);
+    transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+  }
+
+  .theme-toggle:hover { transform: scale(1.07); }
+  .theme-toggle:active { transform: scale(0.95); }
+
+  .theme-toggle svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--text);
+  }
+
+  .theme-toggle .icon-sun  { display: none; }
+  .theme-toggle .icon-moon { display: block; }
+
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) .theme-toggle .icon-sun  { display: block; }
+    :root:not([data-theme]) .theme-toggle .icon-moon { display: none; }
+  }
+
+  :root[data-theme="light"] .theme-toggle .icon-sun  { display: block; }
+  :root[data-theme="light"] .theme-toggle .icon-moon { display: none; }
+  :root[data-theme="dark"] .theme-toggle .icon-sun   { display: none; }
+  :root[data-theme="dark"] .theme-toggle .icon-moon  { display: block; }
+
+  @media (max-width: 560px) {
+    .theme-toggle { top: 14px; right: 14px; width: 42px; height: 42px; }
+    .theme-toggle svg { width: 19px; height: 19px; }
+  }
+
   .phone-1 { top: 0;   left: 38%; z-index: 3; width: 220px; }
   .phone-2 { top: 60px; left: 2%;  z-index: 2; transform: rotate(-9deg); }
   .phone-3 { top: 40px; right: 0%; z-index: 2; transform: rotate(8deg); }
@@ -361,7 +462,7 @@
   .stat .num {
     font-size: 30px;
     font-weight: 800;
-    color: var(--brand-light);
+    color: var(--brand-text);
   }
 
   .stat .label {
@@ -545,6 +646,16 @@
 </head>
 <body>
 
+<button class="theme-toggle" id="themeToggle" type="button" aria-label="Cambiar tema claro/oscuro">
+  <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="5"/>
+    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+  </svg>
+  <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+  </svg>
+</button>
+
 <main>
 
   <section class="hero">
@@ -573,16 +684,22 @@
             </span>
           </a>
         </div>
-        <div class="hero-actions" style="margin-top: 18px;">
-          <a class="btn btn-ghost" href="#funciones">Ver qué puedes hacer</a>
-        </div>
       </div>
 
       <div class="phones">
-        <div class="phone phone-2"><img src="assets/directory.jpeg" alt="Directorio de hermanos"></div>
-        <div class="phone phone-3"><img src="assets/profile.jpeg" alt="Perfil de un hermano"></div>
+        <div class="phone phone-2">
+          <img class="img-dark" src="assets/directory.jpeg" alt="Directorio de hermanos">
+          <img class="img-light" src="assets/directory-light.jpeg" alt="Directorio de hermanos">
+        </div>
+        <div class="phone phone-3">
+          <img class="img-dark" src="assets/profile.jpeg" alt="Perfil de un hermano">
+          <img class="img-light" src="assets/profile-light.jpeg" alt="Perfil de un hermano">
+        </div>
         <div class="phone phone-1"><img src="assets/splash.jpeg" alt="Directorio IPUC Pisarreal"></div>
-        <div class="phone phone-4"><img src="assets/settings.jpeg" alt="Configuración de la app"></div>
+        <div class="phone phone-4">
+          <img class="img-dark" src="assets/settings.jpeg" alt="Configuración de la app">
+          <img class="img-light" src="assets/settings-light.jpeg" alt="Configuración de la app">
+        </div>
       </div>
     </div>
 
@@ -657,15 +774,18 @@
           <figcaption>Bienvenida</figcaption>
         </figure>
         <figure>
-          <img src="assets/directory.jpeg" alt="Directorio de hermanos">
+          <img class="img-dark" src="assets/directory.jpeg" alt="Directorio de hermanos">
+          <img class="img-light" src="assets/directory-light.jpeg" alt="Directorio de hermanos">
           <figcaption>Directorio</figcaption>
         </figure>
         <figure>
-          <img src="assets/profile.jpeg" alt="Perfil de un hermano">
+          <img class="img-dark" src="assets/profile.jpeg" alt="Perfil de un hermano">
+          <img class="img-light" src="assets/profile-light.jpeg" alt="Perfil de un hermano">
           <figcaption>Mi perfil</figcaption>
         </figure>
         <figure>
-          <img src="assets/settings.jpeg" alt="Configuración">
+          <img class="img-dark" src="assets/settings.jpeg" alt="Configuración">
+          <img class="img-light" src="assets/settings-light.jpeg" alt="Configuración">
           <figcaption>Configuración</figcaption>
         </figure>
       </div>
@@ -710,6 +830,30 @@
     </div>
   </div>
 </footer>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var toggle = document.getElementById('themeToggle');
+    var stored = localStorage.getItem('theme');
+
+    if (stored === 'light' || stored === 'dark') {
+      root.setAttribute('data-theme', stored);
+    }
+
+    function effectiveTheme() {
+      var explicit = root.getAttribute('data-theme');
+      if (explicit) return explicit;
+      return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+    }
+
+    toggle.addEventListener('click', function () {
+      var next = effectiveTheme() === 'light' ? 'dark' : 'light';
+      root.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+  })();
+</script>
 
 </body>
 </html>
