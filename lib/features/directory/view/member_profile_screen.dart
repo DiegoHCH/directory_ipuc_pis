@@ -1,9 +1,11 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_radius.dart';
@@ -43,6 +45,24 @@ class _MemberProfileScreenState extends ConsumerState<MemberProfileScreen> {
     });
   }
 
+  Future<void> _share() async {
+    final member = widget.member;
+    final l10n = context.l10n;
+    final url = 'https://ipuc-pis-directory.web.app/member?id=${member.id}';
+    final text =
+        '${l10n.shareMemberText(member.name, l10n.dirChurchShort)}\n$url';
+    try {
+      await SharePlus.instance.share(ShareParams(text: text));
+    } catch (_) {
+      await Clipboard.setData(ClipboardData(text: url));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.shareLinkCopied)),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final member = widget.member;
@@ -61,7 +81,7 @@ class _MemberProfileScreenState extends ConsumerState<MemberProfileScreen> {
                 onBookmark: () => ref
                     .read(bookmarkProvider(member.id).notifier)
                     .state = !isBookmarked,
-                onShare: () {},
+                onShare: _share,
               ),
             ),
             Expanded(
