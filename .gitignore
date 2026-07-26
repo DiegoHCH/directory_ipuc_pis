@@ -46,3 +46,7 @@ app.*.map.json
 
 # Firebase CLI local deploy cache
 /.firebase/
+
+# Cloudflare Worker — artefactos locales y variables de entorno
+cloudflare/.wrangler/
+cloudflare/.dev.vars
