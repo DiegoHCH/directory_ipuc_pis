@@ -326,8 +326,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errOpenPrivacy => 'Could not open the privacy policy.';
 
   @override
-  String get settingsHelpMessage =>
-      'Hello, I need help with the IPUC Pisarreal Directory 🙏';
+  String settingsHelpMessage(String church) {
+    return 'Hello, I need help with the $church Directory 🙏';
+  }
 
   @override
   String get settingsSignOut => 'Sign out';
@@ -390,6 +391,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get splashTagline => 'Connecting our community';
+
+  @override
+  String shareMemberText(String name, String church) {
+    return '$name is in the $church Directory 🙏';
+  }
+
+  @override
+  String get shareLinkCopied => 'Link copied to clipboard';
 
   @override
   String get errOpenWhatsApp => 'Could not open WhatsApp.';

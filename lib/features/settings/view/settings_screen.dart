@@ -449,7 +449,9 @@ class _AccountCard extends ConsumerWidget {
             label: context.l10n.settingsHelp,
             showDivider: true,
             onTap: () async {
-              final msg = Uri.encodeComponent(context.l10n.settingsHelpMessage);
+              final l10n = context.l10n;
+              final msg = Uri.encodeComponent(
+                  l10n.settingsHelpMessage(l10n.dirChurchShort));
               final support = await ref.read(supportContactProvider.future);
               if (support.phone.isEmpty) return;
               final uri = Uri.parse('https://wa.me/${support.phone}?text=$msg');

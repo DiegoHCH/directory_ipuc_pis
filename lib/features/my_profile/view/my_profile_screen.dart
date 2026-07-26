@@ -444,15 +444,17 @@ class _TopBar extends StatelessWidget {
   const _TopBar({required this.status, required this.member});
 
   Future<void> _share(BuildContext context) async {
+    final l10n = context.l10n;
     final url = 'https://ipuc-pis-directory.web.app/member?id=${member.id}';
-    final text = '${member.name} está en el Directorio IPUC Pisarreal 🙏\n$url';
+    final text =
+        '${l10n.shareMemberText(member.name, l10n.dirChurchShort)}\n$url';
     try {
       await SharePlus.instance.share(ShareParams(text: text));
     } catch (_) {
       await Clipboard.setData(ClipboardData(text: url));
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Enlace copiado al portapapeles')),
+          SnackBar(content: Text(l10n.shareLinkCopied)),
         );
       }
     }

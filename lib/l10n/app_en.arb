@@ -116,7 +116,13 @@
   "settingsHelp": "Help and support",
   "settingsPrivacy": "Privacy policy",
   "errOpenPrivacy": "Could not open the privacy policy.",
-  "settingsHelpMessage": "Hello, I need help with the IPUC Pisarreal Directory 🙏",
+  "settingsHelpMessage": "Hello, I need help with the {church} Directory 🙏",
+  "@settingsHelpMessage": {
+    "description": "WhatsApp support message. {church} is a proper name, do not translate.",
+    "placeholders": {
+      "church": { "type": "String" }
+    }
+  },
   "settingsSignOut": "Sign out",
   "settingsLanguage": "LANGUAGE",
   "settingsLangSpanish": "Spanish",
@@ -141,6 +147,16 @@
   "successProfileCreated": "Profile created! Welcome to the directory.",
 
   "splashTagline": "Connecting our community",
+
+  "shareMemberText": "{name} is in the {church} Directory 🙏",
+  "@shareMemberText": {
+    "description": "Share text. {church} is a proper name, do not translate.",
+    "placeholders": {
+      "name": { "type": "String" },
+      "church": { "type": "String" }
+    }
+  },
+  "shareLinkCopied": "Link copied to clipboard",
 
   "errOpenWhatsApp": "Could not open WhatsApp.",
   "errOpenDialer": "Could not open the dialer.",

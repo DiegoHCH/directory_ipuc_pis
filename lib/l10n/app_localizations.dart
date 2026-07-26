@@ -716,11 +716,11 @@ abstract class AppLocalizations {
   /// **'Could not open the privacy policy.'**
   String get errOpenPrivacy;
 
-  /// No description provided for @settingsHelpMessage.
+  /// WhatsApp support message. {church} is a proper name, do not translate.
   ///
   /// In en, this message translates to:
-  /// **'Hello, I need help with the IPUC Pisarreal Directory 🙏'**
-  String get settingsHelpMessage;
+  /// **'Hello, I need help with the {church} Directory 🙏'**
+  String settingsHelpMessage(String church);
 
   /// No description provided for @settingsSignOut.
   ///
@@ -835,6 +835,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Connecting our community'**
   String get splashTagline;
+
+  /// Share text. {church} is a proper name, do not translate.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is in the {church} Directory 🙏'**
+  String shareMemberText(String name, String church);
+
+  /// No description provided for @shareLinkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied to clipboard'**
+  String get shareLinkCopied;
 
   /// No description provided for @errOpenWhatsApp.
   ///

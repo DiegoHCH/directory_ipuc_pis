@@ -111,7 +111,13 @@
   "settingsHelp": "Ayuda y soporte",
   "settingsPrivacy": "Política de privacidad",
   "errOpenPrivacy": "No se pudo abrir la política de privacidad.",
-  "settingsHelpMessage": "Hola, necesito ayuda con el Directorio IPUC Pisarreal 🙏",
+  "settingsHelpMessage": "Hola, necesito ayuda con el Directorio {church} 🙏",
+  "@settingsHelpMessage": {
+    "description": "Mensaje de soporte por WhatsApp. {church} es un nombre propio, no se traduce.",
+    "placeholders": {
+      "church": { "type": "String" }
+    }
+  },
   "settingsSignOut": "Cerrar sesión",
   "settingsLanguage": "IDIOMA",
   "settingsLangSpanish": "Español",
@@ -136,6 +142,16 @@
   "successProfileCreated": "¡Perfil creado! Bienvenido al directorio.",
 
   "splashTagline": "Conectando nuestra comunidad",
+
+  "shareMemberText": "{name} está en el Directorio {church} 🙏",
+  "@shareMemberText": {
+    "description": "Texto de compartir. {church} es un nombre propio, no se traduce.",
+    "placeholders": {
+      "name": { "type": "String" },
+      "church": { "type": "String" }
+    }
+  },
+  "shareLinkCopied": "Enlace copiado al portapapeles",
 
   "errOpenWhatsApp": "No se pudo abrir WhatsApp.",
   "errOpenDialer": "No se pudo abrir el marcador.",
