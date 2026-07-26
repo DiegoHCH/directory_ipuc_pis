@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -11,7 +12,6 @@ const _channelId = 'ipuc_directorio';
 const _channelName = 'Directorio IPUC';
 
 const _workerUrl = 'https://ipuc-notifications.educacion-cristiana-pis.workers.dev';
-const _workerSecret = 'c20b1f503aa779f24837cc11354b62a6f700ac3004ed34d6f589d6b47cad9e29';
 
 // Generar en: Firebase Console → Project Settings → Cloud Messaging → Web Push certificates
 const vapidKey = 'BF7W-EQwoeQJ88paHXmY3ZBm08ttEeYd54vgsCms9de0n_qE40zRhqpr9yY-YDaDjvs-FBL5P7htlrn5TeFA46s';
@@ -202,15 +202,21 @@ class NotificationService {
     String? excludeToken,
   }) async {
     try {
+      // El Worker autentica con el ID token de Firebase: sin sesión no hay
+      // notificación (y no hay ningún secreto embebido en el cliente).
+      final idToken = await FirebaseAuth.instance.currentUser?.getIdToken();
+      if (idToken == null) return;
+
       await http.post(
         Uri.parse(_workerUrl),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $idToken',
+        },
         body: jsonEncode({
           'title': title,
           'body': body,
-          'secret': _workerSecret,
-          // ignore: use_null_aware_elements
-          if (excludeToken != null) 'excludeToken': excludeToken,
+          'excludeToken': ?excludeToken,
         }),
       );
     } catch (_) {
