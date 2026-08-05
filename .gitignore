@@ -50,3 +50,6 @@ app.*.map.json
 # Cloudflare Worker — artefactos locales y variables de entorno
 cloudflare/.wrangler/
 cloudflare/.dev.vars
+
+# Claude Code — ajustes locales por máquina/desarrollador
+.claude/*.local.json
