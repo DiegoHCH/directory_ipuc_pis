@@ -2,8 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 	<dict>
+		<key>ITSAppUsesNonExemptEncryption</key>
+		<false/>
 		<key>NSPhotoLibraryUsageDescription</key>
-		<string>Se necesita acceso a tu galería para actualizar tu foto de perfil.</string>
+		<string>Directorio Pisarreal necesita acceso a tus fotos para que elijas una imagen de perfil, la cual se guardará en tu cuenta y será visible para otros miembros de la congregación en el directorio.</string>
 		<key>LSApplicationQueriesSchemes</key>
 		<array>
 			<string>tel</string>
